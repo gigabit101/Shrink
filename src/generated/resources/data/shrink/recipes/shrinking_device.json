@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iei",
+    "igi",
+    "ibi"
+  ],
+  "key": {
+    "e": {
+      "tag": "forge:ender_pearls"
+    },
+    "g": {
+      "tag": "forge:glass"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "b": {
+      "item": "minecraft:stone_button"
+    }
+  },
+  "result": {
+    "item": "shrink:shrinking_device"
+  }
+}
