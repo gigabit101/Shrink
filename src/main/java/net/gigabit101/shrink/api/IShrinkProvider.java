@@ -10,6 +10,10 @@ public interface IShrinkProvider extends INBTSerializable<CompoundNBT>
 {
     boolean isShrunk();
 
+    boolean isShrinking();
+
+    void setShrinking(boolean set);
+
     void setShrunk(boolean set);
 
     void sync(@Nonnull ServerPlayerEntity player);

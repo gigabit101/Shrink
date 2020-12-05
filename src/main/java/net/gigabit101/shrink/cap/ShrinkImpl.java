@@ -13,9 +13,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -54,6 +56,7 @@ public final class ShrinkImpl
         @Nullable
         private final PlayerEntity player;
         private boolean isShrunk = false;
+        private boolean isShrinking = false;
 
         private DefaultImpl(@Nullable PlayerEntity player)
         {
@@ -77,6 +80,18 @@ public final class ShrinkImpl
         }
 
         @Override
+        public boolean isShrinking()
+        {
+            return this.isShrinking;
+        }
+
+        @Override
+        public void setShrinking(boolean shrinking)
+        {
+            this.isShrinking = shrinking;
+        }
+
+        @Override
         public void sync(@Nonnull ServerPlayerEntity player)
         {
             PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
@@ -86,11 +101,12 @@ public final class ShrinkImpl
         @Override
         public void shrink(@Nonnull ServerPlayerEntity player)
         {
+            setShrunk(true);
+            setShrinking(true);
             player.size = new EntitySize(0.1F, 0.2F, true);
             PlayerEntity.STANDING_SIZE = EntitySize.flexible(0.1F, 0.2F);
             PlayerEntity.SIZE_BY_POSE = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, PlayerEntity.STANDING_SIZE).put(Pose.SLEEPING, EntitySize.fixed(0.2F, 0.2F)).put(Pose.FALL_FLYING, EntitySize.flexible(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.flexible(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.flexible(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.flexible(0.5F, 0.5F)).put(Pose.DYING, EntitySize.fixed(0.2F, 0.2F)).build();
             player.eyeHeight = 0.16F;
-            setShrunk(true);
             player.recalculateSize();
             sync(player);
         }
@@ -98,10 +114,11 @@ public final class ShrinkImpl
         @Override
         public void deShrink(@Nonnull ServerPlayerEntity player)
         {
+            setShrunk(false);
+            setShrinking(false);
             player.eyeHeight = defaultEyeHeight;
             player.size = defaultSize;
             PlayerEntity.SIZE_BY_POSE = defaultSizes;
-            setShrunk(false);
             player.recalculateSize();
             sync(player);
         }
@@ -112,6 +129,7 @@ public final class ShrinkImpl
         {
             CompoundNBT properties = new CompoundNBT();
             properties.putBoolean("isshrunk", isShrunk);
+            properties.putBoolean("isshrinking", isShrinking);
             return properties;
         }
 
@@ -119,6 +137,7 @@ public final class ShrinkImpl
         public void deserializeNBT(CompoundNBT properties)
         {
             isShrunk = properties.getBoolean("isshrunk");
+            isShrinking = properties.getBoolean("isshrinking");
         }
     }
 

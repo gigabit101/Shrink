@@ -8,9 +8,11 @@ import net.gigabit101.shrink.network.ShrinkPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -77,10 +79,27 @@ public class PlayerEvents {
             PlayerEntity playerEntity = (PlayerEntity) event.getEntity();
             playerEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
-                if(iShrinkProvider.isShrunk())
+                double x = event.getEntity().getPosX();
+                double y = event.getEntity().getPosY();
+                double z = event.getEntity().getPosZ();
+
+                if(iShrinkProvider.isShrunk() && event.getPose() == Pose.STANDING)
                 {
                     event.setNewSize(new EntitySize(0.1F, 0.2F, true));
                     event.setNewEyeHeight(0.16F);
+                    event.getEntity().setPosition(x, y, z);
+                }
+                else if(iShrinkProvider.isShrunk() && event.getPose() == Pose.CROUCHING)
+                {
+                    event.setNewSize(new EntitySize(0.1F, 0.14F, true));
+                    event.setNewEyeHeight(0.11F);
+                    event.getEntity().setPosition(x, y, z);
+                }
+                else if(!iShrinkProvider.isShrunk() && event.getPose() == Pose.STANDING)
+                {
+                    event.setNewSize(ShrinkImpl.defaultSize);
+                    event.setNewEyeHeight(ShrinkImpl.defaultEyeHeight);
+                    event.getEntity().setPosition(x, y, z);
                 }
             });
         }
