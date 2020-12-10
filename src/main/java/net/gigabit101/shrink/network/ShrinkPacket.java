@@ -55,23 +55,6 @@ public class ShrinkPacket
                         entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(cap ->
                         {
                             cap.deserializeNBT(message.nbt);
-
-                            if(cap.isShrunk())
-                            {
-                                entity.size = new EntitySize(0.1F, 0.1F, true);
-                                EntitySize entitySize = PlayerEntity.STANDING_SIZE = EntitySize.flexible(0.1F, 0.2F);
-                                PlayerEntity.SIZE_BY_POSE = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, entitySize).put(Pose.SLEEPING, EntitySize.fixed(0.2F, 0.2F)).put(Pose.FALL_FLYING, EntitySize.flexible(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.flexible(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.flexible(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.flexible(0.5F, 0.5F)).put(Pose.DYING, EntitySize.fixed(0.2F, 0.2F)).build();
-                                entity.eyeHeight = 0.16F;
-                                entity.recalculateSize();
-                            }
-                            else if(!cap.isShrunk())
-                            {
-                                entity.size = ShrinkImpl.defaultSize;
-                                PlayerEntity.STANDING_SIZE =  EntitySize.flexible(0.6F, 1.8F);
-                                PlayerEntity.SIZE_BY_POSE = ShrinkImpl.defaultSizes;
-                                entity.eyeHeight = ShrinkImpl.defaultEyeHeight;
-                                entity.recalculateSize();
-                            }
                         });
                     }
                 }

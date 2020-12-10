@@ -1,15 +1,15 @@
 package net.gigabit101.shrink.events;
 
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class RenderEvents
 {
-    float scale = 1.0F;
-    int delay = 0;
-
     @SubscribeEvent
     public void onRenderPlayerPre(RenderPlayerEvent.Pre event)
     {
@@ -23,26 +23,9 @@ public class RenderEvents
                 {
                     event.getMatrixStack().push();
 
-                    if(iShrinkProvider.isShrinking())
-                    {
-                        delay++;
-                        if(delay >= 5)
-                        {
-                            scale -= 0.1F;
-                            delay = 0;
-                        }
-                    }
-
-                    if(scale <= 0.1F)
-                    {
-                        iShrinkProvider.setShrinking(false);
-                        scale = 0.1F;
-                        delay = 0;
-                    }
-
-                    event.getMatrixStack().scale(scale, scale, scale);
+                    event.getMatrixStack().scale(0.1F, 0.1F, 0.1F);
                     event.getRenderer().shadowSize = 0.08F;
-                    if(event.getEntity().isCrouching() && !iShrinkProvider.isShrinking())
+                    if(event.getEntity().isCrouching())
                     {
                         event.getMatrixStack().translate(0, 1.0, 0);
                     }
@@ -50,7 +33,6 @@ public class RenderEvents
                 else if(!iShrinkProvider.isShrunk())
                 {
                     event.getRenderer().shadowSize = 0.5F;
-                    scale = 1.0F;
                 }
             });
         } catch (Exception e)
@@ -72,6 +54,56 @@ public class RenderEvents
                     event.getMatrixStack().pop();
                 }
             });
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingRenderPre(RenderLivingEvent.Pre event)
+    {
+        try
+        {
+            LivingEntity livingEntity = event.getEntity();
+            if(livingEntity != null && livingEntity instanceof MobEntity)
+            {
+                livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+                {
+                    if(iShrinkProvider.isShrunk())
+                    {
+                        event.getMatrixStack().push();
+
+                        event.getMatrixStack().scale(0.1F, 0.1F, 0.1F);
+                        event.getRenderer().shadowSize = 0.08F;
+                    }
+                });
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingRenderPost(RenderLivingEvent.Post event)
+    {
+        try
+        {
+            LivingEntity livingEntity = event.getEntity();
+            if(livingEntity != null && livingEntity instanceof MobEntity)
+            {
+                if(livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
+                {
+                    livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+                    {
+                        if(iShrinkProvider.isShrunk())
+                        {
+                            event.getMatrixStack().pop();
+                        }
+                    });
+                }
+            }
         } catch (Exception e)
         {
             e.printStackTrace();

@@ -1,9 +1,13 @@
 package net.gigabit101.shrink.items;
 
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.config.ShrinkConfig;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -12,10 +16,10 @@ import net.minecraft.item.Rarity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -34,13 +38,24 @@ public class ItemShrinkingDevice extends Item
 {
     public ItemShrinkingDevice(Properties properties)
     {
-        super(properties.rarity(Rarity.EPIC));
+        super(properties.rarity(Rarity.EPIC).maxStackSize(1));
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
         ItemStack stack = player.getHeldItem(hand);
+
+//        if(!player.isSneaking())
+//        {
+//            player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+//            {
+//               player.sendStatusMessage(new StringTextComponent("isShrunk: " + iShrinkProvider.isShrunk()), false);
+//               player.sendStatusMessage(new StringTextComponent("isShrinking: " + iShrinkProvider.isShrinking()), false);
+//               player.sendStatusMessage(new StringTextComponent("default height: " + iShrinkProvider.defaultEntitySize().toString()), false);
+//
+//            });
+//        }
 
         if (!world.isRemote() && player.isSneaking())
         {
@@ -67,6 +82,27 @@ public class ItemShrinkingDevice extends Item
             spawnParticle(world, player.getPosX(), player.getPosY(), player.getPosZ() -1, world.rand);
         }
         return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
+    }
+
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+    {
+        if(entity instanceof LivingEntity && !entity.world.isRemote)
+        {
+            entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+            {
+                if (!iShrinkProvider.isShrunk() && canUse(stack, player))
+                {
+                    iShrinkProvider.shrink((LivingEntity) entity);
+                }
+                else if (iShrinkProvider.isShrunk() && canUse(stack, player))
+                {
+                    iShrinkProvider.deShrink((LivingEntity) entity);
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
     public void spawnParticle(World worldIn, double posX, double posY, double posZ, Random rand)
@@ -153,6 +189,7 @@ public class ItemShrinkingDevice extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
+        tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click to activate"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {

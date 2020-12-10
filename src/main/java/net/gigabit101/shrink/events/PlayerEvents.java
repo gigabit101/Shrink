@@ -5,21 +5,18 @@ import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.ShrinkPacket;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.apache.logging.log4j.core.jmx.Server;
 
 @Mod.EventBusSubscriber(modid = Shrink.MOD_ID)
 public class PlayerEvents {
@@ -27,7 +24,7 @@ public class PlayerEvents {
     public static void cloneEvent(PlayerEvent.Clone evt) {
         evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old -> {
             CompoundNBT knowledge = old.serializeNBT();
-            evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(knowledge));
+            evt.getEntityLiving().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(knowledge));
         });
     }
 
@@ -46,6 +43,9 @@ public class PlayerEvents {
         if (evt.getObject() instanceof PlayerEntity) {
             evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider((PlayerEntity) evt.getObject()));
         }
+        if(evt.getObject() instanceof MobEntity) {
+            evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider((MobEntity) evt.getObject()));
+        }
     }
 
     @SubscribeEvent
@@ -60,20 +60,31 @@ public class PlayerEvents {
         Entity target = event.getTarget();
         PlayerEntity player = event.getPlayer();
 
-        if (player instanceof ServerPlayerEntity && target instanceof ServerPlayerEntity)
+        if (player instanceof ServerPlayerEntity && target instanceof LivingEntity)
         {
             LivingEntity livingBase = (LivingEntity) target;
             livingBase.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
-                PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> (ServerPlayerEntity) player),
-                                new ShrinkPacket(target.getEntityId(), iShrinkProvider.serializeNBT()));
+                PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new ShrinkPacket(target.getEntityId(), iShrinkProvider.serializeNBT()));
             });
+        }
+    }
+
+    @SubscribeEvent
+    public static void joinWorldEvent(EntityJoinWorldEvent event)
+    {
+        if(!event.getWorld().isRemote && event.getEntity() instanceof LivingEntity && !(event.getEntity() instanceof PlayerEntity))
+        {
+            LivingEntity livingEntity = (LivingEntity) event.getEntity();
+            livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(livingEntity));
         }
     }
 
     @SubscribeEvent
     public static void changeSize(EntityEvent.Size event)
     {
+        World world = event.getEntity().world;
+
         if(event.getEntity() instanceof PlayerEntity)
         {
             PlayerEntity playerEntity = (PlayerEntity) event.getEntity();
@@ -97,7 +108,7 @@ public class PlayerEvents {
                 }
                 else if(!iShrinkProvider.isShrunk() && event.getPose() == Pose.STANDING)
                 {
-                    event.setNewSize(ShrinkImpl.defaultSize);
+                    event.setNewSize(new EntitySize(0.6F, 1.8F, false));
                     event.setNewEyeHeight(ShrinkImpl.defaultEyeHeight);
                     event.getEntity().setPosition(x, y, z);
                 }
