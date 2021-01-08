@@ -46,17 +46,6 @@ public class ItemShrinkingDevice extends Item
     {
         ItemStack stack = player.getHeldItem(hand);
 
-//        if(!player.isSneaking())
-//        {
-//            player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
-//            {
-//               player.sendStatusMessage(new StringTextComponent("isShrunk: " + iShrinkProvider.isShrunk()), false);
-//               player.sendStatusMessage(new StringTextComponent("isShrinking: " + iShrinkProvider.isShrinking()), false);
-//               player.sendStatusMessage(new StringTextComponent("default height: " + iShrinkProvider.defaultEntitySize().toString()), false);
-//
-//            });
-//        }
-
         if (!world.isRemote() && player.isSneaking())
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->

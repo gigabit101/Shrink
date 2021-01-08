@@ -3,17 +3,22 @@ package net.gigabit101.shrink.events;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.ShrinkImpl;
+import net.gigabit101.shrink.items.ItemModBottle;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.ShrinkPacket;
+import net.minecraft.advancements.criterion.PlayerEntityInteractionTrigger;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -81,10 +86,35 @@ public class PlayerEvents {
     }
 
     @SubscribeEvent
+    public static void itemInteractionForEntity(PlayerInteractEvent.EntityInteract event)
+    {
+        if(!event.getWorld().isRemote && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof PlayerEntity))
+        {
+            PlayerEntity playerEntity = event.getPlayer();
+
+            if(event.getTarget() instanceof LivingEntity)
+            {
+                LivingEntity livingEntity = (LivingEntity) event.getTarget();
+
+                if(playerEntity.getHeldItem(event.getHand()).getItem() == Items.GLASS_BOTTLE.getItem())
+                {
+                    livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+                    {
+                        if(iShrinkProvider.isShrunk())
+                        {
+                            playerEntity.getHeldItem(event.getHand()).shrink(1);
+                            ItemStack output = ItemModBottle.setContainedEntity(event.getItemStack(), livingEntity);
+                            playerEntity.inventory.addItemStackToInventory(output);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void changeSize(EntityEvent.Size event)
     {
-        World world = event.getEntity().world;
-
         if(event.getEntity() instanceof PlayerEntity)
         {
             PlayerEntity playerEntity = (PlayerEntity) event.getEntity();

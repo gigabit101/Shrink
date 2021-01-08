@@ -4,6 +4,7 @@ import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.Items;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -19,6 +20,7 @@ public class GeneratorItemModels extends ItemModelProvider
     protected void registerModels()
     {
         singleTexture(ShrinkItems.SHRINKING_DEVICE.get().getRegistryName().getPath(), mcLoc("item/handheld"), "layer0", modLoc("item/" + ShrinkItems.SHRINKING_DEVICE.get().getRegistryName().getPath()));
+        singleTexture(ShrinkItems.MOB_BOTTLE.get().getRegistryName().getPath(), mcLoc("item/handheld"), "layer0", mcLoc("item/" + Items.GLASS_BOTTLE.getRegistryName().getPath()));
     }
 
     private void registerBlockModel(Block block)

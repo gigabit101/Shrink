@@ -17,6 +17,7 @@ public class GeneratorLanguage extends LanguageProvider
     {
         add("itemGroup.shrink", "Shrink");
         addItem(ShrinkItems.SHRINKING_DEVICE, "Personal Shrinking Device");
+        addItem(ShrinkItems.MOB_BOTTLE, "Glass Bottle");
     }
 
     private void addPrefixed(String key, String text)
