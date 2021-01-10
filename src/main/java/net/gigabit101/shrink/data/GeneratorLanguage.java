@@ -16,6 +16,8 @@ public class GeneratorLanguage extends LanguageProvider
     protected void addTranslations()
     {
         add("itemGroup.shrink", "Shrink");
+        add("key.shrink.category", "Shrink");
+        add("key.shrink.shrink", "Toggle Shrink");
         addItem(ShrinkItems.SHRINKING_DEVICE, "Personal Shrinking Device");
         addItem(ShrinkItems.MOB_BOTTLE, "Glass Bottle");
     }

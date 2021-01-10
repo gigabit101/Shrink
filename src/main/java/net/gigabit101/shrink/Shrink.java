@@ -1,5 +1,6 @@
 package net.gigabit101.shrink;
 
+import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ShrinkItems;
@@ -38,5 +39,6 @@ public class Shrink
     private void clientSetup(final FMLClientSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
+        KeyBindings.init();
     }
 }

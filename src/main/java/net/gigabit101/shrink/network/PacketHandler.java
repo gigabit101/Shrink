@@ -27,10 +27,10 @@ public class PacketHandler
 
     private static int index;
 
-
     public static void register()
     {
         registerMessage(ShrinkPacket.class, ShrinkPacket::encode, ShrinkPacket::decode, ShrinkPacket.Handler::handle);
+        registerMessage(PacketShrink.class, PacketShrink::encode, PacketShrink::decode, PacketShrink.Handler::handle);
     }
 
     private static <MSG> void registerMessage(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer)
@@ -38,12 +38,9 @@ public class PacketHandler
         HANDLER.registerMessage(index++, type, encoder, decoder, consumer);
     }
 
-    public static void sendTo(Object msg, ServerPlayerEntity player)
+    public static void sendToServer(Object msg)
     {
-        if (!(player instanceof FakePlayer))
-        {
-            HANDLER.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-        }
+        HANDLER.sendToServer(msg);
     }
 
     public static void send(PacketDistributor.PacketTarget target, ShrinkPacket message)

@@ -55,6 +55,17 @@ public class ShrinkPacket
                         entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(cap ->
                         {
                             cap.deserializeNBT(message.nbt);
+
+                            if(cap.isShrunk())
+                            {
+                                entity.size = new EntitySize(0.1F, 0.2F, true);
+                                entity.eyeHeight = 0.16F;
+                            }
+                            else
+                            {
+                                entity.size = cap.defaultEntitySize();
+                                entity.eyeHeight = cap.defaultEyeHeight();
+                            }
                         });
                     }
                 }
