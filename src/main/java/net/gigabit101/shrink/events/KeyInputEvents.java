@@ -3,7 +3,7 @@ package net.gigabit101.shrink.events;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.network.PacketHandler;
-import net.gigabit101.shrink.network.PacketShrink;
+import net.gigabit101.shrink.network.PacketShrinkKeybind;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
@@ -21,7 +21,7 @@ public class KeyInputEvents
 
         if (KeyBindings.shrink.isPressed())
         {
-            PacketHandler.sendToServer(new PacketShrink());
+            PacketHandler.sendToServer(new PacketShrinkKeybind());
         }
     }
 }

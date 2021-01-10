@@ -4,7 +4,7 @@ import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.api.IShrinkProvider;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.network.PacketHandler;
-import net.gigabit101.shrink.network.ShrinkPacket;
+import net.gigabit101.shrink.network.PacketShrink;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,7 +19,6 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 public final class ShrinkImpl
 {
@@ -92,7 +91,7 @@ public final class ShrinkImpl
         @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new ShrinkPacket(livingEntity.getEntityId(), serializeNBT()));
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getEntityId(), serializeNBT()));
         }
 
         @Override
