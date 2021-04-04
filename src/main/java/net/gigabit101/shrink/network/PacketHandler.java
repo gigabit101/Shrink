@@ -28,6 +28,7 @@ public class PacketHandler
     {
         registerMessage(PacketShrink.class, PacketShrink::encode, PacketShrink::decode, PacketShrink.Handler::handle);
         registerMessage(PacketShrinkKeybind.class, PacketShrinkKeybind::encode, PacketShrinkKeybind::decode, PacketShrinkKeybind.Handler::handle);
+        registerMessage(PacketShrinkScreen.class, PacketShrinkScreen::encode, PacketShrinkScreen::decode, PacketShrinkScreen.Handler::handle);
     }
 
     private static <MSG> void registerMessage(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer)

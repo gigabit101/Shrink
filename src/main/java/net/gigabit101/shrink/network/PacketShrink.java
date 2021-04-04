@@ -48,19 +48,19 @@ public class PacketShrink
 
                     if (entity instanceof LivingEntity)
                     {
-                        entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(cap ->
+                        entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
                         {
-                            cap.deserializeNBT(message.nbt);
+                            iShrinkProvider.deserializeNBT(message.nbt);
 
-                            if(cap.isShrunk())
+                            if(iShrinkProvider.isShrunk())
                             {
-                                entity.size = new EntitySize(0.1F, 0.2F, true);
-                                entity.eyeHeight = 0.16F;
+                                entity.size = new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
+                                entity.eyeHeight = iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale();
                             }
                             else
                             {
-                                entity.size = cap.defaultEntitySize();
-                                entity.eyeHeight = cap.defaultEyeHeight();
+                                entity.size = iShrinkProvider.defaultEntitySize();
+                                entity.eyeHeight = iShrinkProvider.defaultEyeHeight();
                             }
                         });
                     }

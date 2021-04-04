@@ -3,6 +3,7 @@ package net.gigabit101.shrink.events;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.ShrinkImpl;
+import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.items.ItemModBottle;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -86,6 +87,8 @@ public class PlayerEvents
     @SubscribeEvent
     public static void itemInteractionForEntity(PlayerInteractEvent.EntityInteract event)
     {
+        if(!ShrinkConfig.ENABLE_MOB_BOTTLES.get()) return;
+
         if(!event.getWorld().isRemote && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof PlayerEntity))
         {
             PlayerEntity playerEntity = event.getPlayer();
@@ -124,21 +127,22 @@ public class PlayerEvents
 
                 if(iShrinkProvider.isShrunk() && (event.getPose() == Pose.STANDING || event.getPose() == Pose.SWIMMING))
                 {
-                    event.setNewSize(new EntitySize(0.1F, 0.2F, true));
+                    event.setNewSize(new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true));
                     if(event.getPose() != Pose.STANDING) event.getEntity().setPose(Pose.STANDING);
-                    event.setNewEyeHeight(0.16F);
+//                    event.setNewEyeHeight(0.16F);
+                    event.setNewEyeHeight(iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale());
                     event.getEntity().setPosition(x, y, z);
                 }
                 else if(iShrinkProvider.isShrunk() && event.getPose() == Pose.CROUCHING && livingEntity instanceof PlayerEntity)
                 {
                     event.setNewSize(new EntitySize(0.1F, 0.14F, true));
-                    event.setNewEyeHeight(0.11F);
+//                    event.setNewEyeHeight(0.11F);
                     event.getEntity().setPosition(x, y, z);
                 }
                 else if(!iShrinkProvider.isShrunk() && event.getPose() == Pose.STANDING && livingEntity instanceof PlayerEntity)
                 {
-                    event.setNewSize(new EntitySize(0.6F, 1.8F, false));
-                    event.setNewEyeHeight(ShrinkImpl.defaultEyeHeight);
+                    event.setNewSize(iShrinkProvider.defaultEntitySize());
+                    event.setNewEyeHeight(iShrinkProvider.defaultEyeHeight());
                     event.getEntity().setPosition(x, y, z);
                 }
             });
