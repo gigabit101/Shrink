@@ -21,6 +21,11 @@ public class ShrinkConfig
     public static ForgeConfigSpec.ConfigValue<Boolean> POWER_REQUIREMENT;
     public static ForgeConfigSpec.ConfigValue<Integer> POWER_COST;
     public static ForgeConfigSpec.ConfigValue<Integer> POWER_CAPACITY;
+    public static ForgeConfigSpec.ConfigValue<Boolean> ENABLE_MOB_BOTTLES;
+    public static ForgeConfigSpec.ConfigValue<Float> MAX_SIZE;
+    public static ForgeConfigSpec.ConfigValue<Float> MIN_SIZE;
+
+
 
     static
     {
@@ -35,6 +40,15 @@ public class ShrinkConfig
 
         POWER_CAPACITY = COMMON_BUILDER.comment("Set the amount of power the personal shrinking device can store")
                 .define("setShrinkingDeviceCapacity",  100000);
+
+        ENABLE_MOB_BOTTLES = COMMON_BUILDER.comment("Set to false to disable mobs being put in bottles")
+                .define("enableMobBottles",  true);
+
+        MAX_SIZE = COMMON_BUILDER.comment("Set the max size a player can grow too")
+                .define("maxSize",  1.0F);
+
+        MIN_SIZE = COMMON_BUILDER.comment("Set the min size a player can shrink too")
+                .define("minSize",  0.21F);
 
         COMMON_CONFIG = COMMON_BUILDER.build();
     }

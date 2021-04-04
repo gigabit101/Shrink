@@ -1,15 +1,16 @@
 package net.gigabit101.shrink.items;
 
+import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
-import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,14 +29,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class ItemShrinkingDevice extends Item
+public class ItemShrinkingDevice extends Item implements INamedContainerProvider
 {
     public ItemShrinkingDevice(Properties properties)
     {
@@ -45,6 +48,21 @@ public class ItemShrinkingDevice extends Item
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
         ItemStack stack = player.getHeldItem(hand);
+
+        if(!player.isSneaking())
+        {
+            player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+            {
+               if(!iShrinkProvider.isShrunk())
+               {
+                   if (!world.isRemote) NetworkHooks.openGui((ServerPlayerEntity) player, this);
+               }
+               else
+               {
+                   if (!world.isRemote) player.sendStatusMessage(new StringTextComponent("Can't open while shrunk"), false);
+               }
+            });
+        }
 
         if (!world.isRemote() && player.isSneaking())
         {
@@ -76,10 +94,15 @@ public class ItemShrinkingDevice extends Item
     @Override
     public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
     {
+        AtomicReference<Float> scale = new AtomicReference<>(0.1F);
+        player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> scale.set(iShrinkProvider.scale()));
+
         if(entity instanceof LivingEntity && !entity.world.isRemote)
         {
             entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
+                iShrinkProvider.setScale(scale.get());
+
                 if (!iShrinkProvider.isShrunk() && canUse(stack, player))
                 {
                     iShrinkProvider.shrink((LivingEntity) entity);
@@ -109,8 +132,6 @@ public class ItemShrinkingDevice extends Item
             worldIn.addParticle(ParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5);
         }
     }
-
-
 
     public boolean canUse(ItemStack stack, PlayerEntity playerEntity)
     {
@@ -149,7 +170,7 @@ public class ItemShrinkingDevice extends Item
     @Override
     public boolean showDurabilityBar(ItemStack stack)
     {
-        return true;
+        return ShrinkConfig.POWER_REQUIREMENT.get();
     }
 
     @Override
@@ -185,6 +206,19 @@ public class ItemShrinkingDevice extends Item
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
             tooltip.add(new StringTextComponent(energyStorage.getEnergyStored() + " FE / " + energyStorage.getMaxEnergyStored() + " FE"));
         }
+    }
+
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return new TranslationTextComponent(this.getTranslationKey());
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory inv, PlayerEntity player)
+    {
+        return new ShrinkContainer(id, inv);
     }
 
     public static class EnergyStorageItemImpl extends EnergyStorage

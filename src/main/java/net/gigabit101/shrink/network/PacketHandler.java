@@ -1,11 +1,8 @@
 package net.gigabit101.shrink.network;
 
 import net.gigabit101.shrink.Shrink;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -27,10 +24,11 @@ public class PacketHandler
 
     private static int index;
 
-
     public static void register()
     {
-        registerMessage(ShrinkPacket.class, ShrinkPacket::encode, ShrinkPacket::decode, ShrinkPacket.Handler::handle);
+        registerMessage(PacketShrink.class, PacketShrink::encode, PacketShrink::decode, PacketShrink.Handler::handle);
+        registerMessage(PacketShrinkKeybind.class, PacketShrinkKeybind::encode, PacketShrinkKeybind::decode, PacketShrinkKeybind.Handler::handle);
+        registerMessage(PacketShrinkScreen.class, PacketShrinkScreen::encode, PacketShrinkScreen::decode, PacketShrinkScreen.Handler::handle);
     }
 
     private static <MSG> void registerMessage(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer)
@@ -38,15 +36,12 @@ public class PacketHandler
         HANDLER.registerMessage(index++, type, encoder, decoder, consumer);
     }
 
-    public static void sendTo(Object msg, ServerPlayerEntity player)
+    public static void sendToServer(Object msg)
     {
-        if (!(player instanceof FakePlayer))
-        {
-            HANDLER.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-        }
+        HANDLER.sendToServer(msg);
     }
 
-    public static void send(PacketDistributor.PacketTarget target, ShrinkPacket message)
+    public static void send(PacketDistributor.PacketTarget target, PacketShrink message)
     {
         HANDLER.send(target, message);
     }

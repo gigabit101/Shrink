@@ -4,7 +4,7 @@ import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.api.IShrinkProvider;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.network.PacketHandler;
-import net.gigabit101.shrink.network.ShrinkPacket;
+import net.gigabit101.shrink.network.PacketShrink;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,11 +19,10 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 public final class ShrinkImpl
 {
-    public static final float defaultEyeHeight = 1.62F;
+    public static final float defaultPlayerEyeHeight = 1.62F;
 
     public static void init()
     {
@@ -50,9 +49,9 @@ public final class ShrinkImpl
     {
         private final LivingEntity livingEntity;
         private boolean isShrunk = false;
-        private boolean isShrinking = false;
         private EntitySize defaultEntitySize;
         private float defaultEyeHeight;
+        private float scale = 1F;
 
         private DefaultImpl(@Nullable LivingEntity livingEntity)
         {
@@ -78,30 +77,17 @@ public final class ShrinkImpl
         }
 
         @Override
-        public boolean isShrinking()
-        {
-            return this.isShrinking;
-        }
-
-        @Override
-        public void setShrinking(boolean shrinking)
-        {
-            this.isShrinking = shrinking;
-        }
-
-        @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new ShrinkPacket(livingEntity.getEntityId(), serializeNBT()));
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getEntityId(), serializeNBT()));
         }
 
         @Override
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
             setShrunk(true);
-            setShrinking(true);
-            defaultEntitySize = livingEntity.size;
-            defaultEyeHeight = livingEntity.eyeHeight;
+            if(defaultEntitySize == null) defaultEntitySize = livingEntity.size;
+            if(defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
             livingEntity.recalculateSize();
             sync(livingEntity);
         }
@@ -110,7 +96,6 @@ public final class ShrinkImpl
         public void deShrink(@Nonnull LivingEntity livingEntity)
         {
             setShrunk(false);
-            setShrinking(false);
             livingEntity.recalculateSize();
             sync(livingEntity);
         }
@@ -128,15 +113,31 @@ public final class ShrinkImpl
         }
 
         @Override
+        public float scale()
+        {
+            return scale;
+        }
+
+        @Override
+        public void setScale(float scale)
+        {
+            if(this.scale != scale)
+            {
+                this.scale = scale;
+                sync(livingEntity);
+            }
+        }
+
+        @Override
         public CompoundNBT serializeNBT()
         {
             CompoundNBT properties = new CompoundNBT();
             properties.putBoolean("isshrunk", isShrunk);
-            properties.putBoolean("isshrinking", isShrinking);
             properties.putFloat("width", defaultEntitySize.width);
             properties.putFloat("height", defaultEntitySize.height);
             properties.putBoolean("fixed", defaultEntitySize.fixed);
             properties.putFloat("defaulteyeheight", defaultEyeHeight);
+            properties.putFloat("scale", scale);
             return properties;
         }
 
@@ -144,9 +145,9 @@ public final class ShrinkImpl
         public void deserializeNBT(CompoundNBT properties)
         {
             isShrunk = properties.getBoolean("isshrunk");
-            isShrinking = properties.getBoolean("isshrinking");
             defaultEntitySize = new EntitySize(properties.getFloat("width"), properties.getFloat("height"), properties.getBoolean("fixed"));
             defaultEyeHeight = properties.getFloat("defaulteyeheight");
+            scale = properties.getFloat("scale");
         }
     }
 

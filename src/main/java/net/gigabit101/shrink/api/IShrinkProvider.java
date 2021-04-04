@@ -12,10 +12,6 @@ public interface IShrinkProvider extends INBTSerializable<CompoundNBT>
 {
     boolean isShrunk();
 
-    boolean isShrinking();
-
-    void setShrinking(boolean set);
-
     void setShrunk(boolean set);
 
     void sync(@Nonnull LivingEntity livingEntity);
@@ -27,4 +23,8 @@ public interface IShrinkProvider extends INBTSerializable<CompoundNBT>
     EntitySize defaultEntitySize();
 
     float defaultEyeHeight();
+
+    float scale();
+
+    void setScale(float scale);
 }

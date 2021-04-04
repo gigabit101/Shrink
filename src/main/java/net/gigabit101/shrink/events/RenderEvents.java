@@ -23,9 +23,9 @@ public class RenderEvents
                 {
                     event.getMatrixStack().push();
 
-                    event.getMatrixStack().scale(0.1F, 0.1F, 0.1F);
+                    event.getMatrixStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
                     event.getRenderer().shadowSize = 0.08F;
-                    if(event.getEntity().isCrouching())
+                    if(event.getEntity().isCrouching() && iShrinkProvider.scale() < 0.2F)
                     {
                         event.getMatrixStack().translate(0, 1.0, 0);
                     }
@@ -74,7 +74,7 @@ public class RenderEvents
                     {
                         event.getMatrixStack().push();
 
-                        event.getMatrixStack().scale(0.1F, 0.1F, 0.1F);
+                        event.getMatrixStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
                         event.getRenderer().shadowSize = 0.08F;
                     }
                 });
