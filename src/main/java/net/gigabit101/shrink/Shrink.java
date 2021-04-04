@@ -1,5 +1,6 @@
 package net.gigabit101.shrink;
 
+import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.client.screen.ShrinkScreen;
 import net.gigabit101.shrink.config.ShrinkConfig;
@@ -51,6 +52,7 @@ public class Shrink
     private void commonSetup(FMLCommonSetupEvent event)
     {
         PacketHandler.register();
+        ShrinkImpl.init();
     }
 
     private void clientSetup(final FMLClientSetupEvent event)
