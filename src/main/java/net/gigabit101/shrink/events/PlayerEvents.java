@@ -125,24 +125,9 @@ public class PlayerEvents
                 double y = event.getEntity().getPosY();
                 double z = event.getEntity().getPosZ();
 
-                if(iShrinkProvider.isShrunk() && (event.getPose() == Pose.STANDING || event.getPose() == Pose.SWIMMING))
-                {
-                    event.setNewSize(new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true));
-                    if(event.getPose() != Pose.STANDING) event.getEntity().setPose(Pose.STANDING);
-//                    event.setNewEyeHeight(0.16F);
-                    event.setNewEyeHeight(iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale());
-                    event.getEntity().setPosition(x, y, z);
-                }
-                else if(iShrinkProvider.isShrunk() && event.getPose() == Pose.CROUCHING && livingEntity instanceof PlayerEntity)
-                {
-                    event.setNewSize(new EntitySize(0.1F, 0.14F, true));
-//                    event.setNewEyeHeight(0.11F);
-                    event.getEntity().setPosition(x, y, z);
-                }
-                else if(!iShrinkProvider.isShrunk() && event.getPose() == Pose.STANDING && livingEntity instanceof PlayerEntity)
-                {
-                    event.setNewSize(iShrinkProvider.defaultEntitySize());
-                    event.setNewEyeHeight(iShrinkProvider.defaultEyeHeight());
+                if(iShrinkProvider.isShrunk()) {
+                    event.setNewSize(event.getOldSize().scale(iShrinkProvider.scale()));
+                    event.setNewEyeHeight(event.getOldEyeHeight() * iShrinkProvider.scale());
                     event.getEntity().setPosition(x, y, z);
                 }
             });

@@ -38,9 +38,6 @@ public class GuiBuilder
 
 
         gui.blit(matrixStack, x, y, 150, 32, width, height, textureXSize, textureYSize);
-//        gui.blit(matrixStack, x + width / 2, y, 150 - width / 2, 0, width / 2, height / 2, textureXSize, textureYSize );
-//        gui.blit(matrixStack, x, y + height / 2, 0, 150 - height / 2, width / 2, height / 2, textureXSize, textureYSize);
-//        gui.blit(matrixStack, x + width / 2, y + height / 2, 150 - width / 2, 150 - height / 2, width / 2, height / 2, textureXSize, textureYSize);
     }
 
     public void drawPlayerSlots(ContainerScreen gui, MatrixStack matrixStack, int posX, int posY, boolean center, int textureXSize, int textureYSize)

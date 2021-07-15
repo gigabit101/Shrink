@@ -88,6 +88,7 @@ public final class ShrinkImpl
             setShrunk(true);
             if(defaultEntitySize == null) defaultEntitySize = livingEntity.size;
             if(defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
+            livingEntity.setPose(livingEntity.getPose());
             livingEntity.recalculateSize();
             sync(livingEntity);
         }

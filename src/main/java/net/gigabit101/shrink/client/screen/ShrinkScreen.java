@@ -55,6 +55,7 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get()) scale -= 0.1F;
+            if(scale < ShrinkConfig.MIN_SIZE.get()) scale = 0.21F;
         }));
     }
 
