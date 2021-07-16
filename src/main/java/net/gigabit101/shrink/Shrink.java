@@ -9,6 +9,7 @@ import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.server.ShrinkCommand;
+import net.gigabit101.shrink.server.ShrinkResetCommand;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.inventory.container.ContainerType;
@@ -51,6 +52,7 @@ public class Shrink
     public void registerCommands(RegisterCommandsEvent event)
     {
         event.getDispatcher().register(ShrinkCommand.register());
+        event.getDispatcher().register(ShrinkResetCommand.register());
     }
 
     @SubscribeEvent

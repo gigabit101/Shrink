@@ -55,6 +55,7 @@ public class PacketShrink
 
                             entity.setPose(entity.getPose());
                             entity.recalculateSize();
+                            entity.resetPositionToBB();
 
                             if(!(entity instanceof PlayerEntity))
                             {

@@ -9,24 +9,21 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class ShrinkCommand
+public class ShrinkResetCommand
 {
     public static LiteralArgumentBuilder<CommandSource> register()
     {
-        return Commands.literal("shrink").requires((cs) -> cs.hasPermissionLevel(4))
+        return Commands.literal("unshrink").requires((cs) -> cs.hasPermissionLevel(4))
                 .then(Commands.argument("player", EntityArgument.player())
-                .then(Commands.argument("size", FloatArgumentType.floatArg())
-                .executes((ctx) -> execute(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
-                        FloatArgumentType.getFloat(ctx, "size")))));
+                .executes((ctx) -> execute(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))));
     }
 
-    public static int execute(CommandSource source, PlayerEntity playerEntity, float scale)
+    public static int execute(CommandSource source, PlayerEntity playerEntity)
     {
         playerEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
         {
-            iShrinkProvider.setScale(scale);
-            iShrinkProvider.shrink(playerEntity);
-            source.sendFeedback(new TranslationTextComponent("Set " + playerEntity.getName().getString() + " scale to " + scale), false);
+            iShrinkProvider.deShrink(playerEntity);
+            source.sendFeedback(new TranslationTextComponent("reset " + playerEntity.getName().getString() + " to default"), false);
         });
         return 0;
     }
