@@ -1,6 +1,5 @@
 package net.gigabit101.shrink;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.client.screen.ShrinkScreen;
@@ -11,7 +10,6 @@ import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.server.ShrinkCommand;
 import net.gigabit101.shrink.server.ShrinkResetCommand;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.command.CommandSource;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;

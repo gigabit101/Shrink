@@ -1,6 +1,5 @@
 package net.gigabit101.shrink.server;
 
-import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.minecraft.command.CommandSource;
