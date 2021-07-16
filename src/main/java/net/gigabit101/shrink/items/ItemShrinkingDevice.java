@@ -2,6 +2,7 @@ package net.gigabit101.shrink.items;
 
 import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -199,7 +200,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click to activate"));
+        tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().func_237520_d_().getString() + TextFormatting.WHITE + " to active"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {
