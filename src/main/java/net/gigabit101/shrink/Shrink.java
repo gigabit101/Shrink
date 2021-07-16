@@ -1,5 +1,6 @@
 package net.gigabit101.shrink;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.client.screen.ShrinkScreen;
@@ -7,9 +8,12 @@ import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
+import net.gigabit101.shrink.server.ShrinkCommand;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.command.CommandSource;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,12 +39,18 @@ public class Shrink
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 
         ShrinkItems.ITEMS.register(eventBus);
 
         eventBus.addGenericListener(ContainerType.class, Shrink::registerContainers);
 
         ShrinkConfig.loadConfig(ShrinkConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+    }
+
+    public void registerCommands(RegisterCommandsEvent event)
+    {
+        event.getDispatcher().register(ShrinkCommand.register());
     }
 
     @SubscribeEvent

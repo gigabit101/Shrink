@@ -6,6 +6,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -52,15 +53,21 @@ public class PacketShrink
                         {
                             iShrinkProvider.deserializeNBT(message.nbt);
 
-                            if(iShrinkProvider.isShrunk())
+                            entity.setPose(entity.getPose());
+                            entity.recalculateSize();
+
+                            if(!(entity instanceof PlayerEntity))
                             {
-                                entity.size = new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
-                                entity.eyeHeight = iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale();
-                            }
-                            else
-                            {
-                                entity.size = iShrinkProvider.defaultEntitySize();
-                                entity.eyeHeight = iShrinkProvider.defaultEyeHeight();
+                                if (iShrinkProvider.isShrunk())
+                                {
+                                    entity.size = new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
+                                    entity.eyeHeight = iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale();
+                                }
+                                else
+                                {
+                                    entity.size = iShrinkProvider.defaultEntitySize();
+                                    entity.eyeHeight = iShrinkProvider.defaultEyeHeight();
+                                }
                             }
                         });
                     }
