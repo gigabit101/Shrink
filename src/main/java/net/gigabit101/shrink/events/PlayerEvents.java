@@ -125,7 +125,8 @@ public class PlayerEvents
                 double y = event.getEntity().getPosY();
                 double z = event.getEntity().getPosZ();
 
-                if(iShrinkProvider.isShrunk()) {
+                if(iShrinkProvider.isShrunk())
+                {
                     event.setNewSize(event.getOldSize().scale(iShrinkProvider.scale()));
                     event.setNewEyeHeight(event.getOldEyeHeight() * iShrinkProvider.scale());
                     event.getEntity().setPosition(x, y, z);

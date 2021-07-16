@@ -7,6 +7,7 @@ import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrink;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -22,8 +23,6 @@ import javax.annotation.Nullable;
 
 public final class ShrinkImpl
 {
-    public static final float defaultPlayerEyeHeight = 1.62F;
-
     public static void init()
     {
         CapabilityManager.INSTANCE.register(IShrinkProvider.class, new Capability.IStorage<IShrinkProvider>()
@@ -86,8 +85,10 @@ public final class ShrinkImpl
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
             setShrunk(true);
-            if(defaultEntitySize == null) defaultEntitySize = livingEntity.size;
-            if(defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
+            if(!(livingEntity instanceof PlayerEntity)) {
+                if (defaultEntitySize == null) defaultEntitySize = livingEntity.size;
+                if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
+            }
             livingEntity.setPose(livingEntity.getPose());
             livingEntity.recalculateSize();
             sync(livingEntity);
