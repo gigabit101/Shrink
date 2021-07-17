@@ -200,7 +200,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().func_237520_d_().getString() + TextFormatting.WHITE + " to active"));
+        if(KeyBindings.shrink != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().func_237520_d_().getString() + TextFormatting.WHITE + " to active"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {
