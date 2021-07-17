@@ -30,7 +30,7 @@ public class ShrinkConfig
         COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
         COMMON_BUILDER.pop();
 
-        POWER_REQUIREMENT = COMMON_BUILDER.comment("Set to true to enable power requirements for personal shrinking device")
+        POWER_REQUIREMENT = COMMON_BUILDER.comment("Set to false to disable power requirements for personal shrinking device")
                 .define("enablePowerRequirements",  true);
 
         POWER_COST = COMMON_BUILDER.comment("Set the amount of power required to use use the personal shrinking device")
