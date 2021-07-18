@@ -23,9 +23,11 @@ public class RenderEvents
                 {
                     event.getMatrixStack().pushPose();
 
-                    event.getMatrixStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
+                    float scale = iShrinkProvider.scale();
+
+                    event.getMatrixStack().scale(scale, scale, scale);
                     event.getRenderer().shadowRadius = 0.08F;
-                    if(event.getEntity().isCrouching() && iShrinkProvider.scale() < 0.2F)
+                    if(event.getEntity().isCrouching() && scale < 0.2F)
                     {
                         event.getMatrixStack().translate(0, 1.0, 0);
                     }
