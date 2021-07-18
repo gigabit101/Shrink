@@ -21,10 +21,10 @@ public class RenderEvents
             {
                 if (iShrinkProvider.isShrunk())
                 {
-                    event.getMatrixStack().push();
+                    event.getMatrixStack().pushPose();
 
                     event.getMatrixStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
-                    event.getRenderer().shadowSize = 0.08F;
+                    event.getRenderer().shadowRadius = 0.08F;
                     if(event.getEntity().isCrouching() && iShrinkProvider.scale() < 0.2F)
                     {
                         event.getMatrixStack().translate(0, 1.0, 0);
@@ -32,7 +32,7 @@ public class RenderEvents
                 }
                 else if(!iShrinkProvider.isShrunk())
                 {
-                    event.getRenderer().shadowSize = 0.5F;
+                    event.getRenderer().shadowRadius = 0.5F;
                 }
             });
         } catch (Exception e)
@@ -51,7 +51,7 @@ public class RenderEvents
             {
                 if (iShrinkProvider.isShrunk())
                 {
-                    event.getMatrixStack().pop();
+                    event.getMatrixStack().popPose();
                 }
             });
         } catch (Exception e)
@@ -72,10 +72,10 @@ public class RenderEvents
                 {
                     if(iShrinkProvider.isShrunk())
                     {
-                        event.getMatrixStack().push();
+                        event.getMatrixStack().pushPose();
 
                         event.getMatrixStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
-                        event.getRenderer().shadowSize = 0.08F;
+                        event.getRenderer().shadowRadius = 0.08F;
                     }
                 });
             }
@@ -99,7 +99,7 @@ public class RenderEvents
                     {
                         if(iShrinkProvider.isShrunk())
                         {
-                            event.getMatrixStack().pop();
+                            event.getMatrixStack().popPose();
                         }
                     });
                 }

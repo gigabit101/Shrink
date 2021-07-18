@@ -27,12 +27,12 @@ public class PacketShrink
     public static void encode(PacketShrink msg, PacketBuffer buf)
     {
         buf.writeInt(msg.entityID);
-        buf.writeCompoundTag(msg.nbt);
+        buf.writeNbt(msg.nbt);
     }
 
     public static PacketShrink decode(PacketBuffer buf)
     {
-        return new PacketShrink(buf.readInt(), buf.readCompoundTag());
+        return new PacketShrink(buf.readInt(), buf.readNbt());
     }
 
     public static class Handler
@@ -41,11 +41,11 @@ public class PacketShrink
         {
             ctx.get().enqueueWork(() ->
             {
-                ClientWorld world = Minecraft.getInstance().world;
+                ClientWorld world = Minecraft.getInstance().level;
 
                 if (world != null)
                 {
-                    Entity entity = world.getEntityByID(message.entityID);
+                    Entity entity = world.getEntity(message.entityID);
 
                     if (entity instanceof LivingEntity)
                     {
@@ -53,20 +53,19 @@ public class PacketShrink
                         {
                             iShrinkProvider.deserializeNBT(message.nbt);
 
-                            entity.setPose(entity.getPose());
-                            entity.recalculateSize();
-                            entity.resetPositionToBB();
+                            entity.refreshDimensions();
+                            entity.setPos(entity.blockPosition().getX(), entity.blockPosition().getY(), entity.blockPosition().getZ());
 
                             if(!(entity instanceof PlayerEntity))
                             {
                                 if (iShrinkProvider.isShrunk())
                                 {
-                                    entity.size = new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
+                                    entity.dimensions = new EntitySize(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
                                     entity.eyeHeight = iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale();
                                 }
                                 else
                                 {
-                                    entity.size = iShrinkProvider.defaultEntitySize();
+                                    entity.dimensions = iShrinkProvider.defaultEntitySize();
                                     entity.eyeHeight = iShrinkProvider.defaultEyeHeight();
                                 }
                             }

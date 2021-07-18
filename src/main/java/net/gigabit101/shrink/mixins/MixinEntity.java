@@ -18,19 +18,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public abstract class MixinEntity
 {
-    @Shadow public World world;
+    @Shadow public abstract EntitySize getDimensions(Pose p_213305_1_);
 
-    @Shadow protected abstract AxisAlignedBB getBoundingBox(Pose pose);
+    @Shadow public abstract double getX();
 
-    @Shadow public abstract EntitySize getSize(Pose poseIn);
+    @Shadow public abstract double getY();
 
-    @Shadow public abstract double getPosX();
+    @Shadow public abstract double getZ();
 
-    @Shadow public abstract double getPosY();
+    @Shadow public World level;
 
-    @Shadow public abstract double getPosZ();
-
-    @Inject(at = @At("RETURN"), method = "isPoseClear", cancellable = true)
+    @Inject(at = @At("RETURN"), method = "canEnterPose", cancellable = true)
     public void isPoseClear(Pose pose, CallbackInfoReturnable<Boolean> cir)
     {
         Entity entity = (Entity) (Object) this;
@@ -42,13 +40,13 @@ public abstract class MixinEntity
                 if(iShrinkProvider.isShrunk())
                 {
                     float scale = iShrinkProvider.scale();
-                    EntitySize entitysize = this.getSize(pose);
+                    EntitySize entitysize = this.getDimensions(pose);
                     entitysize = entitysize.scale(scale);
                     float f = entitysize.width / 2.0F;
-                    Vector3d vector3d = new Vector3d(this.getPosX() - (double)f, this.getPosY(), this.getPosZ() - (double)f);
-                    Vector3d vector3d1 = new Vector3d(this.getPosX() + (double)f, this.getPosY() + (double)entitysize.height, this.getPosZ() + (double)f);
+                    Vector3d vector3d = new Vector3d(this.getX() - (double)f, this.getY(), this.getZ() - (double)f);
+                    Vector3d vector3d1 = new Vector3d(this.getX() + (double)f, this.getY() + (double)entitysize.height, this.getZ() + (double)f);
                     AxisAlignedBB box = new AxisAlignedBB(vector3d, vector3d1);
-                    cir.setReturnValue(this.world.hasNoCollisions(livingEntity, box.shrink(1.0E-7D)));
+                    cir.setReturnValue(this.level.noCollision(livingEntity, box.deflate(1.0E-7D)));
                 }
             });
         }

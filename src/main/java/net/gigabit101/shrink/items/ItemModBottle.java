@@ -24,38 +24,38 @@ public class ItemModBottle extends Item
 {
     public ItemModBottle(Properties properties)
     {
-        super(properties.maxStackSize(1));
+        super(properties.stacksTo(1));
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context)
+    public ActionResultType useOn(ItemUseContext context)
     {
         PlayerEntity player = context.getPlayer();
-        BlockPos pos = context.getPos();
-        Direction facing = context.getFace();
-        World worldIn = context.getWorld();
-        ItemStack stack = context.getItem();
+        BlockPos pos = context.getClickedPos();
+        Direction facing = context.getClickedFace();
+        World worldIn = context.getLevel();
+        ItemStack stack = context.getItemInHand();
 
-        if (player.getEntityWorld().isRemote) return ActionResultType.FAIL;
+        if (player.level.isClientSide) return ActionResultType.FAIL;
         if (!containsEntity(stack)) return ActionResultType.FAIL;
         Entity entity = getEntityFromItemStack(stack, worldIn);
-        BlockPos blockPos = pos.offset(facing);
-        entity.setPositionAndRotation(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
-        player.setHeldItem(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
+        BlockPos blockPos = pos.relative(facing);
+        entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
+        player.setItemInHand(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
         stack.setTag(new CompoundNBT());
-        worldIn.addEntity(entity);
+        worldIn.addFreshEntity(entity);
         return ActionResultType.SUCCESS;
     }
 
     public static ItemStack setContainedEntity(ItemStack stack, LivingEntity entity)
     {
         if (containsEntity(stack)) return stack;
-        if (entity.getEntityWorld().isRemote) return stack;
-        if (entity instanceof PlayerEntity || !entity.isNonBoss() || !entity.isAlive()) return stack;
+        if (entity.level.isClientSide) return stack;
+        if (entity instanceof PlayerEntity || !entity.isAlive()) return stack;
 
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
-        entity.writeWithoutTypeId(nbt);
+        entity.save(nbt);
         ItemStack mobBottle = new ItemStack(ShrinkItems.MOB_BOTTLE.get(), 1);
         mobBottle.setTag(nbt);
         entity.remove(true);
@@ -76,26 +76,26 @@ public class ItemModBottle extends Item
     @Nullable
     public Entity getEntityFromItemStack(ItemStack stack, World world)
     {
-        EntityType type = EntityType.byKey(stack.getTag().getString("entity")).orElse(null);
+        EntityType type = EntityType.byString(stack.getTag().getString("entity")).orElse(null);
         if (type != null)
         {
             Entity entity = type.create(world);
-            entity.read(stack.getTag());
+            entity.load(stack.getTag());
             return entity;
         }
         return null;
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack)
+    public boolean isFoil(ItemStack itemStack)
     {
-        return containsEntity(stack);
+        return containsEntity(itemStack);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (containsEntity(stack))
         {
             tooltip.add(new StringTextComponent("Contains : " + getEntityID(stack)));

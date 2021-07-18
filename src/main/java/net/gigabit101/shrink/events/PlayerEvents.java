@@ -77,10 +77,10 @@ public class PlayerEvents
     @SubscribeEvent
     public static void joinWorldEvent(EntityJoinWorldEvent event)
     {
-        if(!event.getWorld().isRemote && event.getEntity() instanceof LivingEntity)
+        if(!event.getWorld().isClientSide() && event.getEntity() instanceof LivingEntity)
         {
             LivingEntity livingEntity = (LivingEntity) event.getEntity();
-            livingEntity.recalculateSize();
+            livingEntity.refreshDimensions();
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> iShrinkProvider.sync(livingEntity));
         }
     }
@@ -90,7 +90,7 @@ public class PlayerEvents
     {
         if(!ShrinkConfig.ENABLE_MOB_BOTTLES.get()) return;
 
-        if(!event.getWorld().isRemote && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof PlayerEntity))
+        if(!event.getWorld().isClientSide() && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof PlayerEntity))
         {
             PlayerEntity playerEntity = event.getPlayer();
 
@@ -98,15 +98,15 @@ public class PlayerEvents
             {
                 LivingEntity livingEntity = (LivingEntity) event.getTarget();
 
-                if(playerEntity.getHeldItem(event.getHand()).getItem() == Items.GLASS_BOTTLE.getItem())
+                if(playerEntity.getItemInHand(event.getHand()).getItem() == Items.GLASS_BOTTLE.getItem())
                 {
                     livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
                     {
                         if(iShrinkProvider.isShrunk())
                         {
-                            playerEntity.getHeldItem(event.getHand()).shrink(1);
+                            playerEntity.getItemInHand(event.getHand()).shrink(1);
                             ItemStack output = ItemModBottle.setContainedEntity(event.getItemStack(), livingEntity);
-                            playerEntity.inventory.addItemStackToInventory(output);
+                            playerEntity.inventory.add(output);
                         }
                     });
                 }
@@ -122,15 +122,15 @@ public class PlayerEvents
             LivingEntity livingEntity = (LivingEntity) event.getEntity();
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
-                double x = event.getEntity().getPosX();
-                double y = event.getEntity().getPosY();
-                double z = event.getEntity().getPosZ();
+                double x = event.getEntity().getX();
+                double y = event.getEntity().getY();
+                double z = event.getEntity().getZ();
 
                 if(iShrinkProvider.isShrunk())
                 {
-                    event.setNewSize(event.getOldSize().scale(iShrinkProvider.scale()));
-                    event.setNewEyeHeight(event.getOldEyeHeight() * iShrinkProvider.scale());
-                    event.getEntity().setPosition(x, y, z);
+                    event.setNewSize(event.getNewSize().scale(iShrinkProvider.scale()));
+                    event.setNewEyeHeight(event.getNewEyeHeight() * iShrinkProvider.scale());
+                    event.getEntity().setPos(x, y, z);
                 }
             });
         }

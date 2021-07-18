@@ -69,6 +69,6 @@ public class Shrink
     {
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
         KeyBindings.init();
-        ScreenManager.registerFactory(Shrink.shrinkingdevice, ShrinkScreen::new);
+        ScreenManager.register(Shrink.shrinkingdevice, ShrinkScreen::new);
     }
 }

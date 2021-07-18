@@ -42,30 +42,30 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
 {
     public ItemShrinkingDevice(Properties properties)
     {
-        super(properties.rarity(Rarity.EPIC).maxStackSize(1));
+        super(properties.rarity(Rarity.EPIC).stacksTo(1));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
     {
-        ItemStack stack = player.getHeldItem(hand);
+        ItemStack stack = player.getItemInHand(hand);
 
-        if(!player.isSneaking())
+        if(!player.isCrouching())
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
                if(!iShrinkProvider.isShrunk())
                {
-                   if (!world.isRemote) NetworkHooks.openGui((ServerPlayerEntity) player, this);
+                   if (!world.isClientSide()) NetworkHooks.openGui((ServerPlayerEntity) player, this);
                }
                else
                {
-                   if (!world.isRemote) player.sendStatusMessage(new StringTextComponent("Can't open while shrunk"), false);
+                   if (!world.isClientSide()) player.displayClientMessage(new StringTextComponent("Can't open while shrunk"), false);
                }
             });
         }
 
-        if (!world.isRemote() && player.isSneaking())
+        if (!world.isClientSide() && player.isCrouching())
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
@@ -79,17 +79,17 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
                 }
                 else if(!canUse(stack, player) && ShrinkConfig.POWER_REQUIREMENT.get())
                 {
-                    player.sendStatusMessage(new StringTextComponent("Not enough power in device"), false);
+                    player.displayClientMessage(new StringTextComponent("Not enough power in device"), false);
                 }
             });
         }
 
-        if(world.isRemote && player.isSneaking())
+        if(world.isClientSide() && player.isCrouching())
         {
-            world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 5F, 0F, true);
-            spawnParticle(world, player.getPosX(), player.getPosY(), player.getPosZ() -1, world.rand);
+            world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 5F, 0F);
+            spawnParticle(world, player.getX(), player.getY(), player.getZ() -1, world.random);
         }
-        return new ActionResult<>(ActionResultType.PASS, player.getHeldItem(hand));
+        return new ActionResult<>(ActionResultType.PASS, player.getItemInHand(hand));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
         AtomicReference<Float> scale = new AtomicReference<>(0.1F);
         player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> scale.set(iShrinkProvider.scale()));
 
-        if(entity instanceof LivingEntity && !entity.world.isRemote)
+        if(entity instanceof LivingEntity && !entity.level.isClientSide)
         {
             entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
@@ -183,7 +183,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack)
     {
-        return MathHelper.hsvToRGB((1 + getChargeRatio(stack)) / 3.0F, 1.0F, 1.0F);
+        return MathHelper.hsvToRgb((1 + getChargeRatio(stack)) / 3.0F, 1.0F, 1.0F);
     }
 
     public static float getChargeRatio(ItemStack stack)
@@ -198,9 +198,9 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        if(KeyBindings.shrink != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().func_237520_d_().getString() + TextFormatting.WHITE + " to active"));
+        if(KeyBindings.shrink != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().getDisplayName().getString() + TextFormatting.WHITE + " to active"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {
@@ -212,7 +212,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     @Override
     public ITextComponent getDisplayName()
     {
-        return new TranslationTextComponent(this.getTranslationKey());
+        return new TranslationTextComponent(this.getOrCreateDescriptionId());
     }
 
     @Nullable

@@ -15,12 +15,6 @@ public class ShrinkContainer extends Container
         drawPlayersHotBar(playerInv, 8, 85 + 58);
     }
 
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn)
-    {
-        return true;
-    }
-
     public void drawPlayersInv(PlayerInventory player, int x, int y)
     {
         int i;
@@ -41,5 +35,11 @@ public class ShrinkContainer extends Container
         {
             this.addSlot(new Slot(player, i, x + i * 18, y));
         }
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity playerEntity)
+    {
+        return true;
     }
 }

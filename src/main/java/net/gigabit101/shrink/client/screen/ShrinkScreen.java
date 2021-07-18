@@ -44,13 +44,13 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         int x = width / 2;
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addButton(upButton = new Button(x - 20, guiTop + 10, 40, 20, new TranslationTextComponent("^"), b ->
+        this.addButton(upButton = new Button(x - 20, topPos + 10, 40, 20, new TranslationTextComponent("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get()) scale += 0.1F;
         }));
 
-        this.addButton(downButton = new Button(x - 20, guiTop + 50, 40, 20, new TranslationTextComponent("v"), b ->
+        this.addButton(downButton = new Button(x - 20, topPos + 50, 40, 20, new TranslationTextComponent("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get()) scale -= 0.1F;
@@ -66,16 +66,20 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         PacketHandler.sendToServer(new PacketShrinkScreen(scale));
     }
 
+    //Override to stop labels from rendering
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y)
-    {
-        builder.drawDefaultBackground(this, matrixStack, guiLeft, guiTop, xSize, ySize, 256, 256);
-        builder.drawPlayerSlots(this, matrixStack, guiLeft + xSize / 2, guiTop + 84, true, 256, 256);
+    protected void renderLabels(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {}
 
-        int i = this.guiLeft;
-        int j = this.guiTop;
+    @Override
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y)
+    {
+        builder.drawDefaultBackground(this, matrixStack, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
+        builder.drawPlayerSlots(this, matrixStack, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
+
+        int i = this.leftPos;
+        int j = this.topPos;
         EntityType entityType = EntityType.COW;
-        LivingEntity livingEntity = (LivingEntity) entityType.create(this.minecraft.world);
+        LivingEntity livingEntity = (LivingEntity) entityType.create(this.minecraft.level);
 
         builder.drawBlackBox(this, matrixStack, i + 4, j + 4, 60, 80, 256, 256);
         builder.drawBlackBox(this, matrixStack, i + 120, j + 4, 60, 80, 256, 256);
@@ -97,48 +101,45 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         matrixstack.scale(scale, scale, scale);
         Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
         Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 20.0F);
-        quaternion.multiply(quaternion1);
-        matrixstack.rotate(quaternion);
-        float f2 = livingEntity.renderYawOffset;
-        float f3 = livingEntity.rotationYaw;
-        float f4 = livingEntity.rotationPitch;
-        float f5 = livingEntity.prevRotationYawHead;
-        float f6 = livingEntity.rotationYawHead;
-        livingEntity.renderYawOffset = 180.0F + f * 20.0F;
-        livingEntity.rotationYaw = 180.0F + f * 40.0F;
-        livingEntity.rotationPitch = -f1 * 20.0F;
-        livingEntity.rotationYawHead = livingEntity.rotationYaw;
-        livingEntity.prevRotationYawHead = livingEntity.rotationYaw;
-        EntityRendererManager entityrenderermanager = Minecraft.getInstance().getRenderManager();
-        quaternion1.conjugate();
-        entityrenderermanager.setCameraOrientation(quaternion1);
+        quaternion.mul(quaternion1);
+        matrixstack.mulPose(quaternion);
+        float f2 = livingEntity.yBodyRot;
+        float f3 = livingEntity.yRot;
+        float f4 = livingEntity.xRot;
+        float f5 = livingEntity.yHeadRotO;
+        float f6 = livingEntity.yHeadRot;
+        livingEntity.yBodyRot = 180.0F + f * 20.0F;
+        livingEntity.yRot = 180.0F + f * 40.0F;
+        livingEntity.xRot = -f1 * 20.0F;
+        livingEntity.yHeadRot = livingEntity.yRot;
+        livingEntity.yHeadRotO = livingEntity.yRot;
+        EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
+        quaternion1.conj();
+        entityrenderermanager.overrideCameraOrientation(quaternion1);
         entityrenderermanager.setRenderShadow(false);
-        IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
         RenderSystem.runAsFancy(() -> {
-            entityrenderermanager.renderEntityStatic(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
+            entityrenderermanager.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
         });
-        irendertypebuffer$impl.finish();
+        irendertypebuffer$impl.endBatch();
         entityrenderermanager.setRenderShadow(true);
-        livingEntity.renderYawOffset = f2;
-        livingEntity.rotationYaw = f3;
-        livingEntity.rotationPitch = f4;
-        livingEntity.prevRotationYawHead = f5;
-        livingEntity.rotationYawHead = f6;
+        livingEntity.yBodyRot = f2;
+        livingEntity.yRot = f3;
+        livingEntity.xRot = f4;
+        livingEntity.yHeadRotO = f5;
+        livingEntity.yHeadRot = f6;
         RenderSystem.popMatrix();
     }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {}
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        this.renderLabels(matrixStack, mouseX, mouseY);
 
         String scaleString = ("" + scale).substring(0, 3);
 
-        drawCenteredString(matrixStack, font, scaleString, this.width / 2, this.guiTop + 35, 0xFFFFFF);
+        drawCenteredString(matrixStack, font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
 
         this.oldMouseX = (float)mouseX;
         this.oldMouseY = (float)mouseY;

@@ -13,7 +13,7 @@ public class ShrinkCommand
 {
     public static LiteralArgumentBuilder<CommandSource> register()
     {
-        return Commands.literal("shrink").requires((cs) -> cs.hasPermissionLevel(4))
+        return Commands.literal("shrink").requires((cs) -> cs.hasPermission(4))
                 .then(Commands.argument("player", EntityArgument.player())
                 .then(Commands.argument("size", FloatArgumentType.floatArg())
                 .executes((ctx) -> execute(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
@@ -26,7 +26,7 @@ public class ShrinkCommand
         {
             iShrinkProvider.setScale(scale);
             iShrinkProvider.shrink(playerEntity);
-            source.sendFeedback(new TranslationTextComponent("Set " + playerEntity.getName().getString() + " scale to " + scale), false);
+            source.sendSuccess(new TranslationTextComponent("Set " + playerEntity.getName().getString() + " scale to " + scale), false);
         });
         return 0;
     }

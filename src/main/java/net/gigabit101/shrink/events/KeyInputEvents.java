@@ -19,7 +19,7 @@ public class KeyInputEvents
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || event.phase == TickEvent.Phase.START) return;
 
-        if (KeyBindings.shrink.isPressed())
+        if (KeyBindings.shrink.isDown())
         {
             PacketHandler.sendToServer(new PacketShrinkKeybind());
         }

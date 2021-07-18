@@ -18,17 +18,17 @@ public class GeneratorRecipes extends RecipeProvider
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
     {
-        ShapedRecipeBuilder.shapedRecipe(ShrinkItems.SHRINKING_DEVICE.get())
-                .key('e', Tags.Items.ENDER_PEARLS)
-                .key('g', Tags.Items.GLASS)
-                .key('i', Tags.Items.INGOTS_IRON)
-                .key('b', Items.STONE_BUTTON)
-                .patternLine("iei")
-                .patternLine("igi")
-                .patternLine("ibi")
-                .addCriterion("has_enderpearls", hasItem(Tags.Items.ENDER_PEARLS))
-                .build(consumer);
+        ShapedRecipeBuilder.shaped(ShrinkItems.SHRINKING_DEVICE.get())
+                .define('e', Tags.Items.ENDER_PEARLS)
+                .define('g', Tags.Items.GLASS)
+                .define('i', Tags.Items.INGOTS_IRON)
+                .define('b', Items.STONE_BUTTON)
+                .pattern("iei")
+                .pattern("igi")
+                .pattern("ibi")
+                .unlockedBy("has_enderpearls", has(Tags.Items.ENDER_PEARLS))
+                .save(consumer);
     }
 }

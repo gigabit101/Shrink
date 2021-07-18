@@ -21,8 +21,8 @@ public class GuiBuilder
 
     public void drawDefaultBackground(ContainerScreen gui, MatrixStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
 
 
         gui.blit(matrixStack, x, y, 0, 0, width / 2, height / 2, textureXSize, textureYSize);
@@ -33,8 +33,8 @@ public class GuiBuilder
 
     public void drawBlackBox(ContainerScreen gui, MatrixStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
 
 
         gui.blit(matrixStack, x, y, 150, 32, width, height, textureXSize, textureYSize);
@@ -42,7 +42,7 @@ public class GuiBuilder
 
     public void drawPlayerSlots(ContainerScreen gui, MatrixStack matrixStack, int posX, int posY, boolean center, int textureXSize, int textureYSize)
     {
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
         if (center)
         {
             posX -= 81;
@@ -62,13 +62,13 @@ public class GuiBuilder
 
     public void drawSlot(ContainerScreen gui, MatrixStack matrixStack, int posX, int posY, int textureXSize, int textureYSize)
     {
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
         gui.blit(matrixStack, posX, posY, 150, 0, 18, 18, textureXSize, textureYSize);
     }
 
     public void drawBigBlueBar(ContainerScreen gui, MatrixStack matrixStack, int x, int y, int value, int max, int mouseX, int mouseY, String suffix, String line2, String format, int textureXSize, int textureYSize)
     {
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
         if (!suffix.equals(""))
         {
             suffix = " " + suffix;
@@ -78,7 +78,7 @@ public class GuiBuilder
         if (j < 0)
             j = 0;
         AbstractGui.blit(matrixStack, x + 4, y + 4, 0, 236, j, 10, textureXSize, textureYSize);
-        gui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, format + suffix, x + 58, y + 5, 0xFFFFFF);
+        gui.drawCenteredString(matrixStack, Minecraft.getInstance().font, format + suffix, x + 58, y + 5, 0xFFFFFF);
         if (isInRect(x, y, 114, 18, mouseX, mouseY))
         {
             int percentage = percentage(max, value);
@@ -93,22 +93,22 @@ public class GuiBuilder
                 list.add(new StringTextComponent(TextFormatting.GRAY + "prolly a bug"));
                 list.add(new StringTextComponent(TextFormatting.GRAY + "pls report and tell how tf you did this"));
             }
-            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, gui.width, gui.height, -1, Minecraft.getInstance().fontRenderer);
+            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, gui.width, gui.height, -1, Minecraft.getInstance().font);
 
-            GlStateManager.disableLighting();
-            GlStateManager.color4f(1, 1, 1, 1);
+            GlStateManager._disableLighting();
+            GlStateManager._color4f(1, 1, 1, 1);
         }
     }
 
     public void drawLock(ContainerScreen gui, MatrixStack matrixStack, int posX, int posY, int mouseX, int mouseY, int textureXSize, int textureYSize, String string)
     {
-        Minecraft.getInstance().getTextureManager().bindTexture(GUI_SHEET);
+        Minecraft.getInstance().getTextureManager().bind(GUI_SHEET);
         gui.blit(matrixStack, posX, posY, 168, 0, 18, 18, textureXSize, textureYSize);
         if (isInRect(posX, posY, 18, 18, mouseX, mouseY))
         {
             List<ITextProperties> list = new ArrayList<>();
             list.add(new StringTextComponent(string));
-            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, gui.width, gui.height, -1, Minecraft.getInstance().fontRenderer);
+            GuiUtils.drawHoveringText(matrixStack, list, mouseX, mouseY, gui.width, gui.height, -1, Minecraft.getInstance().font);
         }
     }
 

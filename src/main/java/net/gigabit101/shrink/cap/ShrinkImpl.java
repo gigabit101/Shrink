@@ -55,7 +55,7 @@ public final class ShrinkImpl
         private DefaultImpl(@Nullable LivingEntity livingEntity)
         {
             this.livingEntity = livingEntity;
-            this.defaultEntitySize = livingEntity.size;
+            this.defaultEntitySize = livingEntity.dimensions;
             this.defaultEyeHeight = livingEntity.eyeHeight;
         }
 
@@ -78,19 +78,17 @@ public final class ShrinkImpl
         @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getEntityId(), serializeNBT()));
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getId(), serializeNBT()));
         }
 
         @Override
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
             setShrunk(true);
-            if(!(livingEntity instanceof PlayerEntity)) {
-                if (defaultEntitySize == null) defaultEntitySize = livingEntity.size;
-                if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
-            }
-            livingEntity.setPose(livingEntity.getPose());
-            livingEntity.recalculateSize();
+            if (defaultEntitySize == null) defaultEntitySize = livingEntity.dimensions;
+            if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
+
+            livingEntity.refreshDimensions();
             sync(livingEntity);
         }
 
@@ -98,7 +96,7 @@ public final class ShrinkImpl
         public void deShrink(@Nonnull LivingEntity livingEntity)
         {
             setShrunk(false);
-            livingEntity.recalculateSize();
+            livingEntity.refreshDimensions();
             sync(livingEntity);
         }
 
@@ -140,6 +138,7 @@ public final class ShrinkImpl
             properties.putBoolean("fixed", defaultEntitySize.fixed);
             properties.putFloat("defaulteyeheight", defaultEyeHeight);
             properties.putFloat("scale", scale);
+
             return properties;
         }
 

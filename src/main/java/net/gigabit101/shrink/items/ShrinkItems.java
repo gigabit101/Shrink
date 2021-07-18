@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ShrinkItems
 {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Shrink.MOD_ID);
-    public static final Item.Properties ITEM_GROUP = new Item.Properties().group(ItemGroupShrink.INSTANCE);
+    public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(ItemGroupShrink.INSTANCE);
 
     public static final RegistryObject<Item> SHRINKING_DEVICE = ITEMS.register("shrinking_device", () -> new ItemShrinkingDevice(ITEM_GROUP));
     public static final RegistryObject<Item> MOB_BOTTLE = ITEMS.register("mob_bottle", () -> new ItemModBottle(ITEM_GROUP));

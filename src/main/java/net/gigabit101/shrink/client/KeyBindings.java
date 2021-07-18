@@ -24,7 +24,7 @@ public class KeyBindings
 
     private static KeyBinding createBinding(String name, int key)
     {
-        KeyBinding keyBinding = new KeyBinding(getKey(name), CONFLICT_CONTEXT_GADGET, InputMappings.Type.KEYSYM.getOrMakeInput(key), getKey("category"));
+        KeyBinding keyBinding = new KeyBinding(getKey(name), CONFLICT_CONTEXT_GADGET, InputMappings.Type.KEYSYM.getOrCreate(key), getKey("category"));
         ClientRegistry.registerKeyBinding(keyBinding);
         return keyBinding;
     }
@@ -41,7 +41,7 @@ public class KeyBindings
         {
             PlayerEntity player = Minecraft.getInstance().player;
             return !KeyConflictContext.GUI.isActive() && player != null
-                    && (player.inventory.hasItemStack(new ItemStack(ShrinkItems.SHRINKING_DEVICE.get())));
+                    && (player.inventory.contains(new ItemStack(ShrinkItems.SHRINKING_DEVICE.get())));
         }
 
         @Override

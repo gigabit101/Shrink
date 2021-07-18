@@ -15,7 +15,7 @@ public class ItemGroupShrink extends ItemGroup
     }
 
     @Override
-    public ItemStack createIcon()
+    public ItemStack makeIcon()
     {
         return new ItemStack(ShrinkItems.SHRINKING_DEVICE.get());
     }

@@ -12,7 +12,7 @@ public class ShrinkResetCommand
 {
     public static LiteralArgumentBuilder<CommandSource> register()
     {
-        return Commands.literal("unshrink").requires((cs) -> cs.hasPermissionLevel(4))
+        return Commands.literal("unshrink").requires((cs) -> cs.hasPermission(4))
                 .then(Commands.argument("player", EntityArgument.player())
                 .executes((ctx) -> execute(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))));
     }
@@ -22,7 +22,7 @@ public class ShrinkResetCommand
         playerEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
         {
             iShrinkProvider.deShrink(playerEntity);
-            source.sendFeedback(new TranslationTextComponent("reset " + playerEntity.getName().getString() + " to default"), false);
+            source.sendSuccess(new TranslationTextComponent("reset " + playerEntity.getName().getString() + " to default"), false);
         });
         return 0;
     }
