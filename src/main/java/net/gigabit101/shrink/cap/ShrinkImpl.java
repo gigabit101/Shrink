@@ -51,6 +51,7 @@ public final class ShrinkImpl
         private EntitySize defaultEntitySize;
         private float defaultEyeHeight;
         private float scale = 1F;
+        private boolean isShrinking = false;
 
         private DefaultImpl(@Nullable LivingEntity livingEntity)
         {
@@ -63,6 +64,18 @@ public final class ShrinkImpl
         public boolean isShrunk()
         {
             return isShrunk;
+        }
+
+        @Override
+        public boolean isShrinking()
+        {
+            return isShrinking;
+        }
+
+        @Override
+        public void setShrinking(boolean value)
+        {
+            isShrinking = value;
         }
 
         @Override
@@ -84,11 +97,12 @@ public final class ShrinkImpl
         @Override
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
-            setShrunk(true);
+            setShrinking(true);
             if (defaultEntitySize == null) defaultEntitySize = livingEntity.dimensions;
             if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
 
             livingEntity.refreshDimensions();
+            setShrunk(true);
             sync(livingEntity);
         }
 
@@ -138,6 +152,8 @@ public final class ShrinkImpl
             properties.putBoolean("fixed", defaultEntitySize.fixed);
             properties.putFloat("defaulteyeheight", defaultEyeHeight);
             properties.putFloat("scale", scale);
+            properties.putBoolean("isshrinking", isShrinking);
+
 
             return properties;
         }
@@ -149,6 +165,7 @@ public final class ShrinkImpl
             defaultEntitySize = new EntitySize(properties.getFloat("width"), properties.getFloat("height"), properties.getBoolean("fixed"));
             defaultEyeHeight = properties.getFloat("defaulteyeheight");
             scale = properties.getFloat("scale");
+            isShrinking = properties.getBoolean("isshrinking");
         }
     }
 

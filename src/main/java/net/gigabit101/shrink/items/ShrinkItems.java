@@ -13,5 +13,7 @@ public class ShrinkItems
     public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(ItemGroupShrink.INSTANCE);
 
     public static final RegistryObject<Item> SHRINKING_DEVICE = ITEMS.register("shrinking_device", () -> new ItemShrinkingDevice(ITEM_GROUP));
+    public static final RegistryObject<Item> SHRINK_RAY = ITEMS.register("shrink_ray", () -> new ItemShrinkRay(ITEM_GROUP));
+
     public static final RegistryObject<Item> MOB_BOTTLE = ITEMS.register("mob_bottle", () -> new ItemModBottle(ITEM_GROUP));
 }
