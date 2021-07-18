@@ -17,6 +17,6 @@ authors="Gigabit101" #optional
 [[dependencies.shrink]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16, 1.17]"
+    versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"
