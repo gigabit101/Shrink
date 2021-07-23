@@ -5,13 +5,13 @@ import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.items.ItemModBottle;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -28,8 +28,8 @@ public class PlayerEvents
     {
         evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
         {
-            CompoundNBT knowledge = old.serializeNBT();
-            evt.getEntityLiving().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(knowledge));
+            CompoundTag compoundTag = old.serializeNBT();
+            evt.getEntityLiving().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
         });
     }
 
@@ -57,7 +57,7 @@ public class PlayerEvents
     @SubscribeEvent
     public static void playerConnect(PlayerEvent.PlayerLoggedInEvent event)
     {
-        ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+        ServerPlayer player = (ServerPlayer) event.getPlayer();
         player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(player));
     }
 
@@ -65,9 +65,9 @@ public class PlayerEvents
     public static void playerStartTracking(PlayerEvent.StartTracking event)
     {
         Entity target = event.getTarget();
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
 
-        if (player instanceof ServerPlayerEntity && target instanceof LivingEntity)
+        if (player instanceof ServerPlayer && target instanceof LivingEntity)
         {
             LivingEntity livingEntity = (LivingEntity) target;
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> iShrinkProvider.sync(livingEntity));
@@ -90,15 +90,15 @@ public class PlayerEvents
     {
         if(!ShrinkConfig.ENABLE_MOB_BOTTLES.get()) return;
 
-        if(!event.getWorld().isClientSide() && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof PlayerEntity))
+        if(!event.getWorld().isClientSide() && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof Player))
         {
-            PlayerEntity playerEntity = event.getPlayer();
+            Player playerEntity = event.getPlayer();
 
             if(event.getTarget() instanceof LivingEntity)
             {
                 LivingEntity livingEntity = (LivingEntity) event.getTarget();
 
-                if(playerEntity.getItemInHand(event.getHand()).getItem() == Items.GLASS_BOTTLE.getItem())
+                if(playerEntity.getItemInHand(event.getHand()).getItem() == Items.GLASS_BOTTLE)
                 {
                     livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
                     {
@@ -106,7 +106,7 @@ public class PlayerEvents
                         {
                             playerEntity.getItemInHand(event.getHand()).shrink(1);
                             ItemStack output = ItemModBottle.setContainedEntity(event.getItemStack(), livingEntity);
-                            playerEntity.inventory.add(output);
+                            playerEntity.getInventory().add(output);
                         }
                     });
                 }

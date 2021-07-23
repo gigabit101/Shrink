@@ -1,59 +1,59 @@
 package net.gigabit101.shrink.items;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemModBottle extends Item
 {
-    public ItemModBottle(Properties properties)
+    public ItemModBottle(Item.Properties properties)
     {
         super(properties.stacksTo(1));
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context)
+    public InteractionResult useOn(UseOnContext context)
     {
-        PlayerEntity player = context.getPlayer();
+        Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         Direction facing = context.getClickedFace();
-        World worldIn = context.getLevel();
+        Level worldIn = context.getLevel();
         ItemStack stack = context.getItemInHand();
 
-        if (player.level.isClientSide) return ActionResultType.FAIL;
-        if (!containsEntity(stack)) return ActionResultType.FAIL;
+        if (player.level.isClientSide) return InteractionResult.FAIL;
+        if (!containsEntity(stack)) return InteractionResult.FAIL;
         Entity entity = getEntityFromItemStack(stack, worldIn);
         BlockPos blockPos = pos.relative(facing);
         entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         player.setItemInHand(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
-        stack.setTag(new CompoundNBT());
+        stack.setTag(new CompoundTag());
         worldIn.addFreshEntity(entity);
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     public static ItemStack setContainedEntity(ItemStack stack, LivingEntity entity)
     {
         if (containsEntity(stack)) return stack;
         if (entity.level.isClientSide) return stack;
-        if (entity instanceof PlayerEntity || !entity.isAlive()) return stack;
+        if (entity instanceof Player || !entity.isAlive()) return stack;
 
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
         entity.save(nbt);
         ItemStack mobBottle = new ItemStack(ShrinkItems.MOB_BOTTLE.get(), 1);
@@ -74,7 +74,7 @@ public class ItemModBottle extends Item
     }
 
     @Nullable
-    public Entity getEntityFromItemStack(ItemStack stack, World world)
+    public Entity getEntityFromItemStack(ItemStack stack, Level world)
     {
         EntityType type = EntityType.byString(stack.getTag().getString("entity")).orElse(null);
         if (type != null)
@@ -93,16 +93,16 @@ public class ItemModBottle extends Item
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (containsEntity(stack))
         {
-            tooltip.add(new StringTextComponent("Contains : " + getEntityID(stack)));
+            tooltip.add(new TextComponent("Contains : " + getEntityID(stack)));
         }
         else
         {
-            tooltip.add(new StringTextComponent("Right-click on a shrunken entity with a glass bottle to capture"));
+            tooltip.add(new TextComponent("Right-click on a shrunken entity with a glass bottle to capture"));
         }
     }
 }

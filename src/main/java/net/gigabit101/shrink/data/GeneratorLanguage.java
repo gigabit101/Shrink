@@ -20,7 +20,7 @@ public class GeneratorLanguage extends LanguageProvider
         add("key.shrink.shrink", "Toggle Shrink");
         addItem(ShrinkItems.SHRINKING_DEVICE, "Personal Shrinking Device");
         addItem(ShrinkItems.MOB_BOTTLE, "Glass Bottle");
-        addItem(ShrinkItems.SHRINK_RAY, "Shrink Ray");
+//        addItem(ShrinkItems.SHRINK_RAY, "Shrink Ray");
     }
 
     private void addPrefixed(String key, String text)

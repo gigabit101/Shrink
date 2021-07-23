@@ -1,7 +1,6 @@
 package net.gigabit101.shrink.cap;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class EnergyStorageItemImpl extends EnergyStorage
@@ -42,6 +41,6 @@ public class EnergyStorageItemImpl extends EnergyStorage
 
     public void setEnergyStored(int amount)
     {
-        stack.getOrCreateTag().putInt("Energy", MathHelper.clamp(amount, 0, this.capacity));
+//        stack.getOrCreateTag().putInt("Energy", MathHelper.clamp(amount, 0, this.capacity));
     }
 }

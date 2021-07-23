@@ -2,9 +2,9 @@ package net.gigabit101.shrink.data;
 
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.items.ShrinkItems;
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;

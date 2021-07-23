@@ -2,15 +2,11 @@ package net.gigabit101.shrink;
 
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
-import net.gigabit101.shrink.client.screen.ShrinkScreen;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
-import net.gigabit101.shrink.server.ShrinkCommand;
-import net.gigabit101.shrink.server.ShrinkResetCommand;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -30,7 +26,7 @@ public class Shrink
     public static Shrink INSTANCE;
 
     @ObjectHolder(MOD_ID + ":" + "shrinkingdevice")
-    public static ContainerType<ShrinkContainer> shrinkingdevice = null;
+    public static MenuType<ShrinkContainer> shrinkingdevice = null;
 
     public Shrink()
     {
@@ -42,21 +38,21 @@ public class Shrink
 
         ShrinkItems.ITEMS.register(eventBus);
 
-        eventBus.addGenericListener(ContainerType.class, Shrink::registerContainers);
+        eventBus.addGenericListener(MenuType.class, Shrink::registerContainers);
 
         ShrinkConfig.loadConfig(ShrinkConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
     }
 
     public void registerCommands(RegisterCommandsEvent event)
     {
-        event.getDispatcher().register(ShrinkCommand.register());
-        event.getDispatcher().register(ShrinkResetCommand.register());
+//        event.getDispatcher().register(ShrinkCommand.register());
+//        event.getDispatcher().register(ShrinkResetCommand.register());
     }
 
     @SubscribeEvent
-    public static void registerContainers(RegistryEvent.Register<ContainerType<?>> event)
+    public static void registerContainers(RegistryEvent.Register<MenuType<?>> event)
     {
-        event.getRegistry().register(new ContainerType<>(ShrinkContainer::new).setRegistryName("shrinkingdevice"));
+        event.getRegistry().register(new MenuType<>(ShrinkContainer::new).setRegistryName("shrinkingdevice"));
     }
 
     private void commonSetup(FMLCommonSetupEvent event)
@@ -69,6 +65,6 @@ public class Shrink
     {
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
         KeyBindings.init();
-        ScreenManager.register(Shrink.shrinkingdevice, ShrinkScreen::new);
+//        ScreenManager.register(Shrink.shrinkingdevice, ShrinkScreen::new);
     }
 }

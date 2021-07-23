@@ -1,13 +1,13 @@
 package net.gigabit101.shrink.api;
 
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
 
-public interface IShrinkProvider extends INBTSerializable<CompoundNBT>
+public interface IShrinkProvider extends INBTSerializable<CompoundTag>
 {
     boolean isShrunk();
 
@@ -23,7 +23,7 @@ public interface IShrinkProvider extends INBTSerializable<CompoundNBT>
 
     void deShrink(@Nonnull LivingEntity livingEntity);
 
-    EntitySize defaultEntitySize();
+    EntityDimensions defaultEntitySize();
 
     float defaultEyeHeight();
 

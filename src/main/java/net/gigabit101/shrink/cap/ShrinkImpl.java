@@ -5,18 +5,16 @@ import net.gigabit101.shrink.api.IShrinkProvider;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrink;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,30 +23,32 @@ public final class ShrinkImpl
 {
     public static void init()
     {
-        CapabilityManager.INSTANCE.register(IShrinkProvider.class, new Capability.IStorage<IShrinkProvider>()
-        {
-            @Override
-            public CompoundNBT writeNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side)
-            {
-                return instance.serializeNBT();
-            }
-
-            @Override
-            public void readNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side, INBT nbt)
-            {
-                if (nbt instanceof CompoundNBT)
-                {
-                    instance.deserializeNBT((CompoundNBT) nbt);
-                }
-            }
-        }, () -> new DefaultImpl(null));
+        CapabilityManager.INSTANCE.register(IShrinkProvider.class);
+        //TODO
+//        CapabilityManager.INSTANCE.register(IShrinkProvider.class, new Capability.IStorage<IShrinkProvider>()
+//        {
+//            @Override
+//            public CompoundTag writeNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side)
+//            {
+//                return instance.serializeNBT();
+//            }
+//
+//            @Override
+//            public void readNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side, INBT nbt)
+//            {
+//                if (nbt instanceof CompoundNBT)
+//                {
+//                    instance.deserializeNBT((CompoundNBT) nbt);
+//                }
+//            }
+//        }, () -> new DefaultImpl(null));
     }
 
     private static class DefaultImpl implements IShrinkProvider
     {
         private final LivingEntity livingEntity;
         private boolean isShrunk = false;
-        private EntitySize defaultEntitySize;
+        private EntityDimensions defaultEntitySize;
         private float defaultEyeHeight;
         private float scale = 1F;
         private boolean isShrinking = false;
@@ -56,8 +56,8 @@ public final class ShrinkImpl
         private DefaultImpl(@Nullable LivingEntity livingEntity)
         {
             this.livingEntity = livingEntity;
-            this.defaultEntitySize = livingEntity.dimensions;
-            this.defaultEyeHeight = livingEntity.eyeHeight;
+//            this.defaultEntitySize = livingEntity.dimensions;
+//            this.defaultEyeHeight = livingEntity.eyeHeight;
         }
 
         @Override
@@ -98,8 +98,8 @@ public final class ShrinkImpl
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
             setShrinking(true);
-            if (defaultEntitySize == null) defaultEntitySize = livingEntity.dimensions;
-            if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
+//            if (defaultEntitySize == null) defaultEntitySize = livingEntity.dimensions;
+//            if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
 
             livingEntity.refreshDimensions();
             setShrunk(true);
@@ -115,7 +115,7 @@ public final class ShrinkImpl
         }
 
         @Override
-        public EntitySize defaultEntitySize()
+        public EntityDimensions defaultEntitySize()
         {
             return defaultEntitySize;
         }
@@ -143,13 +143,15 @@ public final class ShrinkImpl
         }
 
         @Override
-        public CompoundNBT serializeNBT()
+        public CompoundTag serializeNBT()
         {
-            CompoundNBT properties = new CompoundNBT();
+            CompoundTag properties = new CompoundTag();
             properties.putBoolean("isshrunk", isShrunk);
-            properties.putFloat("width", defaultEntitySize.width);
-            properties.putFloat("height", defaultEntitySize.height);
-            properties.putBoolean("fixed", defaultEntitySize.fixed);
+            if(defaultEntitySize != null) {
+                properties.putFloat("width", defaultEntitySize.width);
+                properties.putFloat("height", defaultEntitySize.height);
+                properties.putBoolean("fixed", defaultEntitySize.fixed);
+            }
             properties.putFloat("defaulteyeheight", defaultEyeHeight);
             properties.putFloat("scale", scale);
             properties.putBoolean("isshrinking", isShrinking);
@@ -159,17 +161,17 @@ public final class ShrinkImpl
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT properties)
+        public void deserializeNBT(CompoundTag properties)
         {
             isShrunk = properties.getBoolean("isshrunk");
-            defaultEntitySize = new EntitySize(properties.getFloat("width"), properties.getFloat("height"), properties.getBoolean("fixed"));
+            defaultEntitySize = new EntityDimensions(properties.getFloat("width"), properties.getFloat("height"), properties.getBoolean("fixed"));
             defaultEyeHeight = properties.getFloat("defaulteyeheight");
             scale = properties.getFloat("scale");
             isShrinking = properties.getBoolean("isshrinking");
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<CompoundNBT>
+    public static class Provider implements ICapabilitySerializable<CompoundTag>
     {
         public static final ResourceLocation NAME = new ResourceLocation(Shrink.MOD_ID, "shrunk");
 
@@ -194,13 +196,13 @@ public final class ShrinkImpl
         }
 
         @Override
-        public CompoundNBT serializeNBT()
+        public CompoundTag serializeNBT()
         {
             return impl.serializeNBT();
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt)
+        public void deserializeNBT(CompoundTag nbt)
         {
             impl.deserializeNBT(nbt);
         }
