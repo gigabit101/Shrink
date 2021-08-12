@@ -58,7 +58,7 @@ public class ItemModBottle extends Item
         entity.save(nbt);
         ItemStack mobBottle = new ItemStack(ShrinkItems.MOB_BOTTLE.get(), 1);
         mobBottle.setTag(nbt);
-        entity.remove(true);
+        entity.remove(Entity.RemovalReason.KILLED);
 
         return mobBottle;
     }

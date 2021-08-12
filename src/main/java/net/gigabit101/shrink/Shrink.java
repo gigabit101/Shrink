@@ -2,12 +2,17 @@ package net.gigabit101.shrink;
 
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
+import net.gigabit101.shrink.client.screen.ShrinkScreen;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -17,6 +22,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(Shrink.MOD_ID)
@@ -25,8 +33,13 @@ public class Shrink
     public static final String MOD_ID = "shrink";
     public static Shrink INSTANCE;
 
-    @ObjectHolder(MOD_ID + ":" + "shrinkingdevice")
-    public static MenuType<ShrinkContainer> shrinkingdevice = null;
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, Shrink.MOD_ID);
+
+    public static final RegistryObject<MenuType<ShrinkContainer>> SHRINK_CONTAINER = CONTAINERS.register("shrinkcontainer",
+            () -> IForgeContainerType.create((windowId, inv, data) -> {
+                return new ShrinkContainer(windowId, inv);
+            }));
+
 
     public Shrink()
     {
@@ -37,6 +50,7 @@ public class Shrink
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 
         ShrinkItems.ITEMS.register(eventBus);
+        CONTAINERS.register(eventBus);
 
         eventBus.addGenericListener(MenuType.class, Shrink::registerContainers);
 
@@ -65,6 +79,7 @@ public class Shrink
     {
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
         KeyBindings.init();
-//        ScreenManager.register(Shrink.shrinkingdevice, ShrinkScreen::new);
+
+        MenuScreens.register(Shrink.SHRINK_CONTAINER.get(), ShrinkScreen::new);
     }
 }

@@ -1,8 +1,10 @@
 package net.gigabit101.shrink.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.gigabit101.shrink.Shrink;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.resources.ResourceLocation;
 
@@ -10,10 +12,9 @@ public class GuiBuilder
 {
     public static final ResourceLocation GUI_SHEET = new ResourceLocation(Shrink.MOD_ID.toLowerCase() + ":" + "textures/gui/gui_sheet.png");
 
-    public void drawDefaultBackground(ContainerScreen gui, PoseStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
+    public void drawDefaultBackground(AbstractContainerScreen gui, PoseStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
     {
-//        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindForSetup(GUI_SHEET);
+        RenderSystem.setShaderTexture(0, GUI_SHEET);
 
 
         gui.blit(matrixStack, x, y, 0, 0, width / 2, height / 2, textureXSize, textureYSize);
@@ -22,18 +23,18 @@ public class GuiBuilder
         gui.blit(matrixStack, x + width / 2, y + height / 2, 150 - width / 2, 150 - height / 2, width / 2, height / 2, textureXSize, textureYSize);
     }
 
-    public void drawBlackBox(ContainerScreen gui, PoseStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
+    public void drawBlackBox(AbstractContainerScreen gui, PoseStack matrixStack, int x, int y, int width, int height, int textureXSize, int textureYSize)
     {
 //        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindForSetup(GUI_SHEET);
+        RenderSystem.setShaderTexture(0, GUI_SHEET);
 
 
         gui.blit(matrixStack, x, y, 150, 32, width, height, textureXSize, textureYSize);
     }
 
-    public void drawPlayerSlots(ContainerScreen gui, PoseStack matrixStack, int posX, int posY, boolean center, int textureXSize, int textureYSize)
+    public void drawPlayerSlots(AbstractContainerScreen gui, PoseStack matrixStack, int posX, int posY, boolean center, int textureXSize, int textureYSize)
     {
-        Minecraft.getInstance().getTextureManager().bindForSetup(GUI_SHEET);
+        RenderSystem.setShaderTexture(0, GUI_SHEET);
         if (center)
         {
             posX -= 81;
@@ -51,9 +52,9 @@ public class GuiBuilder
         }
     }
 
-    public void drawSlot(ContainerScreen gui, PoseStack matrixStack, int posX, int posY, int textureXSize, int textureYSize)
+    public void drawSlot(AbstractContainerScreen gui, PoseStack matrixStack, int posX, int posY, int textureXSize, int textureYSize)
     {
-        Minecraft.getInstance().getTextureManager().bindForSetup(GUI_SHEET);
+        RenderSystem.setShaderTexture(0, GUI_SHEET);
         gui.blit(matrixStack, posX, posY, 150, 0, 18, 18, textureXSize, textureYSize);
     }
 

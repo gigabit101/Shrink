@@ -13,6 +13,8 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
+//apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 version = "${project.mc_version}-${project.mod_version}"

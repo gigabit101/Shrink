@@ -3,14 +3,13 @@ package net.gigabit101.shrink;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 
 public class ShrinkContainer extends AbstractContainerMenu
 {
     public ShrinkContainer(int id, Inventory playerInv)
     {
-        super(Shrink.shrinkingdevice, id);
+        super(Shrink.SHRINK_CONTAINER.get(), id);
 
         drawPlayersInv(playerInv, 8, 85);
         drawPlayersHotBar(playerInv, 8, 85 + 58);

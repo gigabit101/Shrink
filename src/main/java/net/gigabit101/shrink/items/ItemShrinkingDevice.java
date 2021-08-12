@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ItemShrinkingDevice extends Item //implements MenuProvider
+public class ItemShrinkingDevice extends Item implements MenuProvider
 {
     public ItemShrinkingDevice(Item.Properties properties)
     {
@@ -59,7 +59,7 @@ public class ItemShrinkingDevice extends Item //implements MenuProvider
             {
                if(!iShrinkProvider.isShrunk())
                {
-//                   if (!level.isClientSide()) NetworkHooks.openGui((ServerPlayer) player, this);
+                   if (!level.isClientSide()) NetworkHooks.openGui((ServerPlayer) player, this);
                }
                else
                {
@@ -72,7 +72,6 @@ public class ItemShrinkingDevice extends Item //implements MenuProvider
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
-                iShrinkProvider.setScale(0.21F);
                 if (!iShrinkProvider.isShrunk() && canUse(stack, player))
                 {
                     iShrinkProvider.shrink((ServerPlayer) player);
@@ -213,17 +212,16 @@ public class ItemShrinkingDevice extends Item //implements MenuProvider
         }
     }
 
+    @Override
+    public Component getDisplayName()
+    {
+        return new TextComponent(this.getOrCreateDescriptionId());
+    }
 
-//    @Nullable
-//    @Override
-//    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
-//    {
-//        return new ShrinkContainer(id, inventory);
-//    }
-//
-//    @Override
-//    public Component getDisplayName()
-//    {
-//        return new TextComponent(this.getOrCreateDescriptionId());
-//    }
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
+    {
+        return new ShrinkContainer(id, inventory);
+    }
 }

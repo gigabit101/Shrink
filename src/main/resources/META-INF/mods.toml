@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[28,]" #mandatory
+loaderVersion="[29,]" #mandatory
 license="GNU General Public License v3.0"
 credits="" #optional
 authors="Gigabit101" #optional
