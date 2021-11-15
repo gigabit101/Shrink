@@ -54,7 +54,7 @@ public class PacketShrink
                             iShrinkProvider.deserializeNBT(message.nbt);
 
                             entity.refreshDimensions();
-                            entity.setPos(entity.blockPosition().getX(), entity.blockPosition().getY(), entity.blockPosition().getZ());
+                            entity.setPos(entity.position().x, entity.position().y, entity.position().z);
 
                             if(!(entity instanceof PlayerEntity))
                             {
