@@ -1,27 +1,25 @@
 package net.gigabit101.shrink.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrinkScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 
-public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+
+public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 {
     private Button upButton;
     private Button downButton;
@@ -32,9 +30,9 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
     private float oldMouseX;
     private float oldMouseY;
 
-    public ShrinkScreen(ShrinkContainer shrinkContainer, PlayerInventory playerInventory, ITextComponent iTextComponent)
+    public ShrinkScreen(ShrinkContainer container, Inventory inventory, Component component)
     {
-        super(shrinkContainer, playerInventory, new StringTextComponent(""));
+        super(container, inventory, component);
     }
 
     @Override
@@ -44,13 +42,13 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         int x = width / 2;
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addButton(upButton = new Button(x - 20, topPos + 10, 40, 20, new TranslationTextComponent("^"), b ->
+        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, new TranslatableComponent("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get()) scale += 0.1F;
         }));
 
-        this.addButton(downButton = new Button(x - 20, topPos + 50, 40, 20, new TranslationTextComponent("v"), b ->
+        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, new TranslatableComponent("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get()) scale -= 0.1F;
@@ -68,10 +66,10 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
 
     //Override to stop labels from rendering
     @Override
-    protected void renderLabels(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {}
+    protected void renderLabels(PoseStack p_230451_1_, int p_230451_2_, int p_230451_3_) {}
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y)
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y)
     {
         builder.drawDefaultBackground(this, matrixStack, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
         builder.drawPlayerSlots(this, matrixStack, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
@@ -84,57 +82,15 @@ public class ShrinkScreen extends ContainerScreen<ShrinkContainer>
         builder.drawBlackBox(this, matrixStack, i + 4, j + 4, 60, 80, 256, 256);
         builder.drawBlackBox(this, matrixStack, i + 120, j + 4, 60, 80, 256, 256);
 
-        drawEntityOnScreen(i + 30, j + 70, scale, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
-        drawEntityOnScreen(i + 145, j + 70, scale, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
-    }
-
-    public static void drawEntityOnScreen(int posX, int posY, float scale, float mouseX, float mouseY, LivingEntity livingEntity)
-    {
-        float f = (float)Math.atan((double)(mouseX / 40.0F));
-        float f1 = (float)Math.atan((double)(mouseY / 40.0F));
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef((float)posX, (float)posY, 1050.0F);
-        RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-        MatrixStack matrixstack = new MatrixStack();
-        matrixstack.translate(0.0D, 0.0D, 1000.0D);
-        matrixstack.scale(30, 30, 30);
-        matrixstack.scale(scale, scale, scale);
-        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 20.0F);
-        quaternion.mul(quaternion1);
-        matrixstack.mulPose(quaternion);
-        float f2 = livingEntity.yBodyRot;
-        float f3 = livingEntity.yRot;
-        float f4 = livingEntity.xRot;
-        float f5 = livingEntity.yHeadRotO;
-        float f6 = livingEntity.yHeadRot;
-        livingEntity.yBodyRot = 180.0F + f * 20.0F;
-        livingEntity.yRot = 180.0F + f * 40.0F;
-        livingEntity.xRot = -f1 * 20.0F;
-        livingEntity.yHeadRot = livingEntity.yRot;
-        livingEntity.yHeadRotO = livingEntity.yRot;
-        EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
-        quaternion1.conj();
-        entityrenderermanager.overrideCameraOrientation(quaternion1);
-        entityrenderermanager.setRenderShadow(false);
-        IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> {
-            entityrenderermanager.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
-        });
-        irendertypebuffer$impl.endBatch();
-        entityrenderermanager.setRenderShadow(true);
-        livingEntity.yBodyRot = f2;
-        livingEntity.yRot = f3;
-        livingEntity.xRot = f4;
-        livingEntity.yHeadRotO = f5;
-        livingEntity.yHeadRot = f6;
-        RenderSystem.popMatrix();
+        InventoryScreen.renderEntityInInventory(i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
+        InventoryScreen.renderEntityInInventory(i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
+
         this.renderLabels(matrixStack, mouseX, mouseY);
 
         String scaleString = ("" + scale).substring(0, 3);

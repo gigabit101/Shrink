@@ -1,12 +1,12 @@
 package net.gigabit101.shrink.network;
 
 import net.gigabit101.shrink.Shrink;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -31,7 +31,7 @@ public class PacketHandler
         registerMessage(PacketShrinkScreen.class, PacketShrinkScreen::encode, PacketShrinkScreen::decode, PacketShrinkScreen.Handler::handle);
     }
 
-    private static <MSG> void registerMessage(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer)
+    private static <MSG> void registerMessage(Class<MSG> type, BiConsumer<MSG, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer)
     {
         HANDLER.registerMessage(index++, type, encoder, decoder, consumer);
     }

@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "net.gigabit101.shrink.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "shrink.refmap.json",
   "mixins": [
     "MixinEntity"

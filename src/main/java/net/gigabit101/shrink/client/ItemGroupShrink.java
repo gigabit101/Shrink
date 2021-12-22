@@ -2,10 +2,10 @@ package net.gigabit101.shrink.client;
 
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.items.ShrinkItems;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
-public class ItemGroupShrink extends ItemGroup
+public class ItemGroupShrink extends CreativeModeTab
 {
     public static ItemGroupShrink INSTANCE = new ItemGroupShrink();
 

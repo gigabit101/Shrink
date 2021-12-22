@@ -1,21 +1,21 @@
 package net.gigabit101.shrink;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 
-public class ShrinkContainer extends Container
+public class ShrinkContainer extends AbstractContainerMenu
 {
-    public ShrinkContainer(int id, PlayerInventory playerInv)
+    public ShrinkContainer(int id, Inventory playerInv)
     {
-        super(Shrink.shrinkingdevice, id);
+        super(Shrink.SHRINK_CONTAINER.get(), id);
 
         drawPlayersInv(playerInv, 8, 85);
         drawPlayersHotBar(playerInv, 8, 85 + 58);
     }
 
-    public void drawPlayersInv(PlayerInventory player, int x, int y)
+    public void drawPlayersInv(Inventory player, int x, int y)
     {
         int i;
         for (i = 0; i < 3; ++i)
@@ -28,7 +28,7 @@ public class ShrinkContainer extends Container
 
     }
 
-    public void drawPlayersHotBar(PlayerInventory player, int x, int y)
+    public void drawPlayersHotBar(Inventory player, int x, int y)
     {
         int i;
         for (i = 0; i < 9; ++i)
@@ -38,7 +38,7 @@ public class ShrinkContainer extends Container
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerEntity)
+    public boolean stillValid(Player player)
     {
         return true;
     }

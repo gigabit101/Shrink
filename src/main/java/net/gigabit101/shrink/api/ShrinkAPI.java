@@ -1,10 +1,10 @@
 package net.gigabit101.shrink.api;
 
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 
 public class ShrinkAPI
 {
-    @CapabilityInject(IShrinkProvider.class)
-    public static Capability<IShrinkProvider> SHRINK_CAPABILITY = null;
+    public static final Capability<IShrinkProvider> SHRINK_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 }

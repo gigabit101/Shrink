@@ -1,37 +1,39 @@
 package net.gigabit101.shrink.items;
 
+import net.gigabit101.shrink.utils.MathHelper;
 import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.EnergyStorageItemImpl;
-import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.config.ShrinkConfig;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Rarity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,15 +41,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ItemShrinkingDevice extends Item implements INamedContainerProvider
+public class ItemShrinkingDevice extends Item implements MenuProvider
 {
-    public ItemShrinkingDevice(Properties properties)
+    public ItemShrinkingDevice(Item.Properties properties)
     {
         super(properties.rarity(Rarity.EPIC).stacksTo(1));
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
         ItemStack stack = player.getItemInHand(hand);
 
@@ -57,44 +59,44 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
             {
                if(!iShrinkProvider.isShrunk())
                {
-                   if (!world.isClientSide()) NetworkHooks.openGui((ServerPlayerEntity) player, this);
+                   if (!level.isClientSide()) NetworkHooks.openGui((ServerPlayer) player, this);
                }
                else
                {
-                   if (!world.isClientSide()) player.displayClientMessage(new StringTextComponent("Can't open while shrunk"), false);
+                   if (!level.isClientSide()) player.displayClientMessage(new TranslatableComponent("Can't open while shrunk"), false);
                }
             });
         }
 
-        if (!world.isClientSide() && player.isCrouching())
+        if (!level.isClientSide() && player.isCrouching())
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
                 if (!iShrinkProvider.isShrunk() && canUse(stack, player))
                 {
-                    iShrinkProvider.shrink((ServerPlayerEntity) player);
+                    iShrinkProvider.shrink((ServerPlayer) player);
                 }
                 else if(iShrinkProvider.isShrunk() && canUse(stack, player))
                 {
-                    iShrinkProvider.deShrink((ServerPlayerEntity) player);
+                    iShrinkProvider.deShrink((ServerPlayer) player);
                 }
                 else if(!canUse(stack, player) && ShrinkConfig.POWER_REQUIREMENT.get())
                 {
-                    player.displayClientMessage(new StringTextComponent("Not enough power in device"), false);
+                    player.displayClientMessage(new TranslatableComponent("Not enough power in device"), false);
                 }
             });
         }
 
-        if(world.isClientSide() && player.isCrouching())
+        if(level.isClientSide() && player.isCrouching())
         {
-            world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 5F, 0F);
-            spawnParticle(world, player.getX(), player.getY(), player.getZ() -1, world.random);
+            level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 5F, 0F);
+            spawnParticle(level, player.getX(), player.getY(), player.getZ() -1, level.random);
         }
-        return new ActionResult<>(ActionResultType.PASS, player.getItemInHand(hand));
+        return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity)
     {
         AtomicReference<Float> scale = new AtomicReference<>(0.1F);
         player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> scale.set(iShrinkProvider.scale()));
@@ -119,7 +121,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
         return false;
     }
 
-    public void spawnParticle(World worldIn, double posX, double posY, double posZ, Random rand)
+    public void spawnParticle(Level worldIn, double posX, double posY, double posZ, Random rand)
     {
         for (int i = 0; i < 16; ++i)
         {
@@ -135,7 +137,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
         }
     }
 
-    public boolean canUse(ItemStack stack, PlayerEntity playerEntity)
+    public boolean canUse(ItemStack stack, Player playerEntity)
     {
         if(!ShrinkConfig.POWER_REQUIREMENT.get()) return true;
         if(playerEntity.isCreative()) return true;
@@ -155,7 +157,7 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt)
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
         return new ICapabilityProvider()
         {
@@ -170,22 +172,29 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack)
+    public boolean isBarVisible(ItemStack stack)
     {
-        return ShrinkConfig.POWER_REQUIREMENT.get();
+        return true;
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack)
-    {
-        return 1 - getChargeRatio(stack);
-    }
-
-    @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack)
+    public int getBarColor(ItemStack stack)
     {
         return MathHelper.hsvToRgb((1 + getChargeRatio(stack)) / 3.0F, 1.0F, 1.0F);
     }
+
+    //TODO
+//    @Override
+//    public boolean showDurabilityBar(ItemStack stack)
+//    {
+//        return ShrinkConfig.POWER_REQUIREMENT.get();
+//    }
+//
+//    @Override
+//    public double getDurabilityForDisplay(ItemStack stack)
+//    {
+//        return 1 - getChargeRatio(stack);
+//    }
 
     public static float getChargeRatio(ItemStack stack)
     {
@@ -197,29 +206,29 @@ public class ItemShrinkingDevice extends Item implements INamedContainerProvider
         }
         return 0;
     }
-
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
-        if(KeyBindings.shrink != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().getDisplayName().getString() + TextFormatting.WHITE + " to active"));
+        //TODO
+//        if(KeyBindings.shrink != null) tooltip.add(new TextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().getDisplayName().getString() + TextFormatting.WHITE + " to active"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
-            tooltip.add(new StringTextComponent(energyStorage.getEnergyStored() + " FE / " + energyStorage.getMaxEnergyStored() + " FE"));
+            tooltip.add(new TextComponent(energyStorage.getEnergyStored() + " FE / " + energyStorage.getMaxEnergyStored() + " FE"));
         }
     }
 
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
-        return new TranslationTextComponent(this.getOrCreateDescriptionId());
+        return new TextComponent(this.getOrCreateDescriptionId());
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, PlayerInventory inv, PlayerEntity player)
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
     {
-        return new ShrinkContainer(id, inv);
+        return new ShrinkContainer(id, inventory);
     }
 }

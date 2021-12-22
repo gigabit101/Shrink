@@ -1,7 +1,7 @@
 package net.gigabit101.shrink.cap;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.gigabit101.shrink.utils.MathHelper;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class EnergyStorageItemImpl extends EnergyStorage

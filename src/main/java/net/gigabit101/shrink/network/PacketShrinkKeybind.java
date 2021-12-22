@@ -1,17 +1,17 @@
 package net.gigabit101.shrink.network;
 
 import net.gigabit101.shrink.api.ShrinkAPI;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class PacketShrinkKeybind
 {
-    public static void encode(PacketShrinkKeybind msg, PacketBuffer buffer) {}
+    public static void encode(PacketShrinkKeybind msg, FriendlyByteBuf buffer) {}
 
-    public static PacketShrinkKeybind decode(PacketBuffer buffer)
+    public static PacketShrinkKeybind decode(FriendlyByteBuf buffer)
     {
         return new PacketShrinkKeybind();
     }
@@ -22,7 +22,7 @@ public class PacketShrinkKeybind
         {
             ctx.get().enqueueWork(() ->
             {
-                ServerPlayerEntity player = ctx.get().getSender();
+                ServerPlayer player = ctx.get().getSender();
                 if (player == null) return;
 
                 player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->

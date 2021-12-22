@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[28,]" #mandatory
+loaderVersion="[29,]" #mandatory
 license="GNU General Public License v3.0"
 credits="" #optional
 authors="Gigabit101" #optional
@@ -13,10 +13,15 @@ authors="Gigabit101" #optional
     # The description text for the mod (multi line!) (#mandatory)
     description='''
 '''
-
+[[dependencies.shrink]]
+   modId="forge"
+   mandatory=true
+   versionRange="[39,)"
+   ordering="NONE"
+   side="BOTH"
 [[dependencies.shrink]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5]"
+    versionRange="[1.18.1, ]"
     ordering="NONE"
     side="BOTH"
