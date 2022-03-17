@@ -20,15 +20,15 @@ public class GeneratorRecipes extends RecipeProvider
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
     {
-        ShapedRecipeBuilder.shaped(ShrinkItems.SHRINKING_DEVICE.get())
-                .define('e', Tags.Items.ENDER_PEARLS)
-                .define('g', Tags.Items.GLASS)
-                .define('i', Tags.Items.INGOTS_IRON)
-                .define('b', Items.STONE_BUTTON)
-                .pattern("iei")
-                .pattern("igi")
-                .pattern("ibi")
-                .unlockedBy("has_enderpearls", has(Tags.Items.ENDER_PEARLS))
-                .save(consumer);
+//        ShapedRecipeBuilder.shaped(ShrinkItems.SHRINKING_DEVICE.get())
+//                .define('e', Tags.Items.ENDER_PEARLS)
+//                .define('g', Tags.Items.GLASS)
+//                .define('i', Tags.Items.INGOTS_IRON)
+//                .define('b', Items.STONE_BUTTON)
+//                .pattern("iei")
+//                .pattern("igi")
+//                .pattern("ibi")
+//                .unlockedBy("has_enderpearls", has(Tags.Items.ENDER_PEARLS))
+//                .save(consumer);
     }
 }
