@@ -9,6 +9,7 @@ import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrinkScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 
@@ -45,15 +46,46 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, new TranslatableComponent("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
-            if(scale <= ShrinkConfig.MAX_SIZE.get()) scale += 0.1F;
+            if(scale <= ShrinkConfig.MAX_SIZE.get())
+            {
+                if(Screen.hasShiftDown())
+                {
+                    scale += 1.0F;
+
+                }
+                else
+                {
+                    scale += 0.1F;
+                }
+            }
         }));
 
         this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, new TranslatableComponent("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
-            if(scale >= ShrinkConfig.MIN_SIZE.get()) scale -= 0.1F;
+            if(scale >= ShrinkConfig.MIN_SIZE.get())
+            {
+                if(Screen.hasShiftDown())
+                {
+                    scale -= 1.0F;
+
+                }
+                else
+                {
+                    scale -= 0.1F;
+                }
+            }
             if(scale < ShrinkConfig.MIN_SIZE.get()) scale = 0.21F;
         }));
+    }
+
+    @Override
+    public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_)
+    {
+        scale += p_94688_;
+        if(scale < ShrinkConfig.MIN_SIZE.get()) scale = 0.21F;
+        if(scale > ShrinkConfig.MAX_SIZE.get()) scale = 10.0F;
+        return super.mouseScrolled(p_94686_, p_94687_, p_94688_);
     }
 
     @Override

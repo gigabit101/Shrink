@@ -1,6 +1,5 @@
 package net.gigabit101.shrink.items;
 
-import net.gigabit101.shrink.utils.MathHelper;
 import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.EnergyStorageItemImpl;
@@ -14,6 +13,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -52,6 +52,13 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
         ItemStack stack = player.getItemInHand(hand);
+
+        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
+        if (optional.isPresent())
+        {
+            IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
+            energyStorage.receiveEnergy(50000, false);
+        }
 
         if(!player.isCrouching())
         {
@@ -174,43 +181,29 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     @Override
     public boolean isBarVisible(ItemStack stack)
     {
-        return true;
+        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        return (energy.getEnergyStored() < energy.getMaxEnergyStored());
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack)
+    {
+        return stack.getCapability(CapabilityEnergy.ENERGY, null)
+                .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
+                .orElse(0);
     }
 
     @Override
     public int getBarColor(ItemStack stack)
     {
-        return MathHelper.hsvToRgb((1 + getChargeRatio(stack)) / 3.0F, 1.0F, 1.0F);
+        return stack.getCapability(CapabilityEnergy.ENERGY)
+                .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
+                .orElse(super.getBarColor(stack));
     }
 
-    //TODO
-//    @Override
-//    public boolean showDurabilityBar(ItemStack stack)
-//    {
-//        return ShrinkConfig.POWER_REQUIREMENT.get();
-//    }
-//
-//    @Override
-//    public double getDurabilityForDisplay(ItemStack stack)
-//    {
-//        return 1 - getChargeRatio(stack);
-//    }
-
-    public static float getChargeRatio(ItemStack stack)
-    {
-        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
-        if (optional.isPresent())
-        {
-            IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
-            return (float) energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
-        }
-        return 0;
-    }
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
-        //TODO
-//        if(KeyBindings.shrink != null) tooltip.add(new TextComponent(TextFormatting.DARK_PURPLE + "Sneak-Click " + TextFormatting.WHITE + "or press " + TextFormatting.DARK_PURPLE + KeyBindings.shrink.getKey().getDisplayName().getString() + TextFormatting.WHITE + " to active"));
         LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
         if (optional.isPresent())
         {

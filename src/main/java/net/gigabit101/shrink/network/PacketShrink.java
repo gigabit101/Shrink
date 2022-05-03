@@ -54,21 +54,6 @@ public class PacketShrink
                             iShrinkProvider.deserializeNBT(message.nbt);
 
                             entity.refreshDimensions();
-                            entity.setPos(entity.blockPosition().getX(), entity.blockPosition().getY(), entity.blockPosition().getZ());
-
-                            if(!(entity instanceof Player))
-                            {
-                                if (iShrinkProvider.isShrunk())
-                                {
-//                                    entity.dimensions = new EntityDimensions(iShrinkProvider.scale(), iShrinkProvider.scale() * 2, true);
-//                                    entity.eyeHeight = iShrinkProvider.defaultEyeHeight() * iShrinkProvider.scale();
-                                }
-                                else
-                                {
-//                                    entity.dimensions = iShrinkProvider.defaultEntitySize();
-//                                    entity.eyeHeight = iShrinkProvider.defaultEyeHeight();
-                                }
-                            }
                         });
                     }
                 }
