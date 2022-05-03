@@ -4,6 +4,7 @@ import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.cap.EnergyStorageItemImpl;
 import net.gigabit101.shrink.config.ShrinkConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -53,13 +54,6 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     {
         ItemStack stack = player.getItemInHand(hand);
 
-        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
-        if (optional.isPresent())
-        {
-            IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
-            energyStorage.receiveEnergy(50000, false);
-        }
-
         if(!player.isCrouching())
         {
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
@@ -89,7 +83,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                 }
                 else if(!canUse(stack, player) && ShrinkConfig.POWER_REQUIREMENT.get())
                 {
-                    player.displayClientMessage(new TranslatableComponent("Not enough power in device"), false);
+                    player.displayClientMessage(new TranslatableComponent(ChatFormatting.RED + "Not enough power in device"), true);
                 }
             });
         }
@@ -121,6 +115,11 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                 else if (iShrinkProvider.isShrunk() && canUse(stack, player))
                 {
                     iShrinkProvider.deShrink((LivingEntity) entity);
+                }
+
+                if(!canUse(stack, player))
+                {
+                    player.displayClientMessage(new TranslatableComponent(ChatFormatting.RED + "Not enough power in device"), true);
                 }
             });
             return true;
@@ -158,6 +157,17 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                 energyStorage.extractEnergy(ShrinkConfig.POWER_COST.get(), false);
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean hasPower(ItemStack stack)
+    {
+        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
+        if(optional.isPresent())
+        {
+            IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
+            return energyStorage.getEnergyStored() >= ShrinkConfig.POWER_COST.get();
         }
         return false;
     }

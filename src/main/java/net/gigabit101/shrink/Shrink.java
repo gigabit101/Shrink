@@ -5,13 +5,19 @@ import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.client.screen.ShrinkScreen;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
+import net.gigabit101.shrink.items.ItemShrinkingDevice;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -84,5 +90,14 @@ public class Shrink
         KeyBindings.init();
 
         MenuScreens.register(Shrink.SHRINK_CONTAINER.get(), ShrinkScreen::new);
+
+        event.enqueueWork(() ->
+        {
+            ItemProperties.register(ShrinkItems.SHRINKING_DEVICE.get(), new ResourceLocation(MOD_ID, "has_power"), (stack, level, living, id) ->
+            {
+                ItemShrinkingDevice itemShrinkingDevice = (ItemShrinkingDevice) stack.getItem();
+                return itemShrinkingDevice.hasPower(stack) ? 1.0F : 0.0F;
+            });
+        });
     }
 }
