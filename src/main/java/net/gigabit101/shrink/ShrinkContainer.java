@@ -1,15 +1,18 @@
 package net.gigabit101.shrink;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ShrinkContainer extends AbstractContainerMenu
 {
-    public ShrinkContainer(int id, Inventory playerInv)
+    public ShrinkContainer(int id, Inventory playerInv, FriendlyByteBuf friendlyByteBuf)
     {
-        super(Shrink.SHRINK_CONTAINER.get(), id);
+        super(ModContainers.SHRINK_CONTAINER.get(), id);
 
         drawPlayersInv(playerInv, 8, 85);
         drawPlayersHotBar(playerInv, 8, 85 + 58);
@@ -38,7 +41,13 @@ public class ShrinkContainer extends AbstractContainerMenu
     }
 
     @Override
-    public boolean stillValid(Player player)
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int p_38942_)
+    {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean stillValid(@NotNull Player player)
     {
         return true;
     }

@@ -90,16 +90,14 @@ public final class ShrinkImpl
         @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getId(), serializeNBT()));
+            //TODO entityID might be wrong??
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.m_19879_(), serializeNBT()));
         }
 
         @Override
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
             setShrinking(true);
-//            if (defaultEntitySize == null) defaultEntitySize = livingEntity.dimensions;
-//            if (defaultEyeHeight == 0F) defaultEyeHeight = livingEntity.eyeHeight;
-
             livingEntity.refreshDimensions();
             setShrunk(true);
             sync(livingEntity);

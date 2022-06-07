@@ -20,17 +20,17 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Shrink.MOD_ID)
+@Mod.EventBusSubscriber(modid = Shrink.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerEvents
 {
     @SubscribeEvent
     public static void cloneEvent(PlayerEvent.Clone evt)
     {
-        evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
-        {
-            CompoundTag compoundTag = old.serializeNBT();
-            evt.getEntityLiving().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
-        });
+//        evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
+//        {
+//            CompoundTag compoundTag = old.serializeNBT();
+//            evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
+//        });
     }
 
     @SubscribeEvent
@@ -50,7 +50,10 @@ public class PlayerEvents
     {
         if(evt.getObject() instanceof LivingEntity)
         {
-            evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider((LivingEntity) evt.getObject()));
+            if(!evt.getObject().getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
+            {
+                evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider((LivingEntity) evt.getObject()));
+            }
         }
     }
 
@@ -67,9 +70,8 @@ public class PlayerEvents
         Entity target = event.getTarget();
         Player player = event.getPlayer();
 
-        if (player instanceof ServerPlayer && target instanceof LivingEntity)
+        if (player instanceof ServerPlayer && target instanceof LivingEntity livingEntity)
         {
-            LivingEntity livingEntity = (LivingEntity) target;
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> iShrinkProvider.sync(livingEntity));
         }
     }
@@ -77,9 +79,8 @@ public class PlayerEvents
     @SubscribeEvent
     public static void joinWorldEvent(EntityJoinWorldEvent event)
     {
-        if(!event.getWorld().isClientSide() && event.getEntity() instanceof LivingEntity)
+        if(!event.getWorld().isClientSide() && event.getEntity() instanceof LivingEntity livingEntity)
         {
-            LivingEntity livingEntity = (LivingEntity) event.getEntity();
             livingEntity.refreshDimensions();
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> iShrinkProvider.sync(livingEntity));
         }
@@ -94,10 +95,8 @@ public class PlayerEvents
         {
             Player playerEntity = event.getPlayer();
 
-            if(event.getTarget() instanceof LivingEntity)
+            if(event.getTarget() instanceof LivingEntity livingEntity)
             {
-                LivingEntity livingEntity = (LivingEntity) event.getTarget();
-
                 if(playerEntity.getItemInHand(event.getHand()).getItem() == Items.GLASS_BOTTLE)
                 {
                     livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
@@ -117,20 +116,14 @@ public class PlayerEvents
     @SubscribeEvent
     public static void changeSize(EntityEvent.Size event)
     {
-        if(event.getEntity() instanceof LivingEntity)
+        if(event.getEntity() instanceof LivingEntity livingEntity)
         {
-            LivingEntity livingEntity = (LivingEntity) event.getEntity();
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
-                double x = event.getEntity().getX();
-                double y = event.getEntity().getY();
-                double z = event.getEntity().getZ();
-
                 if(iShrinkProvider.isShrunk())
                 {
                     event.setNewSize(event.getNewSize().scale(iShrinkProvider.scale()));
                     event.setNewEyeHeight(event.getNewEyeHeight() * iShrinkProvider.scale());
-//                    event.getEntity().setPos(x, y, z);
                 }
             });
         }

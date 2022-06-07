@@ -7,7 +7,7 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ShrinkCommand
@@ -27,7 +27,7 @@ public class ShrinkCommand
         {
             iShrinkProvider.setScale(scale);
             iShrinkProvider.shrink(playerEntity);
-            source.sendMessage(new TextComponent("Set " + playerEntity.getName().getString() + " scale to " + scale), null);
+            source.m_213846_(Component.m_237115_("Set " + playerEntity.getName().getString() + " scale to " + scale));
         });
         return 0;
     }

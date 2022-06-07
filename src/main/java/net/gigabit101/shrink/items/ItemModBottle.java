@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -39,7 +38,7 @@ public class ItemModBottle extends Item
         if (player.level.isClientSide) return InteractionResult.FAIL;
         if (!containsEntity(stack)) return InteractionResult.FAIL;
         Entity entity = getEntityFromItemStack(stack, worldIn);
-        BlockPos blockPos = pos.relative(facing);
+        BlockPos blockPos = pos.m_121945_(facing);
         entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         player.setItemInHand(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
         stack.setTag(new CompoundTag());
@@ -98,11 +97,11 @@ public class ItemModBottle extends Item
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (containsEntity(stack))
         {
-            tooltip.add(new TextComponent("Contains : " + getEntityID(stack)));
+            tooltip.add(Component.m_237115_("Contains : " + getEntityID(stack)));
         }
         else
         {
-            tooltip.add(new TextComponent("Right-click on a shrunken entity with a glass bottle to capture"));
+            tooltip.add(Component.m_237115_("Right-click on a shrunken entity with a glass bottle to capture"));
         }
     }
 }

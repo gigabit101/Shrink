@@ -1,6 +1,5 @@
 package net.gigabit101.shrink.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.gigabit101.shrink.ShrinkContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
@@ -11,11 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,7 +40,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         int x = width / 2;
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, new TranslatableComponent("^"), b ->
+        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, Component.m_237115_("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get())
@@ -60,7 +57,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
             }
         }));
 
-        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, new TranslatableComponent("v"), b ->
+        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, Component.m_237115_("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get())

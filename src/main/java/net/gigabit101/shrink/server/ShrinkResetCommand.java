@@ -6,7 +6,7 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 public class ShrinkResetCommand
@@ -23,7 +23,7 @@ public class ShrinkResetCommand
         playerEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
         {
             iShrinkProvider.deShrink(playerEntity);
-            source.sendMessage(new TextComponent("reset " + playerEntity.getName().getString() + " to default"), null);
+            source.m_213846_(Component.m_237115_("reset " + playerEntity.getName().getString() + " to default"));
         });
         return 0;
     }

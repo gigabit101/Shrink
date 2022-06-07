@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[29,]" #mandatory
+loaderVersion="[40,]" #mandatory
 license="GNU General Public License v3.0"
 credits="" #optional
 authors="Gigabit101" #optional
@@ -16,12 +16,12 @@ authors="Gigabit101" #optional
 [[dependencies.shrink]]
    modId="forge"
    mandatory=true
-   versionRange="[39,)"
+   versionRange="[40,)"
    ordering="NONE"
    side="BOTH"
 [[dependencies.shrink]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.1, ]"
+    versionRange="[1.19, ]"
     ordering="NONE"
     side="BOTH"

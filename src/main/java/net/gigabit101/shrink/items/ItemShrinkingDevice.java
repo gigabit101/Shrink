@@ -9,12 +9,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,6 +34,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +50,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand)
     {
         ItemStack stack = player.getItemInHand(hand);
 
@@ -64,9 +64,14 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                }
                else
                {
-                   if (!level.isClientSide()) player.displayClientMessage(new TranslatableComponent("Can't open while shrunk"), false);
+                   if (!level.isClientSide()) player.displayClientMessage(Component.m_237115_("Can't open while shrunk"), false);
                }
             });
+            if(!player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
+            {
+                player.displayClientMessage(Component.m_237115_("No cap, Forge done f**ked up " + (level.isClientSide ? "Client" : "Server")), false);
+                return InteractionResultHolder.fail(stack);
+            }
         }
 
         if (!level.isClientSide() && player.isCrouching())
@@ -83,7 +88,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                 }
                 else if(!canUse(stack, player) && ShrinkConfig.POWER_REQUIREMENT.get())
                 {
-                    player.displayClientMessage(new TranslatableComponent(ChatFormatting.RED + "Not enough power in device"), true);
+                    player.displayClientMessage(Component.m_237115_(ChatFormatting.RED + "Not enough power in device"), true);
                 }
             });
         }
@@ -119,7 +124,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
 
                 if(!canUse(stack, player))
                 {
-                    player.displayClientMessage(new TranslatableComponent(ChatFormatting.RED + "Not enough power in device"), true);
+                    player.displayClientMessage(Component.m_237115_(ChatFormatting.RED + "Not enough power in device"), true);
                 }
             });
             return true;
@@ -127,18 +132,18 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
         return false;
     }
 
-    public void spawnParticle(Level worldIn, double posX, double posY, double posZ, Random rand)
+    public void spawnParticle(Level worldIn, double posX, double posY, double posZ, RandomSource rand)
     {
         for (int i = 0; i < 16; ++i)
         {
-            int j = rand.nextInt(2) * 2 - 1;
-            int k = rand.nextInt(2) * 2 - 1;
+            int j = rand.m_188503_(2) * 2 - 1;
+            int k = rand.m_188503_(2) * 2 - 1;
             double d0 = posX + 0.5D + 0.25D * (double) j;
-            double d1 = ((float) posY + rand.nextFloat());
+            double d1 = ((float) posY + rand.m_188501_());
             double d2 = posZ + 0.5D + 0.25D * (double) k;
-            double d3 = (rand.nextFloat() * (float) j);
-            double d4 = (rand.nextFloat() - 0.5D) * 0.125D;
-            double d5 = (rand.nextFloat() * (float) k);
+            double d3 = (rand.m_188501_() * (float) j);
+            double d4 = (rand.m_188501_() - 0.5D) * 0.125D;
+            double d5 = (rand.m_188501_() * (float) k);
             worldIn.addParticle(ParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5);
         }
     }
@@ -218,20 +223,20 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
         if (optional.isPresent())
         {
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
-            tooltip.add(new TextComponent(energyStorage.getEnergyStored() + " FE / " + energyStorage.getMaxEnergyStored() + " FE"));
+            tooltip.add(Component.m_237115_(energyStorage.getEnergyStored() + " FE / " + energyStorage.getMaxEnergyStored() + " FE"));
         }
     }
 
     @Override
     public Component getDisplayName()
     {
-        return new TextComponent(this.getOrCreateDescriptionId());
+        return Component.m_237115_(this.getOrCreateDescriptionId());
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
+    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player)
     {
-        return new ShrinkContainer(id, inventory);
+        return new ShrinkContainer(id, inventory, null);
     }
 }
