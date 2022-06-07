@@ -26,11 +26,11 @@ public class PlayerEvents
     @SubscribeEvent
     public static void cloneEvent(PlayerEvent.Clone evt)
     {
-//        evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
-//        {
-//            CompoundTag compoundTag = old.serializeNBT();
-//            evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
-//        });
+        evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
+        {
+            CompoundTag compoundTag = old.serializeNBT();
+            evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
+        });
     }
 
     @SubscribeEvent
@@ -48,11 +48,26 @@ public class PlayerEvents
     @SubscribeEvent
     public static void attachCaps(AttachCapabilitiesEvent<Entity> evt)
     {
-        if(evt.getObject() instanceof LivingEntity)
+        if (evt.getObject() instanceof LivingEntity livingEntity)
         {
-            if(!evt.getObject().getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
+            try
             {
-                evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider((LivingEntity) evt.getObject()));
+                evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider(livingEntity));
+                if (evt.getObject() instanceof Player)
+                {
+                    evt.addListener(() ->
+                    {
+                        System.out.println("Listener fired from player");
+                        //Re-add the cap if its gone walkies
+//                        if(!livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
+//                        {
+//                            evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider(livingEntity));
+//                        }
+                    });
+                }
+            } catch (Exception exception)
+            {
+                exception.printStackTrace();
             }
         }
     }

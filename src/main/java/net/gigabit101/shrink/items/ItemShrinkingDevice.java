@@ -67,11 +67,6 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
                    if (!level.isClientSide()) player.displayClientMessage(Component.m_237115_("Can't open while shrunk"), false);
                }
             });
-            if(!player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
-            {
-                player.displayClientMessage(Component.m_237115_("No cap, Forge done f**ked up " + (level.isClientSide ? "Client" : "Server")), false);
-                return InteractionResultHolder.fail(stack);
-            }
         }
 
         if (!level.isClientSide() && player.isCrouching())

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,25 +23,6 @@ public final class ShrinkImpl
     public static void init(RegisterCapabilitiesEvent event)
     {
         event.register(IShrinkProvider.class);
-//        CapabilityManager.INSTANCE.register(IShrinkProvider.class);
-        //TODO
-//        CapabilityManager.INSTANCE.register(IShrinkProvider.class, new Capability.IStorage<IShrinkProvider>()
-//        {
-//            @Override
-//            public CompoundTag writeNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side)
-//            {
-//                return instance.serializeNBT();
-//            }
-//
-//            @Override
-//            public void readNBT(Capability<IShrinkProvider> capability, IShrinkProvider instance, Direction side, INBT nbt)
-//            {
-//                if (nbt instanceof CompoundNBT)
-//                {
-//                    instance.deserializeNBT((CompoundNBT) nbt);
-//                }
-//            }
-//        }, () -> new DefaultImpl(null));
     }
 
     private static class DefaultImpl implements IShrinkProvider
@@ -52,11 +34,9 @@ public final class ShrinkImpl
         private float scale = 1F;
         private boolean isShrinking = false;
 
-        private DefaultImpl(@Nullable LivingEntity livingEntity)
+        private DefaultImpl(@Nonnull LivingEntity livingEntity)
         {
             this.livingEntity = livingEntity;
-//            this.defaultEntitySize = livingEntity.dimensions;
-//            this.defaultEyeHeight = livingEntity.eyeHeight;
         }
 
         @Override
@@ -90,7 +70,6 @@ public final class ShrinkImpl
         @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            //TODO entityID might be wrong??
             PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.m_19879_(), serializeNBT()));
         }
 
@@ -184,6 +163,16 @@ public final class ShrinkImpl
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing)
+        {
+            if (capability == ShrinkAPI.SHRINK_CAPABILITY)
+            {
+                return cap.cast();
+            }
+            return LazyOptional.empty();
+        }
+
+        @Override
+        public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability)
         {
             if (capability == ShrinkAPI.SHRINK_CAPABILITY)
             {
