@@ -27,7 +27,7 @@ public class ShrinkCommand
         {
             iShrinkProvider.setScale(scale);
             iShrinkProvider.shrink(playerEntity);
-            source.m_213846_(Component.m_237115_("Set " + playerEntity.getName().getString() + " scale to " + scale));
+            source.sendSystemMessage(Component.literal("Set " + playerEntity.getName().getString() + " scale to " + scale));
         });
         return 0;
     }

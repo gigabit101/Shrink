@@ -23,7 +23,7 @@ public class ShrinkResetCommand
         playerEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
         {
             iShrinkProvider.deShrink(playerEntity);
-            source.m_213846_(Component.m_237115_("reset " + playerEntity.getName().getString() + " to default"));
+            source.sendSystemMessage(Component.literal("reset " + playerEntity.getName().getString() + " to default"));
         });
         return 0;
     }

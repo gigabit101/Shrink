@@ -53,18 +53,6 @@ public class PlayerEvents
             try
             {
                 evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider(livingEntity));
-                if (evt.getObject() instanceof Player)
-                {
-                    evt.addListener(() ->
-                    {
-                        System.out.println("Listener fired from player");
-                        //Re-add the cap if its gone walkies
-//                        if(!livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
-//                        {
-//                            evt.addCapability(ShrinkImpl.Provider.NAME, new ShrinkImpl.Provider(livingEntity));
-//                        }
-                    });
-                }
             } catch (Exception exception)
             {
                 exception.printStackTrace();

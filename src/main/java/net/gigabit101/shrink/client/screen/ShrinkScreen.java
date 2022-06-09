@@ -40,7 +40,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         int x = width / 2;
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, Component.m_237115_("^"), b ->
+        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get())
@@ -57,7 +57,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
             }
         }));
 
-        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, Component.m_237115_("v"), b ->
+        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get())

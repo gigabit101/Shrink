@@ -70,7 +70,7 @@ public final class ShrinkImpl
         @Override
         public void sync(@Nonnull LivingEntity livingEntity)
         {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.m_19879_(), serializeNBT()));
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PacketShrink(livingEntity.getId(), serializeNBT()));
         }
 
         @Override
