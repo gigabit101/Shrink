@@ -60,7 +60,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
             {
                if(!iShrinkProvider.isShrunk())
                {
-                   if (!level.isClientSide()) NetworkHooks.openGui((ServerPlayer) player, this);
+                   if (!level.isClientSide()) NetworkHooks.openScreen((ServerPlayer) player, this);
                }
                else
                {

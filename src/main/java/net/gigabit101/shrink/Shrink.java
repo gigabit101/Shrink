@@ -12,17 +12,21 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.lwjgl.glfw.GLFW;
 
 @Mod(Shrink.MOD_ID)
 public class Shrink
@@ -36,6 +40,7 @@ public class Shrink
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->  eventBus.addListener(this::registerKeybinding));
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 
         ShrinkItems.ITEMS.register(eventBus);
@@ -44,6 +49,12 @@ public class Shrink
 //        eventBus.addGenericListener(MenuType.class, Shrink::registerContainers);
 
         ShrinkConfig.loadConfig(ShrinkConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+    }
+
+    public void registerKeybinding(RegisterKeyMappingsEvent event)
+    {
+        KeyBindings.shrink = KeyBindings.createBinding("shrink", GLFW.GLFW_KEY_G);
+        event.register(KeyBindings.shrink);
     }
 
     public void registerCommands(RegisterCommandsEvent event)
@@ -73,7 +84,6 @@ public class Shrink
     private void clientSetup(final FMLClientSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
-        KeyBindings.init();
 
         MenuScreens.register(ModContainers.SHRINK_CONTAINER.get(), ShrinkScreen::new);
 

@@ -7,26 +7,17 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyConflictContext;
-import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings
 {
     private static final KeyConflictShrink CONFLICT_CONTEXT_GADGET = new KeyConflictShrink();
     public static KeyMapping shrink;
 
-    public static void init()
+    public static KeyMapping createBinding(String name, int key)
     {
-        shrink = createBinding("shrink", GLFW.GLFW_KEY_G);
-    }
-
-    private static KeyMapping createBinding(String name, int key)
-    {
-        KeyMapping keyBinding = new KeyMapping(getKey(name), CONFLICT_CONTEXT_GADGET, InputConstants.Type.KEYSYM.getOrCreate(key), getKey("category"));
-        ClientRegistry.registerKeyBinding(keyBinding);
-        return keyBinding;
+        return new KeyMapping(getKey(name), CONFLICT_CONTEXT_GADGET, InputConstants.Type.KEYSYM.getOrCreate(key), getKey("category"));
     }
 
     private static String getKey(String name)

@@ -9,12 +9,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,20 +30,20 @@ public class PlayerEvents
         evt.getOriginal().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(old ->
         {
             CompoundTag compoundTag = old.serializeNBT();
-            evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
+            evt.getEntity().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.deserializeNBT(compoundTag));
         });
     }
 
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent evt)
     {
-        evt.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(evt.getPlayer()));
+        evt.getEntity().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(evt.getEntity()));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event)
     {
-        event.getPlayer().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(event.getPlayer()));
+        event.getEntity().getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(event.getEntity()));
     }
 
     @SubscribeEvent
@@ -63,7 +64,7 @@ public class PlayerEvents
     @SubscribeEvent
     public static void playerConnect(PlayerEvent.PlayerLoggedInEvent event)
     {
-        ServerPlayer player = (ServerPlayer) event.getPlayer();
+        ServerPlayer player = (ServerPlayer) event.getEntity();
         player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(c -> c.sync(player));
     }
 
@@ -71,7 +72,7 @@ public class PlayerEvents
     public static void playerStartTracking(PlayerEvent.StartTracking event)
     {
         Entity target = event.getTarget();
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
 
         if (player instanceof ServerPlayer && target instanceof LivingEntity livingEntity)
         {
@@ -80,9 +81,9 @@ public class PlayerEvents
     }
 
     @SubscribeEvent
-    public static void joinWorldEvent(EntityJoinWorldEvent event)
+    public static void joinWorldEvent(EntityJoinLevelEvent event)
     {
-        if(!event.getWorld().isClientSide() && event.getEntity() instanceof LivingEntity livingEntity)
+        if(!event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity livingEntity)
         {
             livingEntity.refreshDimensions();
             livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> iShrinkProvider.sync(livingEntity));
@@ -94,9 +95,9 @@ public class PlayerEvents
     {
         if(!ShrinkConfig.ENABLE_MOB_BOTTLES.get()) return;
 
-        if(!event.getWorld().isClientSide() && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof Player))
+        if(!event.getLevel().isClientSide() && event.getTarget() instanceof LivingEntity && !(event.getTarget() instanceof Player))
         {
-            Player playerEntity = event.getPlayer();
+            Player playerEntity = event.getEntity();
 
             if(event.getTarget() instanceof LivingEntity livingEntity)
             {
@@ -108,7 +109,12 @@ public class PlayerEvents
                         {
                             playerEntity.getItemInHand(event.getHand()).shrink(1);
                             ItemStack output = ItemModBottle.setContainedEntity(event.getItemStack(), livingEntity);
-                            playerEntity.getInventory().add(output);
+                            boolean added = playerEntity.getInventory().add(output);
+                            if(!added)
+                            {
+                                ItemEntity itemEntity = new ItemEntity(event.getLevel(), playerEntity.blockPosition().getX(), playerEntity.blockPosition().getY(), playerEntity.blockPosition().getZ(), output);
+                                event.getLevel().addFreshEntity(itemEntity);
+                            }
                         }
                     });
                 }

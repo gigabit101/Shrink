@@ -15,7 +15,7 @@ public class RenderEvents
     {
         try
         {
-            Player player = event.getPlayer();
+            Player player = event.getEntity();
 
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
@@ -48,7 +48,7 @@ public class RenderEvents
     {
         try
         {
-            Player player = event.getPlayer();
+            Player player = event.getEntity();
             player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
                 if (iShrinkProvider.isShrunk())
