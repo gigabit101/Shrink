@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class GeneratorItemModels extends ItemModelProvider
 {
@@ -28,12 +29,12 @@ public class GeneratorItemModels extends ItemModelProvider
 
     public String getPath(Item item)
     {
-        return Registry.ITEM.getKey(item).getPath();
+        return ForgeRegistries.ITEMS.getKey(item).getPath();
     }
 
     private void registerBlockModel(Block block)
     {
-        String path = Registry.BLOCK.getKey(block).getPath();
+        String path = ForgeRegistries.BLOCKS.getKey(block).getPath();
         getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
     }
 

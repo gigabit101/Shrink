@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 {
@@ -38,9 +39,11 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
     {
         super.init();
         int x = width / 2;
+        if(Minecraft.getInstance().player == null) return;
+
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addRenderableWidget(upButton = new Button(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
+        this.addRenderableWidget(upButton = new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get())
@@ -57,7 +60,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
             }
         }));
 
-        this.addRenderableWidget(downButton = new Button(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
+        this.addRenderableWidget(downButton = new ShrinkButton(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get())
@@ -95,36 +98,38 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 
     //Override to stop labels from rendering
     @Override
-    protected void renderLabels(PoseStack p_230451_1_, int p_230451_2_, int p_230451_3_) {}
+    protected void renderLabels(@NotNull PoseStack poseStack, int p_230451_2_, int p_230451_3_) {}
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y)
+    protected void renderBg(@NotNull PoseStack poseStack, float partialTicks, int x, int y)
     {
-        builder.drawDefaultBackground(this, matrixStack, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
-        builder.drawPlayerSlots(this, matrixStack, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
+        builder.drawDefaultBackground(this, poseStack, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
+        builder.drawPlayerSlots(this, poseStack, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
 
         int i = this.leftPos;
         int j = this.topPos;
-        EntityType entityType = EntityType.COW;
+        EntityType<?> entityType = EntityType.COW;
+        if(this.minecraft == null) return;
+        if(this.minecraft.level == null) return;
         LivingEntity livingEntity = (LivingEntity) entityType.create(this.minecraft.level);
 
-        builder.drawBlackBox(this, matrixStack, i + 4, j + 4, 60, 80, 256, 256);
-        builder.drawBlackBox(this, matrixStack, i + 120, j + 4, 60, 80, 256, 256);
+        builder.drawBlackBox(this, poseStack, i + 4, j + 4, 60, 80, 256, 256);
+        builder.drawBlackBox(this, poseStack, i + 120, j + 4, 60, 80, 256, 256);
 
         InventoryScreen.renderEntityInInventory(i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
         InventoryScreen.renderEntityInInventory(i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
 
-        this.renderLabels(matrixStack, mouseX, mouseY);
+        this.renderLabels(poseStack, mouseX, mouseY);
 
         String scaleString = ("" + scale).substring(0, 3);
 
-        drawCenteredString(matrixStack, font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
+        drawCenteredString(poseStack, font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
 
         this.oldMouseX = (float)mouseX;
         this.oldMouseY = (float)mouseY;

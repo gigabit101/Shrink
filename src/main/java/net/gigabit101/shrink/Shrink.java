@@ -10,13 +10,17 @@ import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,13 +44,12 @@ public class Shrink
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        eventBus.addListener(this::registerCreativeTab);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->  eventBus.addListener(this::registerKeybinding));
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 
         ShrinkItems.ITEMS.register(eventBus);
         ModContainers.CONTAINERS.register(eventBus);
-
-//        eventBus.addGenericListener(MenuType.class, Shrink::registerContainers);
 
         ShrinkConfig.loadConfig(ShrinkConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
     }
@@ -63,12 +66,14 @@ public class Shrink
 //        event.getDispatcher().register(ShrinkResetCommand.register());
     }
 
-    //TODO replace with RegistryObject
-//    @SubscribeEvent
-//    public static void registerContainers(RegistryEvent.Register<MenuType<?>> event)
-//    {
-//        event.getRegistry().register(new MenuType<>(ShrinkContainer::new).setRegistryName("shrinkingdevice"));
-//    }
+
+    public void registerCreativeTab(CreativeModeTabEvent.Register event)
+    {
+        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "creative_tab"), builder -> builder.icon(() -> new ItemStack(ShrinkItems.SHRINKING_DEVICE.get()))
+                .title(Component.translatable("key.shrink.category"))
+                .displayItems((features, output, hasPermissions) -> ShrinkItems.ITEMS.getEntries().forEach(itemRegistryObject -> output.accept(new ItemStack(itemRegistryObject.get())))));
+
+    }
 
     @SubscribeEvent
     public static void registerCap(RegisterCapabilitiesEvent event)

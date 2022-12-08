@@ -29,9 +29,9 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ItemShrinkingDevice extends Item implements MenuProvider
@@ -148,7 +147,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
         if(!ShrinkConfig.POWER_REQUIREMENT.get()) return true;
         if(playerEntity.isCreative()) return true;
 
-        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
+        LazyOptional<IEnergyStorage> optional = stack.getCapability(ForgeCapabilities.ENERGY);
         if(optional.isPresent())
         {
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
@@ -163,7 +162,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
 
     public boolean hasPower(ItemStack stack)
     {
-        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
+        LazyOptional<IEnergyStorage> optional = stack.getCapability(ForgeCapabilities.ENERGY);
         if(optional.isPresent())
         {
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);
@@ -182,7 +181,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
             @Override
             public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
             {
-                if (cap == CapabilityEnergy.ENERGY) return LazyOptional.of(() -> new EnergyStorageItemImpl(stack, ShrinkConfig.POWER_CAPACITY.get(), ShrinkConfig.POWER_CAPACITY.get(), ShrinkConfig.POWER_CAPACITY.get())).cast();
+                if (cap == ForgeCapabilities.ENERGY) return LazyOptional.of(() -> new EnergyStorageItemImpl(stack, ShrinkConfig.POWER_CAPACITY.get(), ShrinkConfig.POWER_CAPACITY.get(), ShrinkConfig.POWER_CAPACITY.get())).cast();
                 return LazyOptional.empty();
             }
         };
@@ -191,14 +190,14 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     @Override
     public boolean isBarVisible(ItemStack stack)
     {
-        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
 
     @Override
     public int getBarWidth(ItemStack stack)
     {
-        return stack.getCapability(CapabilityEnergy.ENERGY, null)
+        return stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
     }
@@ -206,7 +205,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     @Override
     public int getBarColor(ItemStack stack)
     {
-        return stack.getCapability(CapabilityEnergy.ENERGY)
+        return stack.getCapability(ForgeCapabilities.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getBarColor(stack));
     }
@@ -214,7 +213,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
-        LazyOptional<IEnergyStorage> optional = stack.getCapability(CapabilityEnergy.ENERGY);
+        LazyOptional<IEnergyStorage> optional = stack.getCapability(ForgeCapabilities.ENERGY);
         if (optional.isPresent())
         {
             IEnergyStorage energyStorage = optional.orElseThrow(IllegalStateException::new);

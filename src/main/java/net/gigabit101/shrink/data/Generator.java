@@ -20,14 +20,14 @@ public class Generator
 
     private static void registerServerProviders(DataGenerator generator)
     {
-        generator.getProviders().add(new GeneratorRecipes(generator));
+//        generator.addProvider(new GeneratorRecipes(generator));
     }
 
     private static void registerClientProviders(DataGenerator generator, GatherDataEvent event)
     {
         ExistingFileHelper helper = event.getExistingFileHelper();
 
-        generator.getProviders().add(new GeneratorItemModels(generator, helper));
-        generator.getProviders().add(new GeneratorLanguage(generator));
+//        generator.getProviders().add(new GeneratorItemModels(generator, helper));
+//        generator.getProviders().add(new GeneratorLanguage(generator));
     }
 }
