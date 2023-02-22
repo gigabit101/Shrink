@@ -46,7 +46,7 @@ public class ShrinkConfig
                 .defineInRange("maxSize", 10, 0,  100D);
 
         MIN_SIZE = COMMON_BUILDER.comment("Set the min size a player can shrink too")
-                .defineInRange("minSize", 0.21, 0.21D,  100D);
+                .defineInRange("minSize", 0.21, 0.0D,  100D);
 
         COMMON_CONFIG = COMMON_BUILDER.build();
     }
