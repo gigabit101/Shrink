@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -75,7 +76,7 @@ public class ItemModBottle extends Item
     @Nullable
     public Entity getEntityFromItemStack(ItemStack stack, Level world)
     {
-        EntityType type = EntityType.byString(stack.getTag().getString("entity")).orElse(null);
+        EntityType<?> type = EntityType.byString(stack.getTag().getString("entity")).orElse(null);
         if (type != null)
         {
             Entity entity = type.create(world);
@@ -86,13 +87,13 @@ public class ItemModBottle extends Item
     }
 
     @Override
-    public boolean isFoil(ItemStack itemStack)
+    public boolean isFoil(@NotNull ItemStack itemStack)
     {
         return containsEntity(itemStack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn)
     {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (containsEntity(stack))
@@ -101,7 +102,7 @@ public class ItemModBottle extends Item
         }
         else
         {
-            tooltip.add(Component.literal("Right-click on a shrunken entity with a glass bottle to capture"));
+            tooltip.add(Component.translatable("item.mob_bottle.tooltip_empty"));
         }
     }
 }

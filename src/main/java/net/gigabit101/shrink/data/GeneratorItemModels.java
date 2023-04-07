@@ -23,8 +23,8 @@ public class GeneratorItemModels extends ItemModelProvider
     @Override
     protected void registerModels()
     {
-        singleTexture(getPath(ShrinkItems.SHRINKING_DEVICE.get()), mcLoc("item/handheld"), "layer0", modLoc("item/" + getPath(ShrinkItems.SHRINKING_DEVICE.get())));
-        singleTexture(getPath(ShrinkItems.MOB_BOTTLE.get()), mcLoc("item/handheld"), "layer0", mcLoc("item/" + getPath(ShrinkItems.MOB_BOTTLE.get())));
+//        singleTexture(getPath(ShrinkItems.SHRINKING_DEVICE.get()), mcLoc("item/handheld"), "layer0", modLoc("item/" + getPath(ShrinkItems.SHRINKING_DEVICE.get())));
+        singleTexture(getPath(ShrinkItems.MOB_BOTTLE.get()), mcLoc("item/handheld"), "layer0", mcLoc("item/glass_bottle"));
     }
 
     public String getPath(Item item)
