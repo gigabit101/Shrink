@@ -3,6 +3,7 @@ package net.gigabit101.shrink.cap;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.api.IShrinkProvider;
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.api.ShrinkEvents;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrink;
@@ -13,8 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,6 +82,10 @@ public final class ShrinkImpl
         @Override
         public void shrink(@Nonnull LivingEntity livingEntity)
         {
+            ShrinkEvents.PlayerShrinkEvent event = new ShrinkEvents.PlayerShrinkEvent(livingEntity);
+            MinecraftForge.EVENT_BUS.post(event);
+            if(event.isCanceled()) return;
+
             if(ShrinkConfig.DISABLE_IN_SPECTATOR.get() && livingEntity instanceof Player player && player.isSpectator())
             {
                 player.displayClientMessage(Component.literal("Shrinking is disabled while in spectator mode"), true);
@@ -93,6 +100,10 @@ public final class ShrinkImpl
         @Override
         public void deShrink(@Nonnull LivingEntity livingEntity)
         {
+            ShrinkEvents.PlayerDeShrinkEvent event = new ShrinkEvents.PlayerDeShrinkEvent(livingEntity);
+            MinecraftForge.EVENT_BUS.post(event);
+            if(event.isCanceled()) return;
+
             if(ShrinkConfig.DISABLE_IN_SPECTATOR.get() && livingEntity instanceof Player player && player.isSpectator())
             {
                 player.displayClientMessage(Component.literal("Shrinking is disabled while in spectator mode"), true);
