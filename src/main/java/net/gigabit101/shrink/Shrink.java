@@ -8,6 +8,8 @@ import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ItemShrinkingDevice;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.gigabit101.shrink.network.PacketHandler;
+import net.gigabit101.shrink.server.ShrinkCommand;
+import net.gigabit101.shrink.server.ShrinkResetCommand;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.network.chat.Component;
@@ -62,8 +64,8 @@ public class Shrink
 
     public void registerCommands(RegisterCommandsEvent event)
     {
-//        event.getDispatcher().register(ShrinkCommand.register());
-//        event.getDispatcher().register(ShrinkResetCommand.register());
+        event.getDispatcher().register(ShrinkCommand.register());
+        event.getDispatcher().register(ShrinkResetCommand.register());
     }
 
 
