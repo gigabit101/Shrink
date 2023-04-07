@@ -7,7 +7,6 @@ import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrinkScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -20,14 +19,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 {
-    private Button upButton;
-    private Button downButton;
-    private Button confirm;
-    private Button cancel;
     private float scale;
-    private GuiBuilder builder = new GuiBuilder();
+    private final GuiBuilder builder = new GuiBuilder();
     private float oldMouseX;
     private float oldMouseY;
+
+    private LivingEntity livingEntity;
+
 
     public ShrinkScreen(ShrinkContainer container, Inventory inventory, Component component)
     {
@@ -40,10 +38,12 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         super.init();
         int x = width / 2;
         if(Minecraft.getInstance().player == null) return;
+        if(this.minecraft != null && this.minecraft.level != null)
+            livingEntity = EntityType.COW.create(this.minecraft.level);
 
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
 
-        this.addRenderableWidget(upButton = new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
+        this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale <= ShrinkConfig.MAX_SIZE.get())
@@ -60,7 +60,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
             }
         }));
 
-        this.addRenderableWidget(downButton = new ShrinkButton(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
+        this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
         {
             if (Minecraft.getInstance().player == null) return;
             if(scale >= ShrinkConfig.MIN_SIZE.get())
@@ -108,16 +108,16 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 
         int i = this.leftPos;
         int j = this.topPos;
-        EntityType<?> entityType = EntityType.COW;
         if(this.minecraft == null) return;
         if(this.minecraft.level == null) return;
-        LivingEntity livingEntity = (LivingEntity) entityType.create(this.minecraft.level);
+        if(this.minecraft.player == null) return;
 
         builder.drawBlackBox(this, poseStack, i + 4, j + 4, 60, 80, 256, 256);
         builder.drawBlackBox(this, poseStack, i + 120, j + 4, 60, 80, 256, 256);
 
         InventoryScreen.renderEntityInInventory(i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
-        InventoryScreen.renderEntityInInventory(i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
+        if(this.livingEntity != null)
+         InventoryScreen.renderEntityInInventory(i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
     }
 
     @Override
