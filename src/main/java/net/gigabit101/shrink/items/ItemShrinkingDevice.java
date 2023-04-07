@@ -103,6 +103,11 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
 
         if(entity instanceof LivingEntity && !entity.level.isClientSide)
         {
+            if(entity.getType().is(ShrinkAPI.SHRINK_DENYLIST))
+            {
+                player.displayClientMessage(Component.translatable("shrink.deny_shrink"), false);
+                return false;
+            }
             entity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
             {
                 iShrinkProvider.setScale(scale.get());

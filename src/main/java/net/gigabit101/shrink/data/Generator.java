@@ -2,7 +2,6 @@ package net.gigabit101.shrink.data;
 
 import net.gigabit101.shrink.Shrink;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,21 +12,12 @@ public class Generator
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
-        if(event.includeServer()) registerServerProviders(event.getGenerator());
+        DataGenerator generator = event.getGenerator();
 
-        if(event.includeClient()) registerClientProviders(event.getGenerator(), event);
-    }
+        generator.addProvider(event.includeServer(), new GeneratorRecipes(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new GeneratorEntityTags(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
 
-    private static void registerServerProviders(DataGenerator generator)
-    {
-        generator.addProvider(true, new GeneratorRecipes(generator.getPackOutput()));
-    }
-
-    private static void registerClientProviders(DataGenerator generator, GatherDataEvent event)
-    {
-        ExistingFileHelper helper = event.getExistingFileHelper();
-
-        generator.addProvider(true, new GeneratorItemModels(generator, helper));
-        generator.addProvider(true, new GeneratorLanguage(generator));
+        generator.addProvider(event.includeClient(), new GeneratorItemModels(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new GeneratorLanguage(generator));
     }
 }

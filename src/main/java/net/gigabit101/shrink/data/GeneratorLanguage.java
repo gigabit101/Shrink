@@ -19,6 +19,7 @@ public class GeneratorLanguage extends LanguageProvider
         add("key.shrink.category", "Shrink");
         add("key.shrink.shrink", "Toggle Shrink");
         add("item.mob_bottle.tooltip_empty", "Right-click on a shrunken entity with a glass bottle to capture");
+        add("shrink.deny_shrink", "Blocked shrinking of entity due to deny tag");
         addItem(ShrinkItems.SHRINKING_DEVICE, "Personal Shrinking Device");
         addItem(ShrinkItems.MOB_BOTTLE, "Glass Bottle");
 //        addItem(ShrinkItems.SHRINK_RAY, "Shrink Ray");
