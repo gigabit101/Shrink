@@ -25,6 +25,8 @@ public class ShrinkConfig
     public static ForgeConfigSpec.DoubleValue MAX_SIZE;
     public static ForgeConfigSpec.DoubleValue MIN_SIZE;
 
+    public static ForgeConfigSpec.BooleanValue DISABLE_IN_SPECTATOR;
+
     static
     {
         COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
@@ -47,6 +49,9 @@ public class ShrinkConfig
 
         MIN_SIZE = COMMON_BUILDER.comment("Set the min size a player can shrink too")
                 .defineInRange("minSize", 0.21, 0.21D,  100D);
+
+        DISABLE_IN_SPECTATOR = COMMON_BUILDER.comment("Set to false to allow shrinking while in spectator mode")
+                .define("enableShrinkInSpectator", false);
 
         COMMON_CONFIG = COMMON_BUILDER.build();
     }
