@@ -9,7 +9,7 @@ public class GeneratorLanguage extends LanguageProvider
 {
     public GeneratorLanguage(DataGenerator gen)
     {
-        super(gen, Shrink.MOD_ID, "en_us");
+        super(gen.getPackOutput(), Shrink.MOD_ID, "en_us");
     }
 
     @Override

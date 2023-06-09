@@ -17,7 +17,7 @@ public class GeneratorItemModels extends ItemModelProvider
 {
     public GeneratorItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
     {
-        super(generator, Shrink.MOD_ID, existingFileHelper);
+        super(generator.getPackOutput(), Shrink.MOD_ID, existingFileHelper);
     }
 
     @Override

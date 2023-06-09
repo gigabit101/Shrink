@@ -101,7 +101,7 @@ public class ItemShrinkingDevice extends Item implements MenuProvider
         AtomicReference<Float> scale = new AtomicReference<>(0.1F);
         player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> scale.set(iShrinkProvider.scale()));
 
-        if(entity instanceof LivingEntity && !entity.level.isClientSide)
+        if(entity instanceof LivingEntity && !entity.level().isClientSide)
         {
             if(entity.getType().is(ShrinkAPI.SHRINK_DENYLIST))
             {

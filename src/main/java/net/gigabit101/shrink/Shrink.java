@@ -12,14 +12,16 @@ import net.gigabit101.shrink.server.ShrinkCommand;
 import net.gigabit101.shrink.server.ShrinkResetCommand;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.RegisterEvent;
 import org.lwjgl.glfw.GLFW;
 
 @Mod(Shrink.MOD_ID)
@@ -65,13 +68,19 @@ public class Shrink
         event.getDispatcher().register(ShrinkResetCommand.register());
     }
 
-
-    public void registerCreativeTab(CreativeModeTabEvent.Register event)
+    public void registerCreativeTab(RegisterEvent event)
     {
-        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "creative_tab"), builder -> builder.icon(() -> new ItemStack(ShrinkItems.SHRINKING_DEVICE.get()))
-                .title(Component.translatable("key.shrink.category"))
-                .displayItems((features, output, hasPermissions) -> ShrinkItems.ITEMS.getEntries().forEach(itemRegistryObject -> output.accept(new ItemStack(itemRegistryObject.get())))));
-
+        ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "creative_tab"));
+        event.register(Registries.CREATIVE_MODE_TAB, creativeModeTabRegisterHelper ->
+        {
+            creativeModeTabRegisterHelper.register(TAB, CreativeModeTab.builder().icon(() -> new ItemStack(ShrinkItems.SHRINKING_DEVICE.get()))
+                    .title(Component.literal("Shrink"))
+                    .withLabelColor(0x00FF00)
+                    .displayItems((params, output) -> {
+                        ShrinkItems.ITEMS.getEntries().forEach(itemRegistryObject -> output.accept(new ItemStack(itemRegistryObject.get())));
+                    })
+                    .build());
+        });
     }
 
     @SubscribeEvent

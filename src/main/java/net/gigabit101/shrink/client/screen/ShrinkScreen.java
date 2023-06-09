@@ -7,6 +7,7 @@ import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.network.PacketShrinkScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 {
@@ -80,6 +82,26 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
     }
 
     @Override
+    protected void renderBg(@NotNull GuiGraphics guiGraphics, float p_97788_, int p_97789_, int p_97790_)
+    {
+        builder.drawDefaultBackground(guiGraphics, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
+        builder.drawPlayerSlots(guiGraphics, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
+
+        int i = this.leftPos;
+        int j = this.topPos;
+        if(this.minecraft == null) return;
+        if(this.minecraft.level == null) return;
+        if(this.minecraft.player == null) return;
+
+        builder.drawBlackBox(guiGraphics, i + 4, j + 4, 60, 80, 256, 256);
+        builder.drawBlackBox(guiGraphics, i + 120, j + 4, 60, 80, 256, 256);
+
+        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
+        if(this.livingEntity != null)
+            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
+    }
+
+    @Override
     public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_)
     {
         scale += p_94688_;
@@ -98,38 +120,16 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
 
     //Override to stop labels from rendering
     @Override
-    protected void renderLabels(@NotNull PoseStack poseStack, int p_230451_2_, int p_230451_3_) {}
+    protected void renderLabels(@NotNull GuiGraphics p_281635_, int p_282681_, int p_283686_) {}
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, float partialTicks, int x, int y)
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks)
     {
-        builder.drawDefaultBackground(this, poseStack, leftPos, topPos, this.getXSize(), this.getYSize(), 256, 256);
-        builder.drawPlayerSlots(this, poseStack, leftPos + this.getXSize() / 2, topPos + 84, true, 256, 256);
-
-        int i = this.leftPos;
-        int j = this.topPos;
-        if(this.minecraft == null) return;
-        if(this.minecraft.level == null) return;
-        if(this.minecraft.player == null) return;
-
-        builder.drawBlackBox(this, poseStack, i + 4, j + 4, 60, 80, 256, 256);
-        builder.drawBlackBox(this, poseStack, i + 120, j + 4, 60, 80, 256, 256);
-
-        InventoryScreen.renderEntityInInventory(i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
-        if(this.livingEntity != null)
-         InventoryScreen.renderEntityInInventory(i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
-    }
-
-    @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
-    {
-        super.render(poseStack, mouseX, mouseY, partialTicks);
-
-        this.renderLabels(poseStack, mouseX, mouseY);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         String scaleString = ("" + scale).substring(0, 3);
 
-        drawCenteredString(poseStack, font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
 
         this.oldMouseX = (float)mouseX;
         this.oldMouseY = (float)mouseY;

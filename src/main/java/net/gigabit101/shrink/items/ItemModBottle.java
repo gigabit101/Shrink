@@ -36,7 +36,7 @@ public class ItemModBottle extends Item
         Level worldIn = context.getLevel();
         ItemStack stack = context.getItemInHand();
 
-        if (player.level.isClientSide) return InteractionResult.FAIL;
+        if (player.level().isClientSide) return InteractionResult.FAIL;
         if (!containsEntity(stack)) return InteractionResult.FAIL;
         Entity entity = getEntityFromItemStack(stack, worldIn);
         BlockPos blockPos = pos.relative(facing);
@@ -50,7 +50,7 @@ public class ItemModBottle extends Item
     public static ItemStack setContainedEntity(ItemStack stack, LivingEntity entity)
     {
         if (containsEntity(stack)) return stack;
-        if (entity.level.isClientSide) return stack;
+        if (entity.level().isClientSide) return stack;
         if (entity instanceof Player || !entity.isAlive()) return stack;
 
         CompoundTag nbt = new CompoundTag();
