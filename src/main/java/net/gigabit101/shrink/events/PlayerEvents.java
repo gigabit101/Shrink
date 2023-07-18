@@ -132,6 +132,20 @@ public class PlayerEvents
                 if(iShrinkProvider.isShrunk())
                 {
                     event.setNewSize(event.getNewSize().scale(iShrinkProvider.scale()));
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void changeEyeHeight(EntityEvent.EyeHeight event)
+    {
+        if(event.getEntity() instanceof LivingEntity livingEntity)
+        {
+            livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
+            {
+                if(iShrinkProvider.isShrunk())
+                {
                     event.setNewEyeHeight(event.getNewEyeHeight() * iShrinkProvider.scale());
                 }
             });
