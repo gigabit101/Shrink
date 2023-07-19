@@ -16,7 +16,7 @@ authors="Gigabit101" #optional
 [[dependencies.shrink]]
    modId="forge"
    mandatory=true
-   versionRange="[47.1.0,)"
+   versionRange="[47.1.29,)"
    ordering="NONE"
    side="BOTH"
 [[dependencies.shrink]]
