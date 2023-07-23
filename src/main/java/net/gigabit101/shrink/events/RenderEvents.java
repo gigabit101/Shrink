@@ -1,6 +1,7 @@
 package net.gigabit101.shrink.events;
 
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.client.ShrinkRender;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -26,15 +27,10 @@ public class RenderEvents
                     float scale = iShrinkProvider.scale();
 
                     event.getPoseStack().scale(scale, scale, scale);
-//                    event.getRenderer().shadowRadius = 0.08F;
                     if(event.getEntity().isCrouching() && scale < 0.2F)
                     {
                         event.getPoseStack().translate(0, 1.0, 0);
                     }
-                }
-                else if(!iShrinkProvider.isShrunk())
-                {
-//                    event.getRenderer().shadowRadius = 0.5F;
                 }
             });
         } catch (Exception e)
@@ -65,50 +61,12 @@ public class RenderEvents
     @SubscribeEvent
     public void onLivingRenderPre(RenderLivingEvent.Pre event)
     {
-        try
-        {
-            LivingEntity livingEntity = event.getEntity();
-            if(livingEntity != null && livingEntity instanceof Mob)
-            {
-                livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
-                {
-                    if(iShrinkProvider.isShrunk())
-                    {
-                        event.getPoseStack().pushPose();
-
-                        event.getPoseStack().scale(iShrinkProvider.scale(), iShrinkProvider.scale(), iShrinkProvider.scale());
-//                        event.getRenderer().shadowRadius = 0.08F;
-                    }
-                });
-            }
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        ShrinkRender.onEntityRenderPre(event.getEntity(), event.getPoseStack());
     }
 
     @SubscribeEvent
     public void onLivingRenderPost(RenderLivingEvent.Post event)
     {
-        try
-        {
-            LivingEntity livingEntity = event.getEntity();
-            if(livingEntity != null && livingEntity instanceof Mob)
-            {
-                if(livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).isPresent())
-                {
-                    livingEntity.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider ->
-                    {
-                        if(iShrinkProvider.isShrunk())
-                        {
-                            event.getPoseStack().popPose();
-                        }
-                    });
-                }
-            }
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        ShrinkRender.onEntityRenderPost(event.getEntity(), event.getPoseStack());
     }
 }

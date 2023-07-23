@@ -3,6 +3,7 @@ package net.gigabit101.shrink;
 import net.gigabit101.shrink.cap.ShrinkImpl;
 import net.gigabit101.shrink.client.KeyBindings;
 import net.gigabit101.shrink.client.screen.ShrinkScreen;
+import net.gigabit101.shrink.compat.CompatHandler;
 import net.gigabit101.shrink.config.ShrinkConfig;
 import net.gigabit101.shrink.events.RenderEvents;
 import net.gigabit101.shrink.items.ItemShrinkingDevice;
@@ -34,11 +35,14 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.RegisterEvent;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.logging.Logger;
+
 @Mod(Shrink.MOD_ID)
 public class Shrink
 {
     public static final String MOD_ID = "shrink";
     public static Shrink INSTANCE;
+    public static Logger LOGGER = Logger.getLogger(MOD_ID);
 
     public Shrink()
     {
@@ -49,6 +53,7 @@ public class Shrink
         eventBus.addListener(this::registerCreativeTab);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->  eventBus.addListener(this::registerKeybinding));
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
+        CompatHandler.init();
 
         ShrinkItems.ITEMS.register(eventBus);
         ModContainers.CONTAINERS.register(eventBus);
