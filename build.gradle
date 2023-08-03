@@ -73,6 +73,7 @@ minecraft {
 
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            arg "--mixin.config=shrink.mixins.json"
 
             // Recommended logging level for the console
             // You can set various levels here.
