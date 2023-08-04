@@ -40,7 +40,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         super.init();
         int x = width / 2;
         if(Minecraft.getInstance().player == null) return;
-        if(this.minecraft != null && this.minecraft.level != null)
+        if(this.minecraft != null && this.minecraft.level != null && livingEntity == null)
             livingEntity = EntityType.COW.create(this.minecraft.level);
 
         Minecraft.getInstance().player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).ifPresent(iShrinkProvider -> this.scale = iShrinkProvider.scale());
