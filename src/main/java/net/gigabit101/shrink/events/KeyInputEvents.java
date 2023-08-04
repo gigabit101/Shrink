@@ -7,7 +7,6 @@ import net.gigabit101.shrink.network.PacketShrinkKeybind;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -20,7 +19,7 @@ public class KeyInputEvents
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        if (KeyBindings.shrink.consumeClick() && event.getAction() == 1)
+        if (KeyBindings.shrink.consumeClick())
         {
             PacketHandler.sendToServer(new PacketShrinkKeybind());
         }

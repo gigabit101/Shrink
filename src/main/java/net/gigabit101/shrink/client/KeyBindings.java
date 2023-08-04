@@ -2,6 +2,7 @@ package net.gigabit101.shrink.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.gigabit101.shrink.Shrink;
+import net.gigabit101.shrink.items.ItemShrinkingDevice;
 import net.gigabit101.shrink.items.ShrinkItems;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -31,8 +32,16 @@ public class KeyBindings
         public boolean isActive()
         {
             Player player = Minecraft.getInstance().player;
-            return !KeyConflictContext.GUI.isActive() && player != null
-                    && (player.getInventory().contains(new ItemStack(ShrinkItems.SHRINKING_DEVICE.get())));
+            if(player == null) return false;
+
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++)
+            {
+                if(player.getInventory().getItem(i).getItem() instanceof ItemShrinkingDevice)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
