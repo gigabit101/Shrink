@@ -96,9 +96,9 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkContainer>
         builder.drawBlackBox(guiGraphics, i + 4, j + 4, 60, 80, 256, 256);
         builder.drawBlackBox(guiGraphics, i + 120, j + 4, 60, 80, 256, 256);
 
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
+        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 70, (int) (30 * scale), (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, this.minecraft.player);
         if(this.livingEntity != null)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 145, j + 70, 30, (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 145, j + 70, (int) (30 * scale), (float)(i + 51) - this.oldMouseX, (float)(j + 75 - 50) - this.oldMouseY, livingEntity);
     }
 
     @Override
