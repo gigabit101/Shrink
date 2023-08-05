@@ -209,7 +209,7 @@ publishing {
         }
     }
     repositories {
-        if (ENV.CREEPERHOST_MAVEN_TOKEN) {
+        if (ENV.MAVEN_TOKEN) {
             maven {
                 url "https://maven.gigabit101.net/repository/default"
                 credentials {
