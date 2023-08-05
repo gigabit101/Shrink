@@ -214,7 +214,7 @@ publishing {
                 url "https://maven.gigabit101.net/repository/default"
                 credentials {
                     username = "gitupload"
-                    password = "${ENV.CREEPERHOST_MAVEN_TOKEN}"
+                    password = "${ENV.MAVEN_TOKEN}"
                 }
             }
         }
