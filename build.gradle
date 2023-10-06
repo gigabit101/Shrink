@@ -97,7 +97,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
-    implementation("software.bernie.geckolib:${project.gekolib_version}")
+    compileOnly("software.bernie.geckolib:${project.gekolib_version}")
     {
         transitive false
     }

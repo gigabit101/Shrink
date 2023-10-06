@@ -53,7 +53,6 @@ public class Shrink
         eventBus.addListener(this::registerCreativeTab);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->  eventBus.addListener(this::registerKeybinding));
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
-        CompatHandler.init();
 
         ShrinkItems.ITEMS.register(eventBus);
         ModContainers.CONTAINERS.register(eventBus);
@@ -101,6 +100,8 @@ public class Shrink
 
     private void clientSetup(final FMLClientSetupEvent event)
     {
+        CompatHandler.init();
+
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
 
         MenuScreens.register(ModContainers.SHRINK_CONTAINER.get(), ShrinkScreen::new);
