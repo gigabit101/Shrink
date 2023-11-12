@@ -18,4 +18,4 @@ jobs:
         MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN}}
       run: |
         chmod +x ./gradlew
-        ./gradlew build publish --stacktrace --no-daemon
+        ./gradlew build --stacktrace --no-daemon
