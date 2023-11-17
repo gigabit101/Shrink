@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "shrink",
+  "version": "${version}",
+  "name": "Example Mod",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "Insert License Here",
+  "icon": "assets/shrink/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.gigabit101.shrink.fabric.ShrinkModFabric"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20.2",
+    "architectury": ">=10.0.11"
+  }
+}

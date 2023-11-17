@@ -1,0 +1,56 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+loom {
+//    accessWidenerPath = file("src/main/resources/shrink.accessWidener")
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.architectury.minecraft}"
+    mappings loom.officialMojangMappings()
+
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+
+
+    modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+}
+
+processResources {
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+    inputs.property "version", project.version
+}
+
+shadowJar {
+
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "shadow"
+}
+
+remapJar {
+    input.set(shadowJar.archiveFile)
+    dependsOn(shadowJar)
+    archiveClassifier = "fabric"
+}
+
+
