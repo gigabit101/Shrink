@@ -24,7 +24,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${rootProject.architectury.minecraft}"
     mappings loom.officialMojangMappings()
 
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
 
     modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
