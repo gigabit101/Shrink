@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ neo/1.20 ]
+    branches: [ 1.20.2/dev ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,8 +14,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Build with Gradle
-      env:
-        MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN}}
       run: |
         chmod +x ./gradlew
         ./gradlew build --stacktrace --no-daemon
