@@ -8,6 +8,7 @@ import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModItems;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 
@@ -36,13 +37,13 @@ public class Shrink
         {
             if(entity == null) return new EntitySizeEvents.UpdatedSize(size, eyeHeight, size, eyeHeight);
 
-            if(entity instanceof Player livingEntity)
+            if(entity instanceof LivingEntity livingEntity)
             {
                 if (livingEntity.getAttributes() != null)
                 {
                     if (livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE) == null) return new EntitySizeEvents.UpdatedSize(size, eyeHeight, size, eyeHeight);
 
-                    boolean canShrink = livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue() != 1.0D;
+                    boolean canShrink = ShrinkAPI.canEntityShrink(livingEntity);
 
                     System.out.println("SIDE: " + (entity.level().isClientSide() ? "CLIENT " : " SERVER ")  + "canShrink:" + canShrink + " " + livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue());
 

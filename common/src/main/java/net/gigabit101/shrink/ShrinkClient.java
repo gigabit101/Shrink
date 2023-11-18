@@ -10,7 +10,7 @@ public class ShrinkClient
     {
         LivingEntityRenderEvents.PRE.register((livingEntity, f, g, poseStack, multiBufferSource, i) ->
         {
-            boolean shrunk = livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue() != 1.0D;
+            boolean shrunk = ShrinkAPI.isEntityShrunk(livingEntity);//livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue() != 1.0D;
             if(shrunk)
             {
                 poseStack.pushPose();
@@ -21,7 +21,7 @@ public class ShrinkClient
 
         LivingEntityRenderEvents.POST.register((livingEntity, f, g, poseStack, multiBufferSource, i) ->
         {
-            boolean shrunk = livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).hasModifier(ItemShrinkDevice.createModifier(1.0F));
+            boolean shrunk = ShrinkAPI.isEntityShrunk(livingEntity);//livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).hasModifier(ItemShrinkDevice.createModifier(1.0F));
             if(shrunk)
             {
                 poseStack.popPose();
