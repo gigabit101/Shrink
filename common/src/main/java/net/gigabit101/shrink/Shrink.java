@@ -6,9 +6,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModItems;
-import net.gigabit101.shrink.items.ItemShrinkDevice;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
-import net.gigabit101.shrink.polylib.LivingEntityRenderEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
@@ -31,25 +29,7 @@ public class Shrink
 
         if(Platform.getEnv() == EnvType.CLIENT)
         {
-            LivingEntityRenderEvents.PRE.register((livingEntity, f, g, poseStack, multiBufferSource, i) ->
-            {
-                boolean shrunk = livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue() != 1.0D;
-                if(shrunk)
-                {
-                    poseStack.pushPose();
-                    float scale = (float) livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue();
-                    poseStack.scale(scale, scale, scale);
-                }
-            });
-
-            LivingEntityRenderEvents.POST.register((livingEntity, f, g, poseStack, multiBufferSource, i) ->
-            {
-                boolean shrunk = livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).hasModifier(ItemShrinkDevice.createModifier(1.0F));
-                if(shrunk)
-                {
-                    poseStack.popPose();
-                }
-            });
+            ShrinkClient.init();
         }
 
         EntitySizeEvents.SIZE.register((entity, pose, size, eyeHeight) ->
