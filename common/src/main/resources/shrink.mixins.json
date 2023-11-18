@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.gigabit101.shrink.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.7.11",
+  "mixins": [
+    "EntityMixin",
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "LivingEntityRendererMixin"
+  ]
+}

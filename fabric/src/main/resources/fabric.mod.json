@@ -19,6 +19,9 @@
       "net.gigabit101.shrink.fabric.ShrinkModFabric"
     ]
   },
+  "mixins": [
+    "shrink.mixins.json"
+  ],
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.20.2",
