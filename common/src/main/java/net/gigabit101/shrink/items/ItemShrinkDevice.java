@@ -25,33 +25,35 @@ public class ItemShrinkDevice extends Item
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand)
     {
-        double scale = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue();
-
-        if(!level.isClientSide())
+        if (player.getAttributes() != null && player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE) != null)
         {
-            ItemStack stack = player.getItemInHand(interactionHand);
-            AttributeInstance shrink = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE);
-            if(shrink == null)
-            {
-                player.displayClientMessage(Component.literal("No Attribute"), false);
-                return InteractionResultHolder.fail(stack);
-            }
+            double scale = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue();
 
-            if(player.isShiftKeyDown())
+            if (!level.isClientSide())
             {
-                if(shrink.getModifier(SHRINKING_DEVICE_ID) == null)
+                ItemStack stack = player.getItemInHand(interactionHand);
+                AttributeInstance shrink = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE);
+                if (shrink == null)
                 {
-                    shrink.addPermanentModifier(createModifier(-1.0D));
+                    player.displayClientMessage(Component.literal("No Attribute"), false);
+                    return InteractionResultHolder.fail(stack);
                 }
-            }
-            else
-            {
-                shrink.removePermanentModifier(SHRINKING_DEVICE_ID);
-            }
-            player.displayClientMessage(Component.literal("SERVER: Scale: " + scale), false);
-        }
-        player.displayClientMessage(Component.literal("CLIENT: Scale: " + scale), false);
 
+                if (player.isShiftKeyDown())
+                {
+                    if (shrink.getModifier(SHRINKING_DEVICE_ID) == null)
+                    {
+                        shrink.addPermanentModifier(createModifier(-1.0D));
+                    }
+                }
+                else
+                {
+                    shrink.removePermanentModifier(SHRINKING_DEVICE_ID);
+                }
+                player.displayClientMessage(Component.literal("SERVER: Scale: " + scale), false);
+            }
+            player.displayClientMessage(Component.literal("CLIENT: Scale: " + scale), false);
+        }
         return super.use(level, player, interactionHand);
     }
 
