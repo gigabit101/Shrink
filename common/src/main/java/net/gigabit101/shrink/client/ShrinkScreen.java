@@ -85,7 +85,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
         guiGraphics.blit(TEXTURE, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 60, relY + 120, 30, 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
 
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 250, relY + 120, 30, 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
+        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 250, relY + 120, (int) (30 * scale), 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
 
         //        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 70, (int) (30 * scale), (float)(i + 51) - this.xMouse, (float)(j + 75 - 50) - this.yMouse, this.minecraft.player);
     }
