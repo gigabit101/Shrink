@@ -1,4 +1,4 @@
-package net.gigabit101.shrink.mixins;
+package net.gigabit101.shrink.fabric.mixins;
 
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.world.entity.Entity;

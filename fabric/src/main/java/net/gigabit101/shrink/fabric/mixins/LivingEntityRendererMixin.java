@@ -1,4 +1,4 @@
-package net.gigabit101.shrink.mixins;
+package net.gigabit101.shrink.fabric.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.gigabit101.shrink.polylib.LivingEntityRenderEvents;
