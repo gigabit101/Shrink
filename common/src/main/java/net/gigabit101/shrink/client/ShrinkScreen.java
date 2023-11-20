@@ -4,13 +4,16 @@ import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.client.widgets.ShrinkButton;
+import net.gigabit101.shrink.items.ItemShrinkDevice;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 
 public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContainer>
 {
@@ -18,13 +21,25 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
     private float xMouse;
     private float yMouse;
     private float scale;
+    private final InteractionHand hand;
 
+    //TODO these are config values
     private float MAX_SIZE = 10.0F;
     private float MIN_SIZE = 0.12F;
 
     public ShrinkScreen(ShrinkingDeviceContainer abstractContainerMenu, Inventory inventory, Component component)
     {
         super(abstractContainerMenu, inventory, component);
+        Player player = minecraft.player;
+        if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemShrinkDevice)
+        {
+            hand = InteractionHand.MAIN_HAND;
+        }
+        else
+        {
+            hand = InteractionHand.OFF_HAND;
+        }
+        this.scale = (float) minecraft.player.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
     }
 
     @Override
@@ -32,7 +47,6 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
     {
         super.init();
         int x = width / 2;
-        this.scale = (float) minecraft.player.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
 
         this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
         {

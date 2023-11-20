@@ -32,7 +32,7 @@ public class Shrink
 
         ModItems.CREATIVE_MODE_TABS.register();
         ModItems.ITEMS.register();
-        ModContainers.CONTAINERS.register();
+//        ModContainers.CONTAINERS.register();
         if(Platform.getEnv() == EnvType.CLIENT)
         {
             ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());

@@ -1,10 +1,10 @@
-package net.gigabit101.shrink.forge;
+package net.gigabit101.shrink.neoforge;
 
 import net.gigabit101.shrink.polylib.LivingEntityRenderEvents;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
-public class ForgeClientEvents
+public class NeoForgeClientEvents
 {
     @SubscribeEvent
     public void onRenderPlayerPre(RenderLivingEvent.Pre event)

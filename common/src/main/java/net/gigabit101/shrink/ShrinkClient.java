@@ -8,7 +8,7 @@ public class ShrinkClient
 {
     public static void init()
     {
-        ModScreens.init();
+//        ModScreens.init();
         LivingEntityRenderEvents.PRE.register((livingEntity, partialTick, poseStack, multiBufferSource, packedLight) -> ShrinkRender.onEntityRenderPre(livingEntity, poseStack));
 
         LivingEntityRenderEvents.POST.register((livingEntity, partialTick, poseStack, multiBufferSource, packedLight) -> ShrinkRender.onEntityRenderPost(livingEntity, poseStack));
