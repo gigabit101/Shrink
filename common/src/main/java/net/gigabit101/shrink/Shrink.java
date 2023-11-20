@@ -10,6 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.init.ModItems;
+import net.gigabit101.shrink.polylib.AttributeEvents;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,7 +33,7 @@ public class Shrink
 
         ModItems.CREATIVE_MODE_TABS.register();
         ModItems.ITEMS.register();
-//        ModContainers.CONTAINERS.register();
+        ModContainers.CONTAINERS.register();
         if(Platform.getEnv() == EnvType.CLIENT)
         {
             ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());
@@ -62,5 +63,7 @@ public class Shrink
 
         //Force the players size to update on login
         PlayerEvent.PLAYER_JOIN.register(player -> player.setPose(Pose.CROUCHING));
+
+        AttributeEvents.ADD.register(builder -> builder.add(ShrinkAPI.SCALE_ATTRIBUTE));
     }
 }
