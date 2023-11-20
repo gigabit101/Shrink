@@ -1,14 +1,19 @@
 package net.gigabit101.shrink;
 
+import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.init.ModItems;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 
@@ -27,10 +32,10 @@ public class Shrink
 
         ModItems.CREATIVE_MODE_TABS.register();
         ModItems.ITEMS.register();
-
+        ModContainers.CONTAINERS.register();
         if(Platform.getEnv() == EnvType.CLIENT)
         {
-            ShrinkClient.init();
+            ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());
         }
 
         EntitySizeEvents.SIZE.register((entity, pose, size, eyeHeight) ->
@@ -45,8 +50,6 @@ public class Shrink
 
                     boolean canShrink = ShrinkAPI.canEntityShrink(livingEntity);
 
-                    System.out.println("SIDE: " + (entity.level().isClientSide() ? "CLIENT " : " SERVER ")  + "canShrink:" + canShrink + " " + livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue());
-
                     if(canShrink)
                     {
                         float scale = (float) livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue();
@@ -57,5 +60,7 @@ public class Shrink
             return new EntitySizeEvents.UpdatedSize(size, eyeHeight, size, eyeHeight);
         });
 
+        //Force the players size to update on login
+        PlayerEvent.PLAYER_JOIN.register(player -> player.setPose(Pose.CROUCHING));
     }
 }

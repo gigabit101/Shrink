@@ -13,11 +13,11 @@ public interface LivingEntityRenderEvents
 
     interface PRE
     {
-        void pre(LivingEntity livingEntity, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
+        void pre(LivingEntity livingEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight);
     }
 
     interface POST
     {
-        void post(LivingEntity livingEntity, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
+        void post(LivingEntity livingEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight);
     }
 }

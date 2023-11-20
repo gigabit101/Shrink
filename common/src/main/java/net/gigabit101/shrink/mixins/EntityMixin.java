@@ -1,10 +1,8 @@
-package net.gigabit101.shrink.fabric.mixins;
+package net.gigabit101.shrink.mixins;
 
+import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -18,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Entity.class)
@@ -80,22 +79,4 @@ public abstract class EntityMixin
             });
         }
     }
-
-//    @Inject(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;", shift = At.Shift.AFTER))
-//    public void refresh(CallbackInfo ci)
-//    {
-//        EntitySizeEvents.UpdatedSize updatedSize = EntitySizeEvents.SIZE.invoker().size((Entity) (Object)this, Pose.STANDING, this.dimensions, this.getEyeHeight(Pose.STANDING, this.dimensions));
-//        this.eyeHeight = updatedSize.getNewEyeHeight();
-//        this.dimensions = updatedSize.getNewSize();
-//        System.out.println(this.dimensions);
-//        System.out.println(this.eyeHeight);
-//
-//    }
-
-//    @Redirect(method = "refreshDimensions", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;"))
-//    private EntityDimensions injected(Entity instance, Pose pose)
-//    {
-//        EntitySizeEvents.UpdatedSize updatedSize = EntitySizeEvents.SIZE.invoker().size((Entity) (Object)this, Pose.STANDING, this.dimensions, this.getEyeHeight(Pose.STANDING, this.dimensions));
-//        return updatedSize.getNewSize();
-//    }
 }

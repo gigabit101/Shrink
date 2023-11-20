@@ -15,7 +15,7 @@ public interface EntitySizeEvents
         UpdatedSize size(Entity entity, Pose pose, EntityDimensions size, float eyeHeight);
     }
 
-    class UpdatedSize
+    public static class UpdatedSize
     {
         EntityDimensions size;
         float eyeHeight;
