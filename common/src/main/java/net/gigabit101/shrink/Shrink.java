@@ -2,6 +2,7 @@ package net.gigabit101.shrink;
 
 import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -70,6 +71,10 @@ public class Shrink
         //Force the players size to update on login
         PlayerEvent.PLAYER_JOIN.register(player -> player.setPose(Pose.CROUCHING));
 
-        AttributeEvents.ADD.register(builder -> builder.add(ShrinkAPI.SCALE_ATTRIBUTE));
+        LifecycleEvent.SETUP.register(() ->
+        {
+            AttributeEvents.ADD.register(builder -> builder.add(ShrinkAPI.SCALE_ATTRIBUTE));
+
+        });
     }
 }

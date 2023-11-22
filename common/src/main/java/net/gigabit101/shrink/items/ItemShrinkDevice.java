@@ -58,6 +58,9 @@ public class ItemShrinkDevice extends Item implements MenuProvider
                     return InteractionResultHolder.fail(stack);
                 }
 
+                System.out.println("Base value: " + shrink.getBaseValue());
+                System.out.println("New value: " + shrink.getValue());
+
                 if (player.isShiftKeyDown())
                 {
                     if(!ShrinkAPI.isEntityShrunk(player))
@@ -76,10 +79,20 @@ public class ItemShrinkDevice extends Item implements MenuProvider
                 }
                 else
                 {
-                    MenuRegistry.openMenu((ServerPlayer) player, this);
+                    if(!ShrinkAPI.isEntityShrunk(player))
+                    {
+                        MenuRegistry.openExtendedMenu((ServerPlayer) player, this, friendlyByteBuf -> friendlyByteBuf.writeDouble(0));
+                    }
+                    else
+                    {
+                        player.displayClientMessage(Component.translatable("shrink.message.already_shrunk"), false);
+                    }
                     return InteractionResultHolder.success(stack);
                 }
             }
+        }
+        else {
+            player.displayClientMessage(Component.literal("IT BROKEN"), false);
         }
         return super.use(level, player, interactionHand);
     }
