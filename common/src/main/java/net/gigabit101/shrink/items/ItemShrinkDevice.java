@@ -15,10 +15,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ItemShrinkDevice extends Item implements MenuProvider
@@ -27,6 +29,18 @@ public class ItemShrinkDevice extends Item implements MenuProvider
     public ItemShrinkDevice(Properties properties)
     {
         super(properties);
+    }
+
+    public void writeScale(ItemStack stack, double scale)
+    {
+        stack.getOrCreateTag().putDouble("scale", scale);
+    }
+
+    public double getScale(ItemStack stack)
+    {
+        if(stack.getTag() == null || !stack.getTag().contains("scale")) writeScale(stack, 1.0D);
+
+        return stack.getTag().getDouble("scale");
     }
 
     @Override
@@ -50,7 +64,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider
                     {
                         if (shrink.getModifier(SHRINKING_DEVICE_ID) == null)
                         {
-                            shrink.addPermanentModifier(createModifier(-1.0D));
+                            shrink.addPermanentModifier(createModifier(getScale(stack)));
                             return InteractionResultHolder.success(stack);
                         }
                     }
@@ -86,5 +100,12 @@ public class ItemShrinkDevice extends Item implements MenuProvider
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
     {
         return new ShrinkingDeviceContainer(id, inventory, null);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag)
+    {
+        super.appendHoverText(itemStack, level, list, tooltipFlag);
+        list.add(Component.literal("Scale: " + getScale(itemStack)));
     }
 }

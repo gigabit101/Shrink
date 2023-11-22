@@ -11,10 +11,7 @@ public class ShrinkAPI
     public static boolean canEntityShrink(LivingEntity livingEntity)
     {
         if(livingEntity == null) return false;
-        if(livingEntity.getAttributes() == null) return false;
-        if(livingEntity.getAttribute(SCALE_ATTRIBUTE) == null) return false;
-
-        return livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue() != 1.0D;
+        return livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE) != null;
     }
 
     public static boolean isEntityShrunk(LivingEntity livingEntity)

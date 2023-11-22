@@ -10,6 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.init.ModItems;
+import net.gigabit101.shrink.network.PacketHandler;
 import net.gigabit101.shrink.polylib.AttributeEvents;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.core.registries.Registries;
@@ -34,6 +35,7 @@ public class Shrink
         ModItems.CREATIVE_MODE_TABS.register();
         ModItems.ITEMS.register();
         ModContainers.CONTAINERS.register();
+        PacketHandler.init();
         if(Platform.getEnv() == EnvType.CLIENT)
         {
             ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());
@@ -53,7 +55,11 @@ public class Shrink
 
                     if(canShrink)
                     {
-                        float scale = (float) livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).getValue();
+                        float scale = (float) livingEntity.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
+                        if(!ShrinkAPI.isEntityShrunk(livingEntity))
+                        {
+                            return new EntitySizeEvents.UpdatedSize(entity.getDimensions(pose), entity.getEyeHeight(pose), entity.getDimensions(pose), entity.getEyeHeight(pose));
+                        }
                         return new EntitySizeEvents.UpdatedSize(entity.getDimensions(pose), entity.getEyeHeight(pose), entity.getDimensions(pose).scale(scale), entity.getEyeHeight(pose) * scale);
                     }
                 }

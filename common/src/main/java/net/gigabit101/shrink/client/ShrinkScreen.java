@@ -5,6 +5,9 @@ import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.client.widgets.ShrinkButton;
 import net.gigabit101.shrink.items.ItemShrinkDevice;
+import net.gigabit101.shrink.network.PacketHandler;
+import net.gigabit101.shrink.network.packets.PacketShrinkDevice;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -20,32 +23,33 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
     public static final ResourceLocation TEXTURE = new ResourceLocation(Shrink.MOD_ID, "textures/gui/shrinking_device.png");
     private float xMouse;
     private float yMouse;
-    private float scale;
-    private final InteractionHand hand;
+    private double scale;
+    private InteractionHand hand;
 
     //TODO these are config values
-    private float MAX_SIZE = 10.0F;
-    private float MIN_SIZE = 0.12F;
+    private double MAX_SIZE = 10.0D;
+    private double MIN_SIZE = 0.21D;
 
     public ShrinkScreen(ShrinkingDeviceContainer abstractContainerMenu, Inventory inventory, Component component)
     {
         super(abstractContainerMenu, inventory, component);
-        Player player = minecraft.player;
-        if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemShrinkDevice)
-        {
-            hand = InteractionHand.MAIN_HAND;
-        }
-        else
-        {
-            hand = InteractionHand.OFF_HAND;
-        }
-        this.scale = (float) minecraft.player.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
     }
 
     @Override
     protected void init()
     {
         super.init();
+        Player player = minecraft.player;
+        if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemShrinkDevice itemShrinkDevice)
+        {
+            hand = InteractionHand.MAIN_HAND;
+            this.scale = itemShrinkDevice.getScale(player.getItemInHand(InteractionHand.MAIN_HAND));
+        }
+        else
+        {
+            hand = InteractionHand.OFF_HAND;
+        }
+
         int x = width / 2;
 
         this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
@@ -55,12 +59,12 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
             {
                 if(Screen.hasShiftDown())
                 {
-                    scale += 1.0F;
+                    scale += 1.0D;
 
                 }
                 else
                 {
-                    scale += 0.1F;
+                    scale += 0.1D;
                 }
             }
         }));
@@ -72,15 +76,15 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
             {
                 if(Screen.hasShiftDown())
                 {
-                    scale -= 1.0F;
+                    scale -= 1.0D;
 
                 }
                 else
                 {
-                    scale -= 0.1F;
+                    scale -= 0.1D;
                 }
             }
-            if(scale < MIN_SIZE) scale = 0.21F;
+            if(scale < MIN_SIZE) scale = MIN_SIZE;
         }));
     }
 
@@ -88,7 +92,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
     public void onClose()
     {
         super.onClose();
-        //TODO send packet to the server to add the target size to itemstack
+        PacketHandler.HANDLER.sendToServer(new PacketShrinkDevice(hand, scale));
     }
 
     @Override
@@ -98,10 +102,7 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
         int relY = this.topPos;
         guiGraphics.blit(TEXTURE, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 60, relY + 120, 30, 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
-
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 250, relY + 120, (int) (30 * scale), 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
-
-        //        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 70, (int) (30 * scale), (float)(i + 51) - this.xMouse, (float)(j + 75 - 50) - this.yMouse, this.minecraft.player);
     }
 
     @Override

@@ -12,8 +12,8 @@ public class ShrinkRender
         if(shrunk)
         {
             poseStack.pushPose();
-            float scale = (float) livingEntity.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
-            poseStack.scale(scale, scale, scale);
+            double scale = livingEntity.getAttributeValue(ShrinkAPI.SCALE_ATTRIBUTE);
+            poseStack.scale((float) scale, (float) scale, (float) scale);
         }
     }
 
