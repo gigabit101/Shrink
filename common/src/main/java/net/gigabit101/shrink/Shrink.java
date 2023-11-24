@@ -7,6 +7,7 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.creeperhost.polylib.config.ConfigBuilder;
 import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModContainers;
@@ -27,10 +28,14 @@ public class Shrink
     public static final DeferredRegister<Attribute> ATTRIBUTES_DEFERRED_REGISTER = DeferredRegister.create(Shrink.MOD_ID, Registries.ATTRIBUTE);
 
     public static final RegistrySupplier<Attribute> SHRINK_ATTRIBUTE = ATTRIBUTES_DEFERRED_REGISTER.register("shrink_scale", () -> ShrinkAPI.SCALE_ATTRIBUTE);
-
+    public static ConfigBuilder configBuilder;
+    public static ShrinkConfig shrinkConfig;
 
     public static void init()
     {
+        configBuilder = new ConfigBuilder(MOD_ID, Platform.getConfigFolder().resolve(MOD_ID + ".json5"), new ShrinkConfig());
+        shrinkConfig = (ShrinkConfig) configBuilder.getConfigData();
+
         ATTRIBUTES_DEFERRED_REGISTER.register();
 
         ModItems.CREATIVE_MODE_TABS.register();

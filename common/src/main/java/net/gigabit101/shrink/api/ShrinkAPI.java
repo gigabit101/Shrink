@@ -1,12 +1,13 @@
 package net.gigabit101.shrink.api;
 
+import net.gigabit101.shrink.Shrink;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
 public class ShrinkAPI
 {
-    public static final Attribute SCALE_ATTRIBUTE = new RangedAttribute("shrink_scale", 0.0D, 0.0D, 10).setSyncable(true);
+    public static final Attribute SCALE_ATTRIBUTE = new RangedAttribute("shrink_scale", 0.0D, 0.0D, Shrink.shrinkConfig.maxSize).setSyncable(true);
 
     public static boolean canEntityShrink(LivingEntity livingEntity)
     {

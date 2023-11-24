@@ -26,9 +26,8 @@ public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContain
     private double scale;
     private InteractionHand hand;
 
-    //TODO these are config values
-    private double MAX_SIZE = 10.0D;
-    private double MIN_SIZE = 0.21D;
+    private final double MAX_SIZE = Shrink.shrinkConfig.maxSize;
+    private final double MIN_SIZE = Shrink.shrinkConfig.minSize;
 
     public ShrinkScreen(ShrinkingDeviceContainer abstractContainerMenu, Inventory inventory, Component component)
     {
