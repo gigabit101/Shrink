@@ -21,6 +21,7 @@ dependencies {
     mappings loom.officialMojangMappings()
 
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi "net.creeperhost:polylib-fabric:${polylib_version}"
 
 
     modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
