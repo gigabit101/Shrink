@@ -1,6 +1,10 @@
 package net.gigabit101.shrink.items;
 
 import dev.architectury.registry.menu.MenuRegistry;
+import net.creeperhost.polylib.inventory.energy.PolyEnergyItem;
+import net.creeperhost.polylib.inventory.energy.impl.SimpleEnergyContainer;
+import net.creeperhost.polylib.inventory.energy.impl.WrappedItemEnergyContainer;
+import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.minecraft.network.chat.Component;
@@ -23,9 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemShrinkDevice extends Item implements MenuProvider
+public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyItem<WrappedItemEnergyContainer>
 {
     public static final UUID SHRINKING_DEVICE_ID = UUID.fromString("e4388c41-4cf8-4631-98b4-b26eeaedcbdc");
+    private WrappedItemEnergyContainer energyContainer;
+
     public ItemShrinkDevice(Properties properties)
     {
         super(properties);
@@ -58,11 +64,13 @@ public class ItemShrinkDevice extends Item implements MenuProvider
                     return InteractionResultHolder.fail(stack);
                 }
 
-                System.out.println("Base value: " + shrink.getBaseValue());
-                System.out.println("New value: " + shrink.getValue());
-
                 if (player.isShiftKeyDown())
                 {
+                    if(!hasPower(player, stack))
+                    {
+                        player.displayClientMessage(Component.translatable("shrink.message.power"), false);
+                        return InteractionResultHolder.fail(stack);
+                    }
                     if(!ShrinkAPI.isEntityShrunk(player))
                     {
                         if (shrink.getModifier(SHRINKING_DEVICE_ID) == null)
@@ -97,6 +105,12 @@ public class ItemShrinkDevice extends Item implements MenuProvider
         return super.use(level, player, interactionHand);
     }
 
+    public boolean hasPower(Player player, ItemStack stack)
+    {
+        if(player.isCreative()) return true;
+        return getEnergyStorage(stack).getStoredEnergy() >= Shrink.shrinkConfig.shrinkingDeviceCost;
+    }
+
     public static AttributeModifier createModifier(double value)
     {
         return new AttributeModifier(SHRINKING_DEVICE_ID, "shrinking_device", value, AttributeModifier.Operation.ADDITION);
@@ -116,9 +130,27 @@ public class ItemShrinkDevice extends Item implements MenuProvider
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag)
+    public WrappedItemEnergyContainer getEnergyStorage(ItemStack holder)
     {
-        super.appendHoverText(itemStack, level, list, tooltipFlag);
-        list.add(Component.literal("Scale: " + getScale(itemStack)));
+        return energyContainer == null ? this.energyContainer = new WrappedItemEnergyContainer(holder, new SimpleEnergyContainer(10000)) : this.energyContainer;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag)
+    {
+        super.appendHoverText(stack, level, list, tooltipFlag);
+        list.add(Component.literal(getEnergyStorage(stack).getStoredEnergy() + "/" + getEnergyStorage(stack).getMaxCapacity() + " RF"));
+    }
+
+    @Override
+    public boolean isBarVisible(@NotNull ItemStack itemStack)
+    {
+        return (getEnergyStorage(itemStack).getStoredEnergy() < getEnergyStorage(itemStack).getMaxCapacity());
+    }
+
+    @Override
+    public int getBarWidth(@NotNull ItemStack itemStack)
+    {
+        return (int) Math.min(13 * getEnergyStorage(itemStack).getStoredEnergy() / getEnergyStorage(itemStack).getMaxCapacity(), 13);
     }
 }

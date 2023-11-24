@@ -6,5 +6,6 @@
   "key.shrink.category": "Shrink",
   "key.shrink.shrink": "Toggle Shrink",
   "shrink.deny_shrink": "Blocked shrinking of entity due to deny tag",
-  "shrink.message.already_shrunk": "Unable to open while already shrunk"
+  "shrink.message.already_shrunk": "Unable to open while already shrunk",
+  "shrink.message.power": "Not enough power"
 }
