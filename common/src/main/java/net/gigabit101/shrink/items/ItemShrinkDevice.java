@@ -58,11 +58,6 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
             {
                 ItemStack stack = player.getItemInHand(interactionHand);
                 AttributeInstance shrink = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE);
-                if (shrink == null)
-                {
-                    player.displayClientMessage(Component.literal("Shrink Attribute Missing???"), false);
-                    return InteractionResultHolder.fail(stack);
-                }
 
                 if (player.isShiftKeyDown())
                 {
@@ -100,7 +95,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
             }
         }
         else {
-            player.displayClientMessage(Component.literal("IT BROKEN"), false);
+            player.displayClientMessage(Component.translatable("shrink.message.missing"), false);
         }
         return super.use(level, player, interactionHand);
     }
@@ -132,7 +127,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     @Override
     public WrappedItemEnergyContainer getEnergyStorage(ItemStack holder)
     {
-        return energyContainer == null ? this.energyContainer = new WrappedItemEnergyContainer(holder, new SimpleEnergyContainer(10000)) : this.energyContainer;
+        return energyContainer == null ? this.energyContainer = new WrappedItemEnergyContainer(holder, new SimpleEnergyContainer(Shrink.shrinkConfig.shrinkingDeviceCapacity)) : this.energyContainer;
     }
 
     @Override
