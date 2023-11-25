@@ -48,6 +48,7 @@ public class Shrink
         ModItems.ITEMS.register();
         ModContainers.CONTAINERS.register();
         PacketHandler.init();
+
         if(Platform.getEnv() == EnvType.CLIENT)
         {
             ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());

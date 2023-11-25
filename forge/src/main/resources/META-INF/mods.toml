@@ -33,3 +33,10 @@ mandatory = false
 versionRange = "[10.0.11,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.shrink]]
+modId = "polylib"
+mandatory = false
+versionRange = "[2002.0.3,)"
+ordering = "AFTER"
+side = "BOTH"
