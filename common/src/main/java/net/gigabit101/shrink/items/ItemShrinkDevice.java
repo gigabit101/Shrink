@@ -10,8 +10,10 @@ import net.gigabit101.shrink.api.ShrinkAPI;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -57,7 +59,6 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
             if (!level.isClientSide())
             {
                 ItemStack stack = player.getItemInHand(interactionHand);
-                AttributeInstance shrink = player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE);
 
                 if (player.isShiftKeyDown())
                 {
@@ -68,15 +69,14 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                     }
                     if(!ShrinkAPI.isEntityShrunk(player))
                     {
-                        if (shrink.getModifier(SHRINKING_DEVICE_ID) == null)
-                        {
-                            shrink.addPermanentModifier(createModifier(getScale(stack)));
-                            return InteractionResultHolder.success(stack);
-                        }
+                        player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).addPermanentModifier(createModifier(getScale(stack)));
+                        usePower(player, stack);
+                        return InteractionResultHolder.success(stack);
                     }
                     else
                     {
-                        shrink.removePermanentModifier(SHRINKING_DEVICE_ID);
+                        player.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).removePermanentModifier(SHRINKING_DEVICE_ID);
+                        usePower(player, stack);
                         return InteractionResultHolder.success(stack);
                     }
                 }
@@ -100,10 +100,47 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
         return super.use(level, player, interactionHand);
     }
 
+    @Override
+    public @NotNull InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand)
+    {
+        if(livingEntity != null)
+        {
+            if(ShrinkAPI.canEntityShrink(livingEntity))
+            {
+                if (hasPower(player, itemStack))
+                {
+                    if(!ShrinkAPI.isEntityShrunk(livingEntity))
+                    {
+                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).addPermanentModifier(createModifier(getScale(itemStack)));
+                        usePower(player, itemStack);
+                        livingEntity.refreshDimensions();
+                        return InteractionResult.SUCCESS;
+                    }
+                    else
+                    {
+                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).removeModifier(SHRINKING_DEVICE_ID);
+                        usePower(player, itemStack);
+                        livingEntity.refreshDimensions();
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            }
+        }
+        return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
+    }
+
     public boolean hasPower(Player player, ItemStack stack)
     {
         if(player.isCreative()) return true;
         return getEnergyStorage(stack).getStoredEnergy() >= Shrink.shrinkConfig.shrinkingDeviceCost;
+    }
+
+    public void usePower(Player player, ItemStack stack)
+    {
+        if(!player.isCreative())
+        {
+            getEnergyStorage(stack).extractEnergy(Shrink.shrinkConfig.shrinkingDeviceCost, false);
+        }
     }
 
     public static AttributeModifier createModifier(double value)
