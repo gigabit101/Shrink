@@ -1,6 +1,5 @@
 package net.gigabit101.shrink.mixins;
 
-import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +13,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin

@@ -23,6 +23,7 @@ public class ModItems
 
     static
     {
+        //noinspection unchecked,UnstableApiUsage
         CreativeTabRegistry.append(CREATIVE_TAB, SHRINKING_DEVICE, SHRINK_BOTTLE);
     }
 }

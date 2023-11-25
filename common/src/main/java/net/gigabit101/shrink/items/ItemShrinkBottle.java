@@ -1,12 +1,9 @@
 package net.gigabit101.shrink.items;
 
-import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -33,20 +30,16 @@ public class ItemShrinkBottle extends Item
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context)
     {
-        Player player = context.getPlayer();
-        BlockPos pos = context.getClickedPos();
-        Direction facing = context.getClickedFace();
-        Level worldIn = context.getLevel();
-        ItemStack stack = context.getItemInHand();
 
-        if (player.level().isClientSide) return InteractionResult.FAIL;
-        if (!containsEntity(stack)) return InteractionResult.FAIL;
-        Entity entity = getEntityFromItemStack(stack, worldIn);
-        BlockPos blockPos = pos.relative(facing);
+        if (context.getPlayer().level().isClientSide) return InteractionResult.FAIL;
+        if (!containsEntity(context.getItemInHand())) return InteractionResult.FAIL;
+
+        Entity entity = getEntityFromItemStack(context.getItemInHand(), context.getLevel());
+        BlockPos blockPos = context.getClickedPos().relative(context.getClickedFace());
         entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
-        player.setItemInHand(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
-        stack.setTag(new CompoundTag());
-        worldIn.addFreshEntity(entity);
+        context.getPlayer().setItemInHand(context.getHand(), new ItemStack(Items.GLASS_BOTTLE, 1));
+        context.getItemInHand().setTag(new CompoundTag());
+        context.getLevel().addFreshEntity(entity);
         return InteractionResult.SUCCESS;
     }
 

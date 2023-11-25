@@ -1,7 +1,6 @@
 package net.gigabit101.shrink.mixins;
 
 import net.gigabit101.shrink.api.ShrinkAPI;
-import net.gigabit101.shrink.polylib.AttributeEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import org.spongepowered.asm.mixin.Mixin;
