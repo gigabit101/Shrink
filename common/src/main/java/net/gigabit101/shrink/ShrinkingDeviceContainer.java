@@ -14,8 +14,8 @@ public class ShrinkingDeviceContainer extends AbstractContainerMenu
     public ShrinkingDeviceContainer(int id, Inventory playerInv, FriendlyByteBuf friendlyByteBuf)
     {
         super(ModContainers.SHRINKING_DEVICE.get(), id);
-        drawPlayersInv(playerInv, 8, 85);
-        drawPlayersHotBar(playerInv, 8, 85 + 58);
+        drawPlayersInv(playerInv, 8, 84);
+        drawPlayersHotBar(playerInv, 8, 84 + 58);
     }
 
     public void drawPlayersInv(Inventory player, int x, int y)

@@ -2,15 +2,14 @@ package net.gigabit101.shrink;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.creeperhost.polylib.PolyLib;
 import net.creeperhost.polylib.config.ConfigBuilder;
-import net.fabricmc.api.EnvType;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.init.ModItems;
@@ -23,7 +22,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -49,7 +47,7 @@ public class Shrink
         ModContainers.CONTAINERS.register();
         PacketHandler.init();
 
-        if(Platform.getEnv() == EnvType.CLIENT)
+        if(PolyLib.isClientSide())
         {
             ClientLifecycleEvent.CLIENT_SETUP.register(instance -> ShrinkClient.init());
         }
