@@ -59,7 +59,7 @@ remapJar {
 
 unifiedPublishing {
     project {
-        displayName = "$rootProject.mod_id-forge-$rootProject.minecraft_version-$rootProject.mod_version"
+        displayName = "[Forge]$rootProject.mod_id-$rootProject.minecraft_version-$rootProject.mod_version"
         releaseType = "$rootProject.artifact_type"
         changelog = ""
         gameVersions = []
@@ -67,7 +67,7 @@ unifiedPublishing {
         mainPublication tasks.remapJar
         relations {
             depends {
-                curseforge = "architectury-api"
+                curseforge = "polylib"
             }
         }
 

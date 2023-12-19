@@ -1,5 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "me.shedaniel.unified-publishing"
 }
 
 configurations {
@@ -54,4 +55,29 @@ remapJar {
     input.set(shadowJar.archiveFile)
     dependsOn(shadowJar)
     archiveClassifier = "neoforge"
+}
+
+unifiedPublishing {
+    project {
+        displayName = "[NeoForge]$rootProject.mod_id-$rootProject.minecraft_version-$rootProject.mod_version"
+        releaseType = "$rootProject.artifact_type"
+        changelog = ""
+        gameVersions = []
+        gameLoaders = ["neoforge"]
+        mainPublication tasks.remapJar
+        relations {
+            depends {
+                curseforge = "polylib"
+            }
+        }
+
+        var CURSE_API_KEY = project.findProperty("CURSE_API_KEY") ?: System.getenv("CURSE_API_KEY")
+        if (CURSE_API_KEY != null) {
+            curseforge {
+                token = CURSE_API_KEY
+                id = rootProject.curseforge_id
+                gameVersions.addAll rootProject.minecraft_version
+            }
+        }
+    }
 }
