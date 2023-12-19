@@ -57,16 +57,6 @@ remapJar {
     archiveClassifier = "forge"
 }
 
-task renameJarForPublication(type: Zip, dependsOn: remapJar) {
-    from remapJar.archiveFile.map { zipTree(it) }
-    archiveExtension = "jar"
-    metadataCharset "UTF-8"
-    destinationDirectory = base.libsDirectory
-    archiveClassifier = project.name
-}
-
-assemble.dependsOn renameJarForPublication
-
 unifiedPublishing {
     project {
         displayName = "$rootProject.mod_id-forge-$rootProject.minecraft_version-$rootProject.mod_version"
@@ -74,7 +64,7 @@ unifiedPublishing {
         changelog = ""
         gameVersions = []
         gameLoaders = ["forge"]
-        mainPublication renameJarForPublication
+        mainPublication tasks.remapJar
         relations {
             depends {
                 curseforge = "architectury-api"
