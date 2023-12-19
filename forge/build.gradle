@@ -1,5 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "me.shedaniel.unified-publishing"
 }
 
 configurations {
@@ -54,4 +55,24 @@ remapJar {
     input.set(shadowJar.archiveFile)
     dependsOn(shadowJar)
     archiveClassifier = "forge"
+}
+
+unifiedPublishing {
+    project {
+        displayName = "$project.mod_id-forge-$project.minecraft_version-$project.version"
+        releaseType = "$rootProject.artifact_type"
+        changelog = ""
+        gameVersions = ["1.20.2"]
+        gameLoaders = ["forge"]
+//        mainPublication renameJarForPublication
+
+        var CURSE_API_KEY = project.findProperty("CURSE_API_KEY") ?: System.getenv("CURSE_API_KEY")
+        if (CURSE_API_KEY != null) {
+            curseforge {
+                token = CURSE_API_KEY
+                id = rootProject.curseforge_id
+                gameVersions.addAll "Java 17", "1.20.2"
+            }
+        }
+    }
 }
