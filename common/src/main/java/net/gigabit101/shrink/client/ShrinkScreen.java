@@ -1,5 +1,16 @@
 package net.gigabit101.shrink.client;
 
+import net.creeperhost.polylib.PolyLib;
+import net.creeperhost.polylib.client.modulargui.ModularGui;
+import net.creeperhost.polylib.client.modulargui.ModularGuiContainer;
+import net.creeperhost.polylib.client.modulargui.elements.*;
+import net.creeperhost.polylib.client.modulargui.lib.Constraints;
+import net.creeperhost.polylib.client.modulargui.lib.DynamicTextures;
+import net.creeperhost.polylib.client.modulargui.lib.container.ContainerGuiProvider;
+import net.creeperhost.polylib.client.modulargui.lib.container.ContainerScreenAccess;
+import net.creeperhost.polylib.client.modulargui.lib.geometry.Align;
+import net.creeperhost.polylib.client.modulargui.lib.geometry.Constraint;
+import net.creeperhost.polylib.client.modulargui.sprite.PolyTextures;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
@@ -17,106 +28,150 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-public class ShrinkScreen extends AbstractContainerScreen<ShrinkingDeviceContainer>
+import java.util.function.Function;
+
+import static net.creeperhost.polylib.client.modulargui.lib.geometry.Constraint.*;
+import static net.creeperhost.polylib.client.modulargui.lib.geometry.GeoParam.*;
+
+public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer> implements DynamicTextures
 {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Shrink.MOD_ID, "textures/gui/shrinking_device.png");
-    private float xMouse;
-    private float yMouse;
-    private double scale;
-    private InteractionHand hand;
+    private String BACKGROUND_TEXTURE;
+    private double SCALE;
+    private GuiText scale;
 
-    private final double MAX_SIZE = Shrink.shrinkConfig.maxSize;
-    private final double MIN_SIZE = Shrink.shrinkConfig.minSize;
-
-    public ShrinkScreen(ShrinkingDeviceContainer abstractContainerMenu, Inventory inventory, Component component)
+    @Override
+    public void makeTextures(Function<DynamicTexture, String> textures)
     {
-        super(abstractContainerMenu, inventory, component);
+        BACKGROUND_TEXTURE = dynamicTexture(textures, new ResourceLocation(PolyLib.MOD_ID, "textures/gui/dynamic/gui_vanilla"),
+                new ResourceLocation(PolyLib.MOD_ID, "textures/gui/dynamic/gui_vanilla"), 226, 220, 4);
     }
 
     @Override
-    protected void init()
+    public GuiElement<?> createRootElement(ModularGui gui)
     {
-        super.init();
-        Player player = minecraft.player;
-        if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemShrinkDevice itemShrinkDevice)
+        GuiManipulable root = new GuiManipulable(gui)
+                .addResizeHandles(4, false)
+                .addMoveHandle(10);
+        root.enableCursors(true);
+        GuiTexture bg = new GuiTexture(root.getContentElement(), PolyTextures.get(BACKGROUND_TEXTURE)).dynamicTexture();
+        Constraints.bind(bg, root.getContentElement());
+        return root;
+    }
+
+    @Override
+    public void buildGui(ModularGui gui, ContainerScreenAccess<ShrinkingDeviceContainer> screenAccess)
+    {
+        ShrinkingDeviceContainer menu = screenAccess.getMenu();
+        ItemStack stack = screenAccess.getMenu().inventory.player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemShrinkDevice itemShrinkDevice = (ItemShrinkDevice) stack.getItem();
+        SCALE = itemShrinkDevice.getScale(stack);
+
+        gui.initStandardGui(226, 220);
+        gui.setGuiTitle(Component.literal("Shrinking Device"));
+        GuiElement<?> root = gui.getRoot();
+        GuiTexture background = new GuiTexture(root, PolyTextures.get(BACKGROUND_TEXTURE));
+        Constraints.bind(background, root);
+
+        GuiText title = new GuiText(background, gui.getGuiTitle())
+                .setTextColour(0x404040)
+                .setShadow(false)
+                .constrain(TOP, relative(background.get(TOP), 8))
+                .constrain(HEIGHT, Constraint.literal(8))
+                .constrain(LEFT, relative(background.get(LEFT), 5))
+                .constrain(RIGHT, relative(background.get(RIGHT), -5));
+
+        var inventory = GuiSlots.playerAllSlots(background, screenAccess, menu.main, menu.hotBar, menu.armor, menu.offhand);
+        inventory.container
+                .constrain(WIDTH, null)
+                .constrain(LEFT, match(background.get(LEFT)))
+                .constrain(RIGHT, match(background.get(RIGHT)))
+                .constrain(BOTTOM, relative(background.get(BOTTOM), -8));
+
+        GuiText invLabel = new GuiText(background, Component.translatable("container.inventory"))
+                .setTextColour(0x404040)
+                .setShadow(false)
+                .setAlignment(Align.LEFT)
+                .constrain(HEIGHT, Constraint.literal(8))
+                .constrain(BOTTOM, relative(inventory.container.get(TOP), -3))
+                .constrain(LEFT, relative(inventory.getPart(1).get(LEFT), 0))
+                .constrain(RIGHT, relative(inventory.primary.get(RIGHT), 0));
+
+        GuiButton upButton = GuiButton.vanillaAnimated(background, Component.literal("^"))
+                .onPress(() -> onButtonPress(true))
+                .constrain(LEFT, midPoint(background.get(LEFT), background.get(RIGHT), -16))
+                .constrain(BOTTOM, relative(title.get(BOTTOM), 32))
+                .constrain(WIDTH, literal(32))
+                .constrain(HEIGHT, literal(18));
+
+
+        GuiButton downButton = GuiButton.vanillaAnimated(background, Component.literal("v"))
+                .onPress(() -> onButtonPress(false))
+                .constrain(LEFT, midPoint(background.get(LEFT), background.get(RIGHT), -16))
+                .constrain(BOTTOM, midPoint(background.get(BOTTOM), title.get(BOTTOM)))
+                .constrain(WIDTH, literal(32))
+                .constrain(HEIGHT, literal(18));
+
+        scale = new GuiText(background, () -> Component.literal(String.valueOf(SCALE).substring(0, 3)))
+                .setTextColour(0x404040)
+                .setShadow(false)
+                .constrain(TOP, midPoint(upButton.get(BOTTOM), downButton.get(TOP)))
+                .constrain(HEIGHT, Constraint.literal(8))
+                .constrain(LEFT, relative(downButton.get(LEFT), 5))
+                .constrain(RIGHT, relative(downButton.get(RIGHT), -5));
+
+        var energyBar = GuiEnergyBar.simpleBar(background);
+        energyBar.container
+                .constrain(LEFT, midPoint(background.get(LEFT), invLabel.get(LEFT), +4))
+                .constrain(BOTTOM, relative(invLabel.get(TOP), -6))
+                .constrain(WIDTH, literal(18))
+                .constrain(TOP, relative(title.get(BOTTOM), 8));
+
+        energyBar.primary.setCapacity(menu.maxEnergy::get).setEnergy(menu.energy::get);
+    }
+
+    public void onButtonPress(boolean plus)
+    {
+        boolean shift = Screen.hasShiftDown();
+        if(plus)
         {
-            hand = InteractionHand.MAIN_HAND;
-            this.scale = itemShrinkDevice.getScale(player.getItemInHand(InteractionHand.MAIN_HAND));
+            if(SCALE <= Shrink.shrinkConfig.maxSize)
+            {
+                if (shift)
+                {
+                    SCALE += 1.0D;
+                }
+                else
+                {
+                    SCALE += 0.1D;
+                }
+            }
         }
         else
         {
-            hand = InteractionHand.OFF_HAND;
+            if (SCALE >= Shrink.shrinkConfig.minSize)
+            {
+                if (shift)
+                {
+                    SCALE -= 1.0D;
+                }
+                else
+                {
+                    SCALE -= 0.1D;
+                }
+            }
         }
+        if(SCALE > Shrink.shrinkConfig.maxSize) SCALE = Shrink.shrinkConfig.maxSize;
+        if(SCALE < Shrink.shrinkConfig.minSize) SCALE = Shrink.shrinkConfig.minSize;
 
-        int x = width / 2;
+        PacketHandler.HANDLER.sendToServer(new PacketShrinkDevice(InteractionHand.MAIN_HAND, SCALE));
+        scale.setText(Component.literal(String.valueOf(SCALE).substring(0, 3)));
 
-        this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 10, 40, 20, Component.literal("^"), b ->
-        {
-            if (minecraft.player == null) return;
-            if(scale <= MAX_SIZE)
-            {
-                if(Screen.hasShiftDown())
-                {
-                    scale += 1.0D;
-
-                }
-                else
-                {
-                    scale += 0.1D;
-                }
-            }
-        }));
-
-        this.addRenderableWidget(new ShrinkButton(x - 20, topPos + 50, 40, 20, Component.literal("v"), b ->
-        {
-            if (minecraft.player == null) return;
-            if(scale >= MIN_SIZE)
-            {
-                if(Screen.hasShiftDown())
-                {
-                    scale -= 1.0D;
-
-                }
-                else
-                {
-                    scale -= 0.1D;
-                }
-            }
-            if(scale < MIN_SIZE) scale = MIN_SIZE;
-        }));
     }
 
-    @Override
-    public void onClose()
+    public static ModularGuiContainer<ShrinkingDeviceContainer> create(ShrinkingDeviceContainer menu, Inventory inventory, Component component)
     {
-        super.onClose();
-        PacketHandler.HANDLER.sendToServer(new PacketShrinkDevice(hand, scale));
+        return new ModularGuiContainer<>(menu, inventory, new ShrinkScreen());
     }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j)
-    {
-        int relX = this.leftPos;
-        int relY = this.topPos;
-        guiGraphics.blit(TEXTURE, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 60, relY + 90, 30, 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, relX + 26, relY + 8, relX + 250, relY + 90, (int) (30 * scale), 0.0625F, this.xMouse, this.yMouse, this.minecraft.player);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int i, int j, float f)
-    {
-        super.render(guiGraphics, i, j, f);
-        renderTooltip(guiGraphics, i, j);
-
-        String scaleString = ("" + scale).substring(0, 3);
-        guiGraphics.drawCenteredString(font, scaleString, this.width / 2, this.topPos + 35, 0xFFFFFF);
-
-        this.xMouse = (float)i;
-        this.yMouse = (float)j;
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int i, int j) {}
 }

@@ -7,6 +7,6 @@ public class ModScreens
 {
     public static void init()
     {
-        MenuRegistry.registerScreenFactory(ModContainers.SHRINKING_DEVICE.get(), ShrinkScreen::new);
+        MenuRegistry.registerScreenFactory(ModContainers.SHRINKING_DEVICE.get(), ShrinkScreen::create);
     }
 }

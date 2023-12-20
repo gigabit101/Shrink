@@ -1,6 +1,5 @@
 package net.gigabit101.shrink.neoforge;
 
-//import dev.architectury.platform.neoforge.EventBuses;
 import net.gigabit101.shrink.Shrink;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -14,8 +13,6 @@ public class ShrinkModForge
     public ShrinkModForge()
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        //TODO??
-//        EventBuses.registerModEventBus(Shrink.MOD_ID, eventBus);
         eventBus.addListener(this::clientSetup);
         Shrink.init();
     }
