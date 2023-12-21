@@ -18,9 +18,6 @@ public class ShrinkingDeviceContainer extends ModularGuiContainerMenu
     public final SlotGroup main = createSlotGroup(0, 1, 3); //zone id is 0, Quick move to zone 1, then 3
     public final SlotGroup hotBar = createSlotGroup(0, 1, 3);
 
-    public final SlotGroup armor = createSlotGroup(1, 3, 0); //zone id is 1, Quick move to zone 3, then 0
-    public final SlotGroup offhand = createSlotGroup(2, 3, 0);
-
     public final DataSync<Long> energy;
     public final DataSync<Long> maxEnergy;
 
@@ -38,8 +35,6 @@ public class ShrinkingDeviceContainer extends ModularGuiContainerMenu
         maxEnergy = new DataSync<>(this, new LongData(), () -> itemShrinkDevice.getEnergyStorage(stack).getMaxCapacity());
         main.addPlayerMain(inventory);
         hotBar.addPlayerBar(inventory);
-        armor.addPlayerArmor(inventory);
-        offhand.addPlayerOffhand(inventory);
     }
 
     @Override

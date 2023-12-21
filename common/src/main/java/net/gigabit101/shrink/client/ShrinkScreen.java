@@ -82,7 +82,8 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .constrain(LEFT, relative(background.get(LEFT), 5))
                 .constrain(RIGHT, relative(background.get(RIGHT), -5));
 
-        var inventory = GuiSlots.playerAllSlots(background, screenAccess, menu.main, menu.hotBar, menu.armor, menu.offhand);
+        var inventory = GuiSlots.player(background, screenAccess, menu.main, menu.hotBar);
+
         inventory.container
                 .constrain(WIDTH, null)
                 .constrain(LEFT, match(background.get(LEFT)))
@@ -95,7 +96,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .setAlignment(Align.LEFT)
                 .constrain(HEIGHT, Constraint.literal(8))
                 .constrain(BOTTOM, relative(inventory.container.get(TOP), -3))
-                .constrain(LEFT, relative(inventory.getPart(1).get(LEFT), 0))
+                .constrain(LEFT, relative(inventory.getPart(0).get(LEFT), 0))
                 .constrain(RIGHT, relative(inventory.primary.get(RIGHT), 0));
 
         GuiButton upButton = GuiButton.vanillaAnimated(background, Component.literal("^"))
@@ -167,7 +168,6 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
 
         PacketHandler.HANDLER.sendToServer(new PacketShrinkDevice(InteractionHand.MAIN_HAND, SCALE));
         scale.setText(Component.literal(String.valueOf(SCALE).substring(0, 3)));
-
     }
 
     public static ModularGuiContainer<ShrinkingDeviceContainer> create(ShrinkingDeviceContainer menu, Inventory inventory, Component component)
