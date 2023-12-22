@@ -39,7 +39,6 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
 {
     private String BACKGROUND_TEXTURE;
     private double SCALE;
-    private GuiText scale;
 
     @Override
     public void makeTextures(Function<DynamicTexture, String> textures)
@@ -55,7 +54,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .addResizeHandles(4, false)
                 .addMoveHandle(10);
         root.enableCursors(true);
-        GuiTexture bg = new GuiTexture(root.getContentElement(), PolyTextures.get(BACKGROUND_TEXTURE)).dynamicTexture();
+        GuiTexture bg = new GuiTexture(root.getContentElement(), PolyTextures.get("dynamic/gui_vanilla")).dynamicTexture();
         Constraints.bind(bg, root.getContentElement());
         return root;
     }
@@ -71,26 +70,26 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
         gui.initStandardGui(226, 220);
         gui.setGuiTitle(Component.literal("Shrinking Device"));
         GuiElement<?> root = gui.getRoot();
-        GuiTexture background = new GuiTexture(root, PolyTextures.get(BACKGROUND_TEXTURE));
-        Constraints.bind(background, root);
+//        GuiTexture background = new GuiTexture(root, PolyTextures.get(BACKGROUND_TEXTURE));
+//        Constraints.bind(background, root);
 
-        GuiText title = new GuiText(background, gui.getGuiTitle())
+        GuiText title = new GuiText(root, gui.getGuiTitle())
                 .setTextColour(0x404040)
                 .setShadow(false)
-                .constrain(TOP, relative(background.get(TOP), 8))
+                .constrain(TOP, relative(root.get(TOP), 8))
                 .constrain(HEIGHT, Constraint.literal(8))
-                .constrain(LEFT, relative(background.get(LEFT), 5))
-                .constrain(RIGHT, relative(background.get(RIGHT), -5));
+                .constrain(LEFT, relative(root.get(LEFT), 5))
+                .constrain(RIGHT, relative(root.get(RIGHT), -5));
 
-        var inventory = GuiSlots.player(background, screenAccess, menu.main, menu.hotBar);
+        var inventory = GuiSlots.player(root, screenAccess, menu.main, menu.hotBar);
 
         inventory.container
                 .constrain(WIDTH, null)
-                .constrain(LEFT, match(background.get(LEFT)))
-                .constrain(RIGHT, match(background.get(RIGHT)))
-                .constrain(BOTTOM, relative(background.get(BOTTOM), -8));
+                .constrain(LEFT, match(root.get(LEFT)))
+                .constrain(RIGHT, match(root.get(RIGHT)))
+                .constrain(BOTTOM, relative(root.get(BOTTOM), -8));
 
-        GuiText invLabel = new GuiText(background, Component.translatable("container.inventory"))
+        GuiText invLabel = new GuiText(root, Component.translatable("container.inventory"))
                 .setTextColour(0x404040)
                 .setShadow(false)
                 .setAlignment(Align.LEFT)
@@ -99,22 +98,22 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .constrain(LEFT, relative(inventory.getPart(0).get(LEFT), 0))
                 .constrain(RIGHT, relative(inventory.primary.get(RIGHT), 0));
 
-        GuiButton upButton = GuiButton.vanillaAnimated(background, Component.literal("^"))
+        GuiButton upButton = GuiButton.vanillaAnimated(root, Component.literal("^"))
                 .onPress(() -> onButtonPress(true))
-                .constrain(LEFT, midPoint(background.get(LEFT), background.get(RIGHT), -16))
+                .constrain(LEFT, midPoint(root.get(LEFT), root.get(RIGHT), -16))
                 .constrain(BOTTOM, relative(title.get(BOTTOM), 32))
                 .constrain(WIDTH, literal(32))
                 .constrain(HEIGHT, literal(18));
 
 
-        GuiButton downButton = GuiButton.vanillaAnimated(background, Component.literal("v"))
+        GuiButton downButton = GuiButton.vanillaAnimated(root, Component.literal("v"))
                 .onPress(() -> onButtonPress(false))
-                .constrain(LEFT, midPoint(background.get(LEFT), background.get(RIGHT), -16))
-                .constrain(BOTTOM, midPoint(background.get(BOTTOM), title.get(BOTTOM)))
+                .constrain(LEFT, midPoint(root.get(LEFT), root.get(RIGHT), -16))
+                .constrain(BOTTOM, midPoint(root.get(BOTTOM), title.get(BOTTOM)))
                 .constrain(WIDTH, literal(32))
                 .constrain(HEIGHT, literal(18));
 
-        scale = new GuiText(background, () -> Component.literal(String.valueOf(SCALE).substring(0, 3)))
+        GuiText scale = new GuiText(root, () -> Component.literal(String.format("%.2f", SCALE)))
                 .setTextColour(0x404040)
                 .setShadow(false)
                 .constrain(TOP, midPoint(upButton.get(BOTTOM), downButton.get(TOP)))
@@ -122,9 +121,9 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .constrain(LEFT, relative(downButton.get(LEFT), 5))
                 .constrain(RIGHT, relative(downButton.get(RIGHT), -5));
 
-        var energyBar = GuiEnergyBar.simpleBar(background);
+        var energyBar = GuiEnergyBar.simpleBar(root);
         energyBar.container
-                .constrain(LEFT, midPoint(background.get(LEFT), invLabel.get(LEFT), +4))
+                .constrain(LEFT, midPoint(root.get(LEFT), invLabel.get(LEFT), +4))
                 .constrain(BOTTOM, relative(invLabel.get(TOP), -6))
                 .constrain(WIDTH, literal(18))
                 .constrain(TOP, relative(title.get(BOTTOM), 8));
@@ -167,7 +166,6 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
         if(SCALE < Shrink.shrinkConfig.minSize) SCALE = Shrink.shrinkConfig.minSize;
 
         PacketHandler.HANDLER.sendToServer(new PacketShrinkDevice(InteractionHand.MAIN_HAND, SCALE));
-        scale.setText(Component.literal(String.valueOf(SCALE).substring(0, 3)));
     }
 
     public static ModularGuiContainer<ShrinkingDeviceContainer> create(ShrinkingDeviceContainer menu, Inventory inventory, Component component)
