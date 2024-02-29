@@ -37,15 +37,10 @@ import static net.creeperhost.polylib.client.modulargui.lib.geometry.GeoParam.*;
 
 public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer> implements DynamicTextures
 {
-    private String BACKGROUND_TEXTURE;
     private double SCALE;
 
     @Override
-    public void makeTextures(Function<DynamicTexture, String> textures)
-    {
-        BACKGROUND_TEXTURE = dynamicTexture(textures, new ResourceLocation(PolyLib.MOD_ID, "textures/gui/dynamic/gui_vanilla"),
-                new ResourceLocation(PolyLib.MOD_ID, "textures/gui/dynamic/gui_vanilla"), 226, 220, 4);
-    }
+    public void makeTextures(Function<DynamicTexture, String> textures) {}
 
     @Override
     public GuiElement<?> createRootElement(ModularGui gui)
@@ -70,8 +65,6 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
         gui.initStandardGui(226, 220);
         gui.setGuiTitle(Component.literal("Shrinking Device"));
         GuiElement<?> root = gui.getRoot();
-//        GuiTexture background = new GuiTexture(root, PolyTextures.get(BACKGROUND_TEXTURE));
-//        Constraints.bind(background, root);
 
         GuiText title = new GuiText(root, gui.getGuiTitle())
                 .setTextColour(0x404040)
@@ -123,7 +116,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
 
         var energyBar = GuiEnergyBar.simpleBar(root);
         energyBar.container
-                .constrain(LEFT, midPoint(root.get(LEFT), invLabel.get(LEFT), +4))
+                .constrain(LEFT, midPoint(root.get(LEFT), invLabel.get(LEFT), +16))
                 .constrain(BOTTOM, relative(invLabel.get(TOP), -6))
                 .constrain(WIDTH, literal(18))
                 .constrain(TOP, relative(title.get(BOTTOM), 8));

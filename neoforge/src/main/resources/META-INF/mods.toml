@@ -15,29 +15,29 @@ This is an example description! Tell everyone what your mod is about!
 
 [[dependencies.shrink]]
 modId = "neoforge"
-mandatory = true
+type="required" #mandatory
 versionRange = "[20.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.shrink]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20.2,)"
+type="required" #mandatory
+versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.shrink]]
 modId = "architectury"
-mandatory = false
-versionRange = "[10.0.11,)"
+type="required" #mandatory
+versionRange = "[11.1.13,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.shrink]]
 modId = "polylib"
-mandatory = false
-versionRange = "[2002.0.3,)"
+type="required" #mandatory
+versionRange = "[2004.0.3,)"
 ordering = "AFTER"
 side = "BOTH"
 

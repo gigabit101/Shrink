@@ -27,8 +27,8 @@ public class ShrinkingDeviceContainer extends ModularGuiContainerMenu
         super(ModContainers.SHRINKING_DEVICE.get(), containerId, inventory);
         ItemStack stack = inventory.player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemShrinkDevice itemShrinkDevice = (ItemShrinkDevice) stack.getItem();
-        setServerToClientPacketHandler(PacketHandler::sendContainerPacketToClient);
-        setClientToServerPacketHandler(PacketHandler::sendContainerPacketToServer);
+//        setServerToClientPacketHandler(PacketHandler::sendContainerPacketToClient);
+//        setClientToServerPacketHandler(PacketHandler::sendContainerPacketToServer);
 
         //TODO make sure its a shrinking device
         energy = new DataSync<>(this, new LongData(), () -> itemShrinkDevice.getEnergyStorage(stack).getStoredEnergy());
