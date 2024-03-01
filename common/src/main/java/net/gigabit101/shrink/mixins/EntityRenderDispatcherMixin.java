@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.LevelReader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,6 +23,8 @@ public class EntityRenderDispatcherMixin
     @Inject(method = "renderShadow", at = @At("HEAD"))
     private static void renderShadow(PoseStack poseStack, MultiBufferSource multiBufferSource, Entity entity, float f, float g, LevelReader levelReader, float h, CallbackInfo ci)
     {
+        if(entity instanceof ItemEntity) return;
+
         if(entity instanceof LivingEntity livingEntity)
         {
             if(ShrinkAPI.isEntityShrunk(livingEntity))
