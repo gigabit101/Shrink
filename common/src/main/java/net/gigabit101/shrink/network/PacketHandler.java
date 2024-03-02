@@ -3,6 +3,7 @@ package net.gigabit101.shrink.network;
 import dev.architectury.networking.NetworkChannel;
 
 import net.gigabit101.shrink.Shrink;
+import net.gigabit101.shrink.network.packets.PacketEntitySync;
 import net.gigabit101.shrink.network.packets.PacketShrinkDevice;
 import net.minecraft.resources.ResourceLocation;
 
@@ -13,5 +14,6 @@ public class PacketHandler
     public static void init()
     {
         HANDLER.register(PacketShrinkDevice.class, PacketShrinkDevice::write, PacketShrinkDevice::new, PacketShrinkDevice::handle);
+        HANDLER.register(PacketEntitySync.class, PacketEntitySync::write, PacketEntitySync::new, PacketEntitySync::handle);
     }
 }

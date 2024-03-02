@@ -7,6 +7,8 @@ import net.creeperhost.polylib.inventory.energy.impl.WrappedItemEnergyContainer;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
+import net.gigabit101.shrink.network.PacketHandler;
+import net.gigabit101.shrink.network.packets.PacketEntitySync;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -103,22 +106,26 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     @Override
     public @NotNull InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand)
     {
-        if(livingEntity != null)
+        if(!livingEntity.level().isClientSide() && livingEntity != null)
         {
             if(ShrinkAPI.canEntityShrink(livingEntity))
             {
                 if (hasPower(player, itemStack))
                 {
+                    List<ServerPlayer> players = livingEntity.level().getServer().getPlayerList().getPlayers();
+
                     if(!ShrinkAPI.isEntityShrunk(livingEntity))
                     {
-                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).addPermanentModifier(createModifier(getScale(itemStack)));
+                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).addPermanentModifier(ItemShrinkDevice.createModifier(getScale(itemStack)));
+                        PacketHandler.HANDLER.sendToPlayers(players, new PacketEntitySync(getScale(itemStack), livingEntity.getId(), true));
                         usePower(player, itemStack);
                         livingEntity.refreshDimensions();
                         return InteractionResult.SUCCESS;
                     }
                     else
                     {
-                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).removeModifier(SHRINKING_DEVICE_ID);
+                        livingEntity.getAttribute(ShrinkAPI.SCALE_ATTRIBUTE).removeModifier(ItemShrinkDevice.SHRINKING_DEVICE_ID);
+                        PacketHandler.HANDLER.sendToPlayers(players, new PacketEntitySync(getScale(itemStack), livingEntity.getId(), false));
                         usePower(player, itemStack);
                         livingEntity.refreshDimensions();
                         return InteractionResult.SUCCESS;
@@ -126,7 +133,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                 }
             }
         }
-        return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
+        return InteractionResult.SUCCESS;
     }
 
     public boolean hasPower(Player player, ItemStack stack)
@@ -139,7 +146,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     {
         if(!player.isCreative())
         {
-            getEnergyStorage(stack).extractEnergy(Shrink.shrinkConfig.shrinkingDeviceCost, false);
+            getEnergyStorage(stack).internalExtract(Shrink.shrinkConfig.shrinkingDeviceCost, false);
         }
     }
 
@@ -171,7 +178,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag)
     {
         super.appendHoverText(stack, level, list, tooltipFlag);
-        list.add(Component.literal(getEnergyStorage(stack).getStoredEnergy() + "/" + getEnergyStorage(stack).getMaxCapacity() + " RF"));
+        list.add(Component.literal(getEnergyStorage(stack).getStoredEnergy() + " / " + getEnergyStorage(stack).getMaxCapacity() + " RF"));
     }
 
     @Override
