@@ -56,7 +56,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'architectury-plugin'
 
-    def runNumber = (System.getenv("GITHUB_RUN_NUMBER") == null ? "2" : System.getenv("GITHUB_RUN_NUMBER"))
+    def runNumber = (System.getenv("GITHUB_RUN_NUMBER") == null ? "3" : System.getenv("GITHUB_RUN_NUMBER"))
 
     version = rootProject.mod_version + "." + runNumber
     archivesBaseName = rootProject.archives_base_name
