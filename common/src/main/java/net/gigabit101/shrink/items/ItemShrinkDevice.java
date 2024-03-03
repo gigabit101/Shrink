@@ -1,9 +1,9 @@
 package net.gigabit101.shrink.items;
 
 import dev.architectury.registry.menu.MenuRegistry;
-import net.creeperhost.polylib.inventory.energy.PolyEnergyItem;
-import net.creeperhost.polylib.inventory.energy.impl.SimpleEnergyContainer;
-import net.creeperhost.polylib.inventory.energy.impl.WrappedItemEnergyContainer;
+import net.creeperhost.polylib.inventory.power.IPolyEnergyStorage;
+import net.creeperhost.polylib.inventory.power.PolyEnergyItem;
+import net.creeperhost.polylib.inventory.power.PolyItemEnergyStorage;
 import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
@@ -16,8 +16,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -32,10 +30,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyItem<WrappedItemEnergyContainer>
+public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyItem
 {
     public static final UUID SHRINKING_DEVICE_ID = UUID.fromString("e4388c41-4cf8-4631-98b4-b26eeaedcbdc");
-    private WrappedItemEnergyContainer energyContainer;
 
     public ItemShrinkDevice(Properties properties)
     {
@@ -139,14 +136,14 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     public boolean hasPower(Player player, ItemStack stack)
     {
         if(player.isCreative()) return true;
-        return getEnergyStorage(stack).getStoredEnergy() >= Shrink.shrinkConfig.shrinkingDeviceCost;
+        return getEnergyStorage(stack).getEnergyStored() >= Shrink.shrinkConfig.shrinkingDeviceCost;
     }
 
     public void usePower(Player player, ItemStack stack)
     {
         if(!player.isCreative())
         {
-            getEnergyStorage(stack).internalExtract(Shrink.shrinkConfig.shrinkingDeviceCost, false);
+            getEnergyStorage(stack).extractEnergy(Shrink.shrinkConfig.shrinkingDeviceCost, false);
         }
     }
 
@@ -168,28 +165,29 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
         return new ShrinkingDeviceContainer(id, inventory, null);
     }
 
-    @Override
-    public WrappedItemEnergyContainer getEnergyStorage(ItemStack holder)
-    {
-        return energyContainer == null ? this.energyContainer = new WrappedItemEnergyContainer(holder, new SimpleEnergyContainer(Shrink.shrinkConfig.shrinkingDeviceCapacity)) : this.energyContainer;
-    }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag)
     {
         super.appendHoverText(stack, level, list, tooltipFlag);
-        list.add(Component.literal(getEnergyStorage(stack).getStoredEnergy() + " / " + getEnergyStorage(stack).getMaxCapacity() + " RF"));
+        list.add(Component.literal(getEnergyStorage(stack).getEnergyStored() + " / " + getEnergyStorage(stack).getMaxEnergyStored() + " RF"));
     }
 
     @Override
     public boolean isBarVisible(@NotNull ItemStack itemStack)
     {
-        return (getEnergyStorage(itemStack).getStoredEnergy() < getEnergyStorage(itemStack).getMaxCapacity());
+        return (getEnergyStorage(itemStack).getEnergyStored() < getEnergyStorage(itemStack).getMaxEnergyStored());
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack itemStack)
     {
-        return (int) Math.min(13 * getEnergyStorage(itemStack).getStoredEnergy() / getEnergyStorage(itemStack).getMaxCapacity(), 13);
+        return (int) Math.min(13 * getEnergyStorage(itemStack).getEnergyStored() / getEnergyStorage(itemStack).getMaxEnergyStored(), 13);
+    }
+
+    @Override
+    public IPolyEnergyStorage getEnergyStorage(ItemStack stack)
+    {
+        return new PolyItemEnergyStorage(stack, Shrink.shrinkConfig.shrinkingDeviceCapacity, 64);
     }
 }

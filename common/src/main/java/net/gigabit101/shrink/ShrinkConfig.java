@@ -15,5 +15,5 @@ public class ShrinkConfig extends ConfigData
     public double maxSize = 10.0D;
 
     @Comment("Shrink Min Size")
-    public double minSize = 0.21D;
+    public double minSize = 0.20D;
 }
