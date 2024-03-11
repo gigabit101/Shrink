@@ -49,6 +49,14 @@ subprojects {
     repositories {
         maven { url "https://maven.creeperhost.net/" }
         maven { url "https://maven.neoforged.net/releases/" }
+        maven {
+            name = 'GeckoLib'
+            url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+            content {
+                includeGroupByRegex("software\\.bernie.*")
+                includeGroup("com.eliotlash.mclib")
+            }
+        }
     }
 }
 
@@ -56,7 +64,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'architectury-plugin'
 
-    def runNumber = (System.getenv("GITHUB_RUN_NUMBER") == null ? "4" : System.getenv("GITHUB_RUN_NUMBER"))
+    def runNumber = (System.getenv("GITHUB_RUN_NUMBER") == null ? "6" : System.getenv("GITHUB_RUN_NUMBER"))
 
     version = rootProject.mod_version + "." + runNumber
     archivesBaseName = rootProject.archives_base_name

@@ -2,8 +2,10 @@ package net.gigabit101.shrink.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import net.gigabit101.shrink.Shrink;
+import net.gigabit101.shrink.forge.compat.GekoLibCompat;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,5 +25,9 @@ public class ShrinkModForge
     private void clientSetup(final FMLClientSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(new ForgeClientEvents());
+        if(ModList.get().isLoaded("gekolib"))
+        {
+            MinecraftForge.EVENT_BUS.register(new GekoLibCompat());
+        }
     }
 }

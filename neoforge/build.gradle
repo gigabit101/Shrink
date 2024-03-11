@@ -33,8 +33,9 @@ dependencies {
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
     modApi ("net.creeperhost:polylib-neoforge:${polylib_version}") { transitive false }
 
-    modApi ("Mekanism:Mekanism:1.20.4-10.5.1.23") { transitive false }
+    compileOnly ("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${gekolib_version}") { transitive false }
 
+    modApi ("Mekanism:Mekanism:1.20.4-10.5.1.23") { transitive false }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }

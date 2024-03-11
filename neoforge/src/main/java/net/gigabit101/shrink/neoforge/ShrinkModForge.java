@@ -1,7 +1,9 @@
 package net.gigabit101.shrink.neoforge;
 
 import net.gigabit101.shrink.Shrink;
+import net.gigabit101.shrink.neoforge.compat.GekoLibCompat;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -18,5 +20,9 @@ public class ShrinkModForge
     private void clientSetup(final FMLClientSetupEvent event)
     {
         NeoForge.EVENT_BUS.register(new NeoForgeClientEvents());
+        if(ModList.get().isLoaded("gekolib"))
+        {
+            NeoForge.EVENT_BUS.register(new GekoLibCompat());
+        }
     }
 }

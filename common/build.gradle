@@ -18,6 +18,8 @@ dependencies {
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
     modApi "net.creeperhost:polylib-fabric:${polylib_version}"
 
+    modApi ("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${gekolib_version}") { transitive false }
+
     // We depend on fabric loader here to use the fabric @Environment annotations
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"

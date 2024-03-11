@@ -32,6 +32,7 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.architectury.minecraft}-${rootProject.forge_version}"
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
     modApi "net.creeperhost:polylib-forge:${polylib_version}"
+    compileOnly ("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${gekolib_version}") { transitive false }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
