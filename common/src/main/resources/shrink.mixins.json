@@ -5,7 +5,6 @@
   "minVersion": "0.7.11",
   "mixins": [
     "EntityMixin",
-    "LivingEntityMixin",
     "PlayerMixin"
   ],
   "injectors": {

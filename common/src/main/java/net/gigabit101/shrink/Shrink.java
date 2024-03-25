@@ -15,7 +15,6 @@ import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.init.ModItems;
 import net.gigabit101.shrink.items.ItemShrinkBottle;
 import net.gigabit101.shrink.network.PacketHandler;
-import net.gigabit101.shrink.polylib.AttributeEvents;
 import net.gigabit101.shrink.polylib.EntitySizeEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,11 +79,6 @@ public class Shrink
 
         //Force the players size to update on login
         PlayerEvent.PLAYER_JOIN.register(player -> player.setPose(Pose.CROUCHING));
-
-        LifecycleEvent.SETUP.register(() ->
-        {
-            AttributeEvents.ADD.register(builder -> builder.add(ShrinkAPI.SCALE_ATTRIBUTE));
-        });
 
         InteractionEvent.INTERACT_ENTITY.register((player, entity, hand) ->
         {
