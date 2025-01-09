@@ -104,6 +104,8 @@ public class Shrink
 
     private void clientSetup(final FMLClientSetupEvent event)
     {
+        CompatHandler.init();
+
         MinecraftForge.EVENT_BUS.register(new RenderEvents());
         CompatHandler.init();
 

@@ -1,0 +1,9 @@
+{
+  "item.mob_bottle.tooltip_empty": "Küçültülmüş bir varlığı yakalamak için cam şişeyle Sağ tıklayın",
+  "item.shrink.mob_bottle": "Cam Şişe",
+  "item.shrink.shrinking_device": "Kişisel Küçültme Cihazı",
+  "itemGroup.shrink": "Shrink",
+  "key.shrink.category": "Shrink",
+  "key.shrink.shrink": "Küçültme Durumunu Değiştir ",
+  "shrink.deny_shrink": "Reddetme etiketi nedeniyle varlığın küçültülmesi engellendi"
+}
