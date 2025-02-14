@@ -32,6 +32,8 @@ public class Shrink
         configBuilder = new ConfigBuilder(MOD_ID, Platform.getConfigFolder().resolve(MOD_ID + ".json5"), new ShrinkConfig());
         shrinkConfig = (ShrinkConfig) configBuilder.getConfigData();
 
+        PolyLib.initPolyItemData();
+
         ModItems.CREATIVE_MODE_TABS.register();
         ModItems.ITEMS.register();
         ModContainers.CONTAINERS.register();
