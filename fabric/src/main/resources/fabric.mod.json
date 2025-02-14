@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "id": "shrink",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Shrink",
+  "description": "Honey I shrunk the children",
   "authors": [
-    "Me!"
+    "Gigabit101"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/shrink_",
+    "sources": "https://github.com/gigabit101/Shrink/issues"
   },
-  "license": "Insert License Here",
+  "license": "LGPL-3.0",
   "icon": "assets/shrink/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -27,8 +27,8 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.20.2",
-    "architectury": ">=10.0.11",
-    "polylib": ">=2002.0.3-build.108"
+    "minecraft": ">=1.21",
+    "architectury": ">=13.0.6",
+    "polylib": ">=2100.0.3-build.160"
   }
 }

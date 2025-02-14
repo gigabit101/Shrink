@@ -3,6 +3,9 @@ plugins {
     id "me.shedaniel.unified-publishing"
 }
 
+def ENV = System.getenv()
+
+
 architectury {
     platformSetupLoomIde()
     neoForge {

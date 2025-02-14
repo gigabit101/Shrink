@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/gigabit101/Shrink/issues"
+license = "LGPL-3.0"
 
 [[mods]]
 modId = "shrink"
@@ -30,7 +30,7 @@ side = "BOTH"
 [[dependencies.shrink]]
 modId = "architectury"
 type="required" #mandatory
-versionRange = "[13.0.1,)"
+versionRange = "[13.0.6,)"
 ordering = "AFTER"
 side = "BOTH"
 
