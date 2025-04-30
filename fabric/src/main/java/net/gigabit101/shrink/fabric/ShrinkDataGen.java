@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 
-import static net.minecraft.data.recipes.RecipeProvider.has;
 
 public class ShrinkDataGen implements DataGeneratorEntrypoint
 {
@@ -40,23 +39,23 @@ public class ShrinkDataGen implements DataGeneratorEntrypoint
             return provider;
         });
 
-        pack.addProvider((output, registriesFuture) ->
-        {
-            PolyRecipeProvider provider = new PolyRecipeProvider(output, ModuleType.COMMON, registriesFuture);
-            var enderPearl = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ender_pearls"));
-
-            provider.add(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SHRINKING_DEVICE.get())
-                    .pattern("iei")
-                    .pattern("igi")
-                    .pattern("ibi")
-                    .define('b', Items.STONE_BUTTON)
-                    .define('e', enderPearl)
-                    .define('g', Items.GLASS)
-                    .define('i', Items.IRON_INGOT)
-                    .group(Shrink.MOD_ID)
-                    .unlockedBy("has_item", has(Items.ENDER_PEARL)), ModuleType.COMMON);
-
-            return provider;
-        });
+//        pack.addProvider((output, registriesFuture) ->
+//        {
+//            PolyRecipeProvider provider = new PolyRecipeProvider(output, ModuleType.COMMON, registriesFuture);
+//            var enderPearl = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ender_pearls"));
+//
+//            provider.add(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SHRINKING_DEVICE.get())
+//                    .pattern("iei")
+//                    .pattern("igi")
+//                    .pattern("ibi")
+//                    .define('b', Items.STONE_BUTTON)
+//                    .define('e', enderPearl)
+//                    .define('g', Items.GLASS)
+//                    .define('i', Items.IRON_INGOT)
+//                    .group(Shrink.MOD_ID)
+//                    .unlockedBy("has_item", has(Items.ENDER_PEARL)), ModuleType.COMMON);
+//
+//            return provider;
+//        });
     }
 }

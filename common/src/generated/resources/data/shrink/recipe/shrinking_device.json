@@ -1,28 +1,28 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "shrink",
-  "key": {
-    "b": {
-      "item": "minecraft:stone_button"
-    },
-    "e": {
-      "tag": "c:ender_pearls"
-    },
-    "g": {
-      "item": "minecraft:glass"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
-  },
+  "category": "misc",
   "pattern": [
     "iei",
     "igi",
     "ibi"
   ],
+  "key": {
+    "e": [
+      "minecraft:ender_pearl"
+    ],
+    "b": [
+      "minecraft:stone_button"
+    ],
+    "i": [
+      "minecraft:iron_ingot"
+    ],
+    "g": [
+      "minecraft:glass"
+    ]
+  },
   "result": {
-    "count": 1,
-    "id": "shrink:shrinking_device"
+    "id": "shrink:shrinking_device",
+    "count": 1
   }
 }
