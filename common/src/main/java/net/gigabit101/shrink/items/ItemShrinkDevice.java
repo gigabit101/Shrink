@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -24,11 +23,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyItem
 {
@@ -53,8 +54,9 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
         return stack.get(ShrinkComponentTypes.SHRINKING_DEVICE.get());
     }
 
+    //TODO
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand)
+    public @NotNull InteractionResult use(Level level, Player player, InteractionHand interactionHand)
     {
         if (player.getAttributes() != null && player.getAttribute(Attributes.SCALE) != null)
         {
@@ -67,19 +69,19 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                     if(!hasPower(player, stack))
                     {
                         player.displayClientMessage(Component.translatable("shrink.message.power"), false);
-                        return InteractionResultHolder.fail(stack);
+                        return InteractionResult.FAIL;
                     }
                     if(!ShrinkAPI.isEntityShrunk(player))
                     {
                         player.getAttribute(Attributes.SCALE).addPermanentModifier(createModifier(getScale(stack)));
                         usePower(player, stack);
-                        return InteractionResultHolder.success(stack);
+                        return InteractionResult.PASS;
                     }
                     else
                     {
                         player.getAttribute(Attributes.SCALE).removeModifier(SHRINKING_DEVICE_ID);
                         usePower(player, stack);
-                        return InteractionResultHolder.success(stack);
+                        return InteractionResult.PASS;
                     }
                 }
                 else
@@ -92,7 +94,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                     {
                         player.displayClientMessage(Component.translatable("shrink.message.already_shrunk"), false);
                     }
-                    return InteractionResultHolder.success(stack);
+                    return InteractionResult.PASS;
                 }
             }
         }
@@ -162,10 +164,10 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag)
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag)
     {
-        super.appendHoverText(stack, tooltipContext, list, tooltipFlag);
-        list.add(Component.literal(getEnergyStorage(stack).getEnergyStored() + " / " + getEnergyStorage(stack).getMaxEnergyStored() + " RF"));
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
+        tooltipAdder.accept(Component.literal(getEnergyStorage(stack).getEnergyStored() + " / " + getEnergyStorage(stack).getMaxEnergyStored() + " RF"));
     }
 
     @Override

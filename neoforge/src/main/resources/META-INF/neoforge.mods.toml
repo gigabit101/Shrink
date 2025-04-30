@@ -23,21 +23,21 @@ side = "BOTH"
 [[dependencies.shrink]]
 modId = "minecraft"
 type="required" #mandatory
-versionRange = "[1.21,)"
+versionRange = "[1.21.5,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.shrink]]
 modId = "architectury"
 type="required" #mandatory
-versionRange = "[13.0.6,)"
+versionRange = "[16.1.4,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.shrink]]
 modId = "polylib"
 type="required" #mandatory
-versionRange = "[2100.0.3,)"
+versionRange = "[2105.0.4.174,)"
 ordering = "AFTER"
 side = "BOTH"
 

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "shrink:item/shrinking_device_no_power"
+  }
+}
