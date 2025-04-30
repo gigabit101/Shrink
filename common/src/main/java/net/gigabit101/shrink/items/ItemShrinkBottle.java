@@ -11,24 +11,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class ItemShrinkBottle extends Item
 {
-    public ItemShrinkBottle(Properties properties)
+    public ItemShrinkBottle()
     {
-        super(properties);
+        super(new Properties().stacksTo(1));
     }
 
     // if a player somehow gets an empty mob bottle, let it work like a regular bottle for capture.
@@ -65,7 +66,7 @@ public class ItemShrinkBottle extends Item
 
         // Spawn the entity if the entity type lookup succeeds, otherwise fail the usage
         Optional<Entity> maybeEntity = ShrinkComponentUtils.getEntityType(stack)
-            .map(type -> type.spawn(serverWorld, stack, player, blockPos, EntitySpawnReason.MOB_SUMMONED, false, false));
+            .map(type -> type.spawn(serverWorld, stack, player, blockPos, MobSpawnType.MOB_SUMMONED, false, false));
         if (maybeEntity.isEmpty()) return InteractionResult.FAIL;
         // reduce the stack in hand and swap
         // replace hand stack with glass bottle if hand is now empty
@@ -121,22 +122,34 @@ public class ItemShrinkBottle extends Item
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag)
+    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag)
     {
-        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
+        super.appendHoverText(stack, tooltipContext, list, tooltipFlag);
         if (containsEntity(stack))
         {
             Component entityTypeName = ShrinkComponentUtils.getEntityType(stack).map(EntityType::getDescription).orElseGet(Component::empty);
             Component name = stack.get(ShrinkComponentTypes.ENTITY_NAME.get());
             if (name != null) {
-                tooltipAdder.accept(Component.translatable("item.mob_bottle.tooltip_with_name", name, entityTypeName));
+                list.add(Component.translatable("item.mob_bottle.tooltip_with_name", name, entityTypeName));
             }else{
-                tooltipAdder.accept(Component.translatable("item.mob_bottle.tooltip", entityTypeName));
+                list.add(Component.translatable("item.mob_bottle.tooltip", entityTypeName));
             }
         }
         else
         {
-            tooltipAdder.accept(Component.translatable("item.mob_bottle.tooltip_empty"));
+            list.add(Component.translatable("item.mob_bottle.tooltip_empty"));
         }
+    }
+
+    // Remove legacy component and replace it with vanilla's ENTITY_DATA component
+    @Override
+    public void verifyComponentsAfterLoad(ItemStack stack) {
+        super.verifyComponentsAfterLoad(stack);
+        // TODO: remove legacy component support
+        ShrinkComponentUtils.convertLegacyDataComponent(stack);
+        CustomData data = stack.get(DataComponents.ENTITY_DATA);
+        if (data != null && !data.contains("id")) stack.remove(DataComponents.ENTITY_DATA);
+        Component name = stack.get(ShrinkComponentTypes.ENTITY_NAME.get());
+        if (!stack.has(DataComponents.ENTITY_DATA) || (name != null && name.getString().isBlank())) stack.remove(ShrinkComponentTypes.ENTITY_NAME.get());
     }
 }
