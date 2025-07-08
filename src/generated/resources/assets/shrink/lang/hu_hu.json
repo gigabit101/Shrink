@@ -1,0 +1,9 @@
+{
+  "item.mob_bottle.tooltip_empty": "Jobb kattintás egy összezsugorodott entitáson az üvegpalackkal a befogásához",
+  "item.shrink.mob_bottle": "Üvegpalack",
+  "item.shrink.shrinking_device": "Személyes zsugorító eszköz",
+  "itemGroup.shrink": "Shrink",
+  "key.shrink.category": "Shrink",
+  "key.shrink.shrink": "Zsugorítás",
+  "shrink.deny_shrink": "Az entitás zsugorítása tiltva a tiltó címke miatt"
+}
