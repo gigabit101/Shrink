@@ -6,7 +6,6 @@ import net.creeperhost.polylib.containers.ModularGuiContainerMenu;
 import net.creeperhost.polylib.data.serializable.LongData;
 import net.gigabit101.shrink.init.ModContainers;
 import net.gigabit101.shrink.items.ItemShrinkDevice;
-import net.gigabit101.shrink.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;

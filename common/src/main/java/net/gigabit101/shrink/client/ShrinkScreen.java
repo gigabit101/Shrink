@@ -14,6 +14,7 @@ import net.gigabit101.shrink.Shrink;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.items.ItemShrinkDevice;
 import net.gigabit101.shrink.network.packets.PacketShrinkDevice;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -57,7 +58,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
         GuiElement<?> root = gui.getRoot();
 
         GuiText title = new GuiText(root, gui.getGuiTitle())
-                .setTextColour(0x404040)
+                .setTextColour(0xFF404040)
                 .setShadow(false)
                 .constrain(TOP, relative(root.get(TOP), 8))
                 .constrain(HEIGHT, Constraint.literal(8))
@@ -73,7 +74,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .constrain(BOTTOM, relative(root.get(BOTTOM), -8));
 
         GuiText invLabel = new GuiText(root, Component.translatable("container.inventory"))
-                .setTextColour(0x404040)
+                .setTextColour(0xFF404040)
                 .setShadow(false)
                 .setAlignment(Align.LEFT)
                 .constrain(HEIGHT, Constraint.literal(8))
@@ -97,7 +98,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 .constrain(HEIGHT, literal(18));
 
         GuiText scale = new GuiText(root, () -> Component.literal(String.format("%.2f", SCALE)))
-                .setTextColour(0x404040)
+                .setTextColour(0xFF404040)
                 .setShadow(false)
                 .constrain(TOP, midPoint(upButton.get(BOTTOM), downButton.get(TOP)))
                 .constrain(HEIGHT, Constraint.literal(8))

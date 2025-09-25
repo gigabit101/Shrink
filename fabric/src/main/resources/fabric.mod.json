@@ -27,7 +27,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.21",
+    "minecraft": ">=1.21.7",
     "architectury": ">=13.0.6",
     "polylib": ">=2100.0.3-build.160"
   }
