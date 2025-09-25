@@ -69,7 +69,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                         player.displayClientMessage(Component.translatable("shrink.message.power"), false);
                         return InteractionResultHolder.fail(stack);
                     }
-                    if(!ShrinkAPI.isEntityShrunk(player))
+                    if(!ShrinkAPI.isEntityShrunk(player, SHRINKING_DEVICE_ID))
                     {
                         player.getAttribute(Attributes.SCALE).addPermanentModifier(createModifier(getScale(stack)));
                         usePower(player, stack);
@@ -84,7 +84,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                 }
                 else
                 {
-                    if(!ShrinkAPI.isEntityShrunk(player))
+                    if(!ShrinkAPI.isEntityShrunk(player, SHRINKING_DEVICE_ID))
                     {
                         MenuRegistry.openExtendedMenu((ServerPlayer) player, this, friendlyByteBuf -> friendlyByteBuf.writeDouble(0));
                     }
