@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ release/1.21.7 ]
+    branches: [ 1.21.7 ]
 jobs:
   build:
     runs-on: ubuntu-latest
