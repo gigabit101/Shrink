@@ -60,7 +60,7 @@ unifiedPublishing {
         displayName = "$rootProject.minecraft_version-$rootProject.project.version [NeoForge]"
         releaseType = "$rootProject.artifact_type"
         changelog = ""
-        gameVersions = []
+        gameVersions = ["$rootProject.minecraft_version", "1.21.8"]
         gameLoaders = ["neoforge"]
         mainPublication tasks.remapJar
         relations {

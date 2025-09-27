@@ -74,7 +74,7 @@ unifiedPublishing {
         displayName = "$rootProject.minecraft_version-$project.version [Fabric]"
         releaseType = "$rootProject.artifact_type"
         changelog = ""
-        gameVersions = []
+        gameVersions = ["$rootProject.minecraft_version", "1.21.8"]
         gameLoaders = ["fabric"]
         mainPublication tasks.remapJar
         relations {

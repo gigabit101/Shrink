@@ -6,6 +6,7 @@ import net.gigabit101.shrink.init.ShrinkComponentTypes;
 import net.gigabit101.shrink.items.components.ShrinkComponentUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
@@ -84,14 +85,13 @@ public class ItemShrinkBottle extends Item
         if (entity.level().isClientSide()) return emptyBottle;
         if (entity instanceof Player || !entity.isAlive() || !entity.getType().canSerialize()) return emptyBottle;
 
-        //TODO
-        //        CompoundTag entityNbt = new CompoundTag();
-        //        if (!entity.save(entityNbt)) return emptyBottle;
-        //        ShrinkComponentUtils.stripTag(entityNbt);
+        TagValueOutput tagValueOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
+        entity.save(tagValueOutput);
+        ShrinkComponentUtils.IGNORED_ENTITY_TAGS.forEach(tagValueOutput::discard);
+        CompoundTag entityNbt = tagValueOutput.buildResult();
 
         ItemStack mobBottle = new ItemStack(ModItems.SHRINK_BOTTLE.get(), 1);
-        //TODO
-        //        mobBottle.set(DataComponents.ENTITY_DATA, CustomData.of(entityNbt));
+        mobBottle.set(DataComponents.ENTITY_DATA, CustomData.of(entityNbt));
 
         if (entity.hasCustomName() && entity.isCustomNameVisible())
         {
