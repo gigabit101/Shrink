@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.gigabit101.shrink.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
   ],
@@ -11,4 +11,4 @@
     "defaultRequire": 1
   }
 }
-
+  

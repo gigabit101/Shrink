@@ -1,15 +1,16 @@
 package net.gigabit101.shrink.items;
 
-import dev.architectury.registry.menu.MenuRegistry;
-import net.creeperhost.polylib.inventory.power.IPolyEnergyStorage;
+import net.creeperhost.polylib.inventory.power.IPolyEnergyStorageItem;
 import net.creeperhost.polylib.inventory.power.PolyEnergyItem;
 import net.creeperhost.polylib.inventory.power.PolyItemEnergyStorage;
-import net.gigabit101.shrink.Shrink;
+import net.creeperhost.polylib.platform.Services;
+import net.gigabit101.shrink.ShrinkCommon;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ShrinkComponentTypes;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,12 +29,11 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyItem
 {
-    public static final ResourceLocation SHRINKING_DEVICE_ID = ResourceLocation.fromNamespaceAndPath(Shrink.MOD_ID, "e4388c41-4cf8-4631-98b4-b26eeaedcbdc");
+    public static final Identifier SHRINKING_DEVICE_ID = Identifier.fromNamespaceAndPath(ShrinkCommon.MOD_ID, "e4388c41-4cf8-4631-98b4-b26eeaedcbdc");
 
     public ItemShrinkDevice(Properties properties)
     {
@@ -68,7 +68,7 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                 {
                     if(!hasPower(player, stack))
                     {
-                        player.displayClientMessage(Component.translatable("shrink.message.power"), false);
+                        player.sendOverlayMessage(Component.translatable("shrink.message.power"));
                         return InteractionResult.FAIL;
                     }
                     if(!ShrinkAPI.isEntityShrunk(player))
@@ -88,18 +88,19 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                 {
                     if(!ShrinkAPI.isEntityShrunk(player))
                     {
-                        MenuRegistry.openExtendedMenu((ServerPlayer) player, this, friendlyByteBuf -> friendlyByteBuf.writeDouble(0));
+                        Services.REGISTER_HELPER.openMenu((ServerPlayer) player, this,
+                                friendlyByteBuf -> friendlyByteBuf.writeDouble(0));
                     }
                     else
                     {
-                        player.displayClientMessage(Component.translatable("shrink.message.already_shrunk"), false);
+                        player.sendOverlayMessage(Component.translatable("shrink.message.already_shrunk"));
                     }
                     return InteractionResult.PASS;
                 }
             }
         }
         else {
-            player.displayClientMessage(Component.translatable("shrink.message.missing"), false);
+            player.sendOverlayMessage(Component.translatable("shrink.message.missing"));
         }
         return super.use(level, player, interactionHand);
     }
@@ -134,14 +135,14 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     public boolean hasPower(Player player, ItemStack stack)
     {
         if(player.isCreative()) return true;
-        return getEnergyStorage(stack).getEnergyStored() >= Shrink.shrinkConfig.shrinkingDeviceCost;
+        return getEnergyStorage(stack).getEnergyStored() >= ShrinkCommon.shrinkConfig.shrinkingDeviceCost;
     }
 
     public void usePower(Player player, ItemStack stack)
     {
         if(!player.isCreative())
         {
-            getEnergyStorage(stack).extractEnergy(Shrink.shrinkConfig.shrinkingDeviceCost, false);
+            getEnergyStorage(stack).extractEnergy(ShrinkCommon.shrinkConfig.shrinkingDeviceCost, false);
         }
     }
 
@@ -183,8 +184,8 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
     }
 
     @Override
-    public IPolyEnergyStorage getEnergyStorage(ItemStack stack)
+    public IPolyEnergyStorageItem getEnergyStorage(ItemStack stack)
     {
-        return new PolyItemEnergyStorage(stack, Shrink.shrinkConfig.shrinkingDeviceCapacity, 64);
+        return new PolyItemEnergyStorage(stack, ShrinkCommon.shrinkConfig.shrinkingDeviceCapacity, 64);
     }
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "iei",
+    "igi",
+    "ibi"
+  ],
+  "key": {
+    "e": "minecraft:ender_pearl",
+    "b": "minecraft:stone_button",
+    "i": "#c:ingots/iron",
+    "g": "minecraft:glass"
+  },
+  "result": {
+    "id": "shrink:shrinking_device",
+    "count": 1
+  }
+}

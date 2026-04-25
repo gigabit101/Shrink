@@ -4,7 +4,7 @@ import net.creeperhost.polylib.client.modulargui.lib.container.DataSync;
 import net.creeperhost.polylib.client.modulargui.lib.container.SlotGroup;
 import net.creeperhost.polylib.containers.ModularGuiContainerMenu;
 import net.creeperhost.polylib.data.serializable.LongData;
-import net.gigabit101.shrink.init.ModContainers;
+import net.gigabit101.shrink.init.ShrinkContainers;
 import net.gigabit101.shrink.items.ItemShrinkDevice;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
@@ -20,10 +20,9 @@ public class ShrinkingDeviceContainer extends ModularGuiContainerMenu
     public final DataSync<Long> energy;
     public final DataSync<Long> maxEnergy;
 
-
     public ShrinkingDeviceContainer(int containerId, Inventory inventory, FriendlyByteBuf extraData)
     {
-        super(ModContainers.SHRINKING_DEVICE.get(), containerId, inventory);
+        super(ShrinkContainers.SHRINKING_DEVICE.get(), containerId, inventory);
         ItemStack stack = inventory.player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemShrinkDevice itemShrinkDevice = (ItemShrinkDevice) stack.getItem();
 

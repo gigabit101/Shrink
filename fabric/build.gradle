@@ -1,107 +1,55 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "8.1.1"
-    id "me.shedaniel.unified-publishing"
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom'
 }
 
-architectury {
-    platformSetupLoomIde()
-    fabric()
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "net.creeperhost.polylib:polylib-fabric-26.1.2:${polylib_version}"
 }
 
 loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
     runs {
-        datagenClient {
+        client {
             client()
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            //This will be ignored but is needed for now to load Fabrics datagen
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-
-            vmArg "-Dpolylib.datagen.output-dir-common=${project(":common").file("src/generated/resources")}"
-            vmArg "-Dpolylib.datagen.output-dir-forge=${project(":neoforge").file("src/generated/resources")}"
-            vmArg "-Dpolylib.datagen.output-dir-fabric=${project(":fabric").file("src/generated/resources")}"
-
-            ideConfigGenerated = true
-            runDir "build/datagen"
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('runs/server')
         }
     }
 }
 
-configurations {
-    common
-    shadowLib
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-    shadowCommon.extendsFrom shadowLib
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
-    implementation.extendsFrom shadowLib
-}
-
-
-dependencies {
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
-    modApi "net.creeperhost:polylib-fabric:${rootProject.polylib_version}"
-
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
-}
-
-processResources {
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
     }
-    inputs.property "version", project.version
 }
-
-shadowJar {
-
-    configurations = [project.configurations.shadowCommon]
-    archiveClassifier = "shadow"
-}
-
-remapJar {
-    input.set(shadowJar.archiveFile)
-    dependsOn(shadowJar)
-    archiveClassifier = "fabric"
-}
-
-unifiedPublishing {
-    project {
-        displayName = "$rootProject.minecraft_version-$project.version [Fabric]"
-        releaseType = "$rootProject.artifact_type"
-        changelog = ""
-        gameVersions = ["$rootProject.minecraft_version", "1.21.8"]
-        gameLoaders = ["fabric"]
-        mainPublication tasks.remapJar
-        relations {
-            depends {
-                curseforge = "polylib"
-            }
-        }
-
-        var CURSE_API_KEY = project.findProperty("CURSE_API_KEY") ?: System.getenv("CURSE_API_KEY")
-        if (CURSE_API_KEY != null) {
-            curseforge {
-                token = CURSE_API_KEY
-                id = rootProject.curseforge_id
-                gameVersions.addAll rootProject.minecraft_version
-            }
-        }
-
-        var MODRINTH_TOKEN = project.findProperty("MODRINTH_TOKEN") ?: System.getenv("MODRINTH_TOKEN")
-        if (MODRINTH_TOKEN != null) {
-            modrinth {
-                token = MODRINTH_TOKEN
-                id = rootProject.modrinth_id
-                version = "$project.version"
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
             }
         }
     }
 }
-
-
-

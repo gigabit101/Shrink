@@ -10,12 +10,12 @@ import net.creeperhost.polylib.client.modulargui.lib.container.ContainerScreenAc
 import net.creeperhost.polylib.client.modulargui.lib.geometry.Align;
 import net.creeperhost.polylib.client.modulargui.lib.geometry.Constraint;
 import net.creeperhost.polylib.client.modulargui.sprite.PolyTextures;
-import net.gigabit101.shrink.Shrink;
+import net.creeperhost.polylib.platform.Services;
+import net.gigabit101.shrink.ShrinkCommon;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
 import net.gigabit101.shrink.items.ItemShrinkDevice;
-import net.gigabit101.shrink.network.packets.PacketShrinkDevice;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
+import net.gigabit101.shrink.network.PacketShrink;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -117,10 +117,10 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
 
     public void onButtonPress(boolean plus)
     {
-        boolean shift = Screen.hasShiftDown();
+        boolean shift = Minecraft.getInstance().hasShiftDown();
         if(plus)
         {
-            if(SCALE <= Shrink.shrinkConfig.maxSize)
+            if(SCALE <= ShrinkCommon.shrinkConfig.maxSize)
             {
                 if (shift)
                 {
@@ -134,7 +134,7 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
         }
         else
         {
-            if (SCALE >= Shrink.shrinkConfig.minSize)
+            if (SCALE >= ShrinkCommon.shrinkConfig.minSize)
             {
                 if (shift)
                 {
@@ -146,10 +146,10 @@ public class ShrinkScreen extends ContainerGuiProvider<ShrinkingDeviceContainer>
                 }
             }
         }
-        if(SCALE > Shrink.shrinkConfig.maxSize) SCALE = Shrink.shrinkConfig.maxSize;
-        if(SCALE < Shrink.shrinkConfig.minSize) SCALE = Shrink.shrinkConfig.minSize;
+        if(SCALE > ShrinkCommon.shrinkConfig.maxSize) SCALE = ShrinkCommon.shrinkConfig.maxSize;
+        if(SCALE < ShrinkCommon.shrinkConfig.minSize) SCALE = ShrinkCommon.shrinkConfig.minSize;
 
-        new PacketShrinkDevice(InteractionHand.MAIN_HAND, SCALE).sendToServer();
+        Services.NETWORK.sendToServer(new PacketShrink(0, SCALE));
     }
 
     public static ModularGuiContainer<ShrinkingDeviceContainer> create(ShrinkingDeviceContainer menu, Inventory inventory, Component component)
