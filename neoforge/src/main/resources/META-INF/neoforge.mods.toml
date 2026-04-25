@@ -31,7 +31,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "polylib"
 type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
-versionRange = "2.0.1,"
+versionRange = "[2.0.1,"
 ordering = "NONE"
 side = "BOTH"
 
