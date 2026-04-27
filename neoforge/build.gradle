@@ -5,6 +5,7 @@ plugins {
 
 repositories {
     mavenLocal()
+    maven { url "https://maven.creeperhost.net/" }
 }
 
 dependencies {

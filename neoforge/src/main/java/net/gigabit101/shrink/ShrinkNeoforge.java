@@ -15,7 +15,7 @@ public class ShrinkNeoforge
     public ShrinkNeoforge(IEventBus eventBus)
     {
         ShrinkCommon.init();
-        NeoPolyRegistry.registerToBus(eventBus);
+        NeoPolyRegistry.registerToBus(eventBus, ShrinkCommon.MOD_ID);
         eventBus.addListener(ShrinkNeoforge::onRegisterPayloads);
         if (FMLLoader.getCurrent().getDist().isClient()) {
             NeoPolyScreens.registerToBus(eventBus);
