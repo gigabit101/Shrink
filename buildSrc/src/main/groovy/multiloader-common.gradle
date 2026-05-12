@@ -29,6 +29,9 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
+    repositories {
+        maven { url "https://maven.creeperhost.net" }
+    }
 }
 
 sourcesJar {

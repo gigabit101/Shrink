@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.creeperhost.polylib:polylib-fabric-26.1.2:${polylib_version}"
+    implementation "net.creeperhost.polylib:polylib-fabric:${polylib_version}"
 }
 
 neoForge {

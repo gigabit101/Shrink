@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.creeperhost.polylib:polylib-neoforge-26.1.2:${polylib_version}"
+    implementation "net.creeperhost.polylib:polylib-neoforge:${polylib_version}"
 }
 
 neoForge {
