@@ -1,0 +1,19 @@
+{
+  "$schema": "https://modpacks.ch/schemas/project-link-v1.json",
+  "version": 1,
+  "projects": {
+    "curseforge": "426386",
+    "modrinth": "jzaTHh0C",
+    "github": "gigabit101/Shrink"
+  },
+  "preferredDownload": "curseforge",
+  "destinations": [],
+  "hosting": [
+    {
+      "name": "CreeperHost",
+      "url": "https://www.creeperhost.net/partner/arkantik222"
+    }
+  ],
+  "support": [],
+  "visibility": "listed"
+}
