@@ -11,7 +11,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation "net.creeperhost.polylib:polylib-fabric-26.1.2:${polylib_version}"
+    implementation "net.creeperhost.polylib:polylib-fabric:${polylib_version}"
 }
 
 loom {
