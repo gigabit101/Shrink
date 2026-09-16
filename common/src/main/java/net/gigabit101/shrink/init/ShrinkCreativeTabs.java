@@ -18,6 +18,7 @@ public class ShrinkCreativeTabs
             () -> new ItemStack(ShrinkItems.SHRINKING_DEVICE.get()),
             (params, output) -> {
                 output.accept(ShrinkItems.SHRINKING_DEVICE.get());
+                output.accept(ShrinkItems.SHRINK_BOTTLE.get());
             }
     );
 

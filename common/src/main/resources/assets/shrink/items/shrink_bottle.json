@@ -1,6 +1,18 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "minecraft:item/glass_bottle"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "minecraft:item/glass_bottle"
+      },
+      {
+        "type": "minecraft:special",
+        "base": "shrink:item/shrink_bottle",
+        "model": {
+          "type": "shrink:bottled_mob"
+        }
+      }
+    ]
   }
 }

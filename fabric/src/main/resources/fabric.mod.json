@@ -17,6 +17,9 @@
     "entrypoints": {
         "main": [
             "net.gigabit101.shrink.ShrinkFabric"
+        ],
+        "client": [
+            "net.gigabit101.shrink.ShrinkFabricClient"
         ]
     },
     "depends": {
