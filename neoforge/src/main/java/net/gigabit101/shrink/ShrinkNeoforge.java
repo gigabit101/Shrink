@@ -9,6 +9,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -21,6 +22,7 @@ public class ShrinkNeoforge
         NeoPolyRegistry.registerToBus(eventBus, ShrinkCommon.MOD_ID);
         eventBus.addListener(ShrinkNeoforge::onRegisterPayloads);
         NeoForge.EVENT_BUS.addListener(ShrinkNeoforge::onEntityInteract);
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Pre event) -> PlayerShrinkAnimation.tick(event.getServer()));
         if (FMLLoader.getCurrent().getDist().isClient()) {
             ShrinkNeoforgeClient.init(eventBus);
         }

@@ -1,6 +1,7 @@
 package net.gigabit101.shrink;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -13,6 +14,7 @@ public class ShrinkFabric implements ModInitializer
     public void onInitialize()
     {
         ShrinkCommon.init();
+        ServerTickEvents.START_SERVER_TICK.register(PlayerShrinkAnimation::tick);
         UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) ->
                 ItemShrinkBottle.capture(player, entity, hand));
         PayloadTypeRegistry.serverboundPlay().register(PacketShrink.TYPE, PacketShrink.STREAM_CODEC);

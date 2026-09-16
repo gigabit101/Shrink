@@ -6,6 +6,7 @@ import net.creeperhost.polylib.inventory.power.PolyItemEnergyStorage;
 import net.creeperhost.polylib.platform.Services;
 import net.gigabit101.shrink.ShrinkCommon;
 import net.gigabit101.shrink.ShrinkingDeviceContainer;
+import net.gigabit101.shrink.PlayerShrinkAnimation;
 import net.gigabit101.shrink.api.ShrinkAPI;
 import net.gigabit101.shrink.init.ShrinkComponentTypes;
 import net.minecraft.network.FriendlyByteBuf;
@@ -71,18 +72,11 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
                         player.sendOverlayMessage(Component.translatable("shrink.message.power"));
                         return InteractionResult.FAIL;
                     }
-                    if(!ShrinkAPI.isEntityShrunk(player))
+                    if (player instanceof ServerPlayer serverPlayer && PlayerShrinkAnimation.toggle(serverPlayer, getScale(stack)))
                     {
-                        player.getAttribute(Attributes.SCALE).addPermanentModifier(createModifier(getScale(stack)));
                         usePower(player, stack);
-                        return InteractionResult.PASS;
                     }
-                    else
-                    {
-                        player.getAttribute(Attributes.SCALE).removeModifier(SHRINKING_DEVICE_ID);
-                        usePower(player, stack);
-                        return InteractionResult.PASS;
-                    }
+                    return InteractionResult.PASS;
                 }
                 else
                 {
@@ -114,6 +108,11 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
             {
                 if (hasPower(player, itemStack))
                 {
+                    if (livingEntity instanceof ServerPlayer target)
+                    {
+                        if (PlayerShrinkAnimation.toggle(target, getScale(itemStack))) usePower(player, itemStack);
+                        return InteractionResult.SUCCESS;
+                    }
                     if(!ShrinkAPI.isEntityShrunk(livingEntity))
                     {
                         livingEntity.getAttribute(Attributes.SCALE).addPermanentModifier(ItemShrinkDevice.createModifier(getScale(itemStack)));
