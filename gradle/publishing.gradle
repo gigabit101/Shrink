@@ -1,0 +1,41 @@
+def loaderName = project.name == 'fabric' ? 'Fabric' : 'NeoForge'
+def fabricPublication = project.name == 'fabric'
+
+publishMods {
+    file = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    version = rootProject.releaseVersion
+    changelog = rootProject.releaseNotes
+    type = STABLE
+    displayName = "${mod_name} ${project.version} for ${loaderName} ${minecraft_version}"
+    modLoaders.add(project.name)
+    dryRun = rootProject.releaseDryRun
+
+    github {
+        accessToken = providers.environmentVariable('GITHUB_TOKEN')
+        parent(rootProject.tasks.named('publishGithub'))
+    }
+
+    curseforge {
+        displayName = "${rootProject.releaseVersion} [${loaderName}]"
+        projectId = rootProject.releaseProjects.curseforge
+        accessToken = providers.environmentVariable('CURSE_API_KEY')
+        minecraftVersions.add(minecraft_version)
+        client = true
+        server = true
+        requires('polylib')
+        if (fabricPublication) {
+            requires('fabric-api')
+        }
+    }
+
+    modrinth {
+        projectId = rootProject.releaseProjects.modrinth
+        accessToken = providers.environmentVariable('MODRINTH_TOKEN')
+        minecraftVersions.add(minecraft_version)
+        environment = CLIENT_AND_SERVER
+        requires('6lvkzFFj')
+        if (fabricPublication) {
+            requires('P7dR8mSH')
+        }
+    }
+}

@@ -1,6 +1,67 @@
+import groovy.json.JsonSlurper
+import net.creeperhost.modpacksch.EnvironmentSupport
+
 plugins {
+    id 'base'
+    id 'net.creeperhost.modpacksch' version '0.1.1'
     // see https://fabricmc.net/develop/ for new versions
     id 'net.fabricmc.fabric-loom' version '1.15.5' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
-    id 'net.neoforged.moddev' version '2.0.141' apply false
+    id 'net.neoforged.moddev' version '2.0.147' apply false
+}
+
+ext.releaseProjects = new JsonSlurper().parse(file('.modpacksch.json')).projects
+ext.releaseVersion = "${minecraft_version}-${version}"
+ext.releaseNotes = providers.environmentVariable('SHRINK_CHANGELOG')
+        .orElse(providers.fileContents(layout.projectDirectory.file('CHANGELOG.md')).asText)
+ext.releaseDryRun = providers.environmentVariable('SHRINK_PUBLISH_DRY_RUN')
+        .map { it.equalsIgnoreCase('true') }
+        .orElse(false)
+
+publishMods {
+    version = releaseVersion
+    changelog = releaseNotes
+    type = STABLE
+    displayName = "${mod_name} ${project.version} for Minecraft ${minecraft_version}"
+    dryRun = releaseDryRun
+
+    github {
+        repository = releaseProjects.github
+        accessToken = providers.environmentVariable('GITHUB_TOKEN')
+        commitish = providers.environmentVariable('GITHUB_SHA').orElse(minecraft_version)
+        tagName = releaseVersion
+        allowEmptyFiles = true
+    }
+}
+
+modpacksCh {
+    defaults {
+        gameVersions.add(minecraft_version)
+        environment {
+            client = EnvironmentSupport.REQUIRED
+            server = EnvironmentSupport.REQUIRED
+        }
+        dependencies {
+            requiredCurseForge('576589')
+            requiredModrinth('6lvkzFFj')
+        }
+    }
+    publication(':fabric:publishGithub') {
+        displayName = "${mod_name} Fabric ${minecraft_version}"
+        loaders.add('fabric')
+        dependencies {
+            requiredCurseForge('306612')
+            requiredModrinth('P7dR8mSH')
+        }
+    }
+    publication(':neoforge:publishGithub') {
+        displayName = "${mod_name} NeoForge ${minecraft_version}"
+        loaders.add('neoforge')
+    }
+}
+
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Builds and checks both Shrink loaders.'
+    dependsOn(':common:build', ':fabric:build', ':neoforge:build')
 }

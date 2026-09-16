@@ -3,6 +3,8 @@ plugins {
     id 'net.fabricmc.fabric-loom'
 }
 
+apply from: rootProject.file('gradle/publishing.gradle')
+
 repositories {
     mavenLocal()
 }

@@ -1,0 +1,58 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - '26.3-*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shrink-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v6
+
+      - name: Validate release inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          minecraft_version="$(sed -n 's/^minecraft_version=//p' gradle.properties | tr -d '\r')"
+          mod_version="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
+          expected="${minecraft_version}-${mod_version}"
+          if [[ "${GITHUB_REF_NAME}" != "${expected}" ]]; then
+            echo "Release tag must be ${expected}; got ${GITHUB_REF_NAME}." >&2
+            exit 1
+          fi
+          for token in GITHUB_TOKEN CURSE_API_KEY MODRINTH_TOKEN; do
+            if [[ -z "${!token}" ]]; then
+              echo "Missing required release token: ${token}" >&2
+              exit 1
+            fi
+          done
+          jq -e '.projects | .github != null and .curseforge != null and .modrinth != null' .modpacksch.json
+          test -s CHANGELOG.md
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build, check and publish
+        run: bash ./gradlew buildAll publishMods --no-daemon

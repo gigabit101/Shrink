@@ -3,6 +3,8 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+apply from: rootProject.file('gradle/publishing.gradle')
+
 repositories {
     mavenLocal()
     maven { url "https://maven.creeperhost.net/" }

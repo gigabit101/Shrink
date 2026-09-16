@@ -19,13 +19,10 @@
             "net.gigabit101.shrink.ShrinkFabric"
         ]
     },
-    "mixins": [
-        "${mod_id}.mixins.json",
-        "${mod_id}.fabric.mixins.json"
-    ],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
+        "polylib": ">=${polylib_min_version}",
         "minecraft": "~${minecraft_version}",
         "java": ">=${java_version}"
     },
@@ -33,4 +30,3 @@
         "another-mod": "*"
     }
 }
-  
