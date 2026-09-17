@@ -22,6 +22,9 @@
             "net.gigabit101.shrink.ShrinkFabricClient"
         ]
     },
+    "mixins": [
+        "shrink.mixins.json"
+    ],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",

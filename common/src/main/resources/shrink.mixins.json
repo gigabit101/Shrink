@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.gigabit101.shrink.mixin",
+    "compatibilityLevel": "JAVA_25",
+    "mixins": [
+        "HappyGhastMixin",
+        "HappyGhastInteractionMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
