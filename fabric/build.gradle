@@ -8,6 +8,17 @@ architectury {
     fabric()
 }
 
+repositories {
+    maven {
+        name = "Sleeping Town"
+        url = "https://repo.sleeping.town/"
+    }
+    maven {
+        name = "Ladysnake Libs"
+        url = "https://maven.ladysnake.org/releases"
+    }
+}
+
 loom {
     runs {
         datagenClient {
@@ -45,6 +56,8 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
+    modImplementation "dev.emi:trinkets:3.10.0"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -93,6 +106,3 @@ unifiedPublishing {
         }
     }
 }
-
-
-

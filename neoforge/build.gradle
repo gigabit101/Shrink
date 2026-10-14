@@ -30,6 +30,8 @@ dependencies {
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
     modApi ("net.creeperhost:polylib-neoforge:${polylib_version}") { transitive false }
 
+    modImplementation "top.theillusivec4.curios:curios-neoforge:9.2.2+1.21.1"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 }

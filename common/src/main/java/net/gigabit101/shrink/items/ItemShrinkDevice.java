@@ -53,6 +53,33 @@ public class ItemShrinkDevice extends Item implements MenuProvider, PolyEnergyIt
         return stack.get(ShrinkComponentTypes.SHRINKING_DEVICE.get());
     }
 
+    public boolean toggleShrink(Player player, ItemStack stack)
+    {
+        if(player.getAttribute(Attributes.SCALE) == null)
+        {
+            player.displayClientMessage(Component.translatable("shrink.message.missing"), false);
+            return false;
+        }
+
+        if(!hasPower(player, stack))
+        {
+            player.displayClientMessage(Component.translatable("shrink.message.power"), false);
+            return false;
+        }
+
+        if(!ShrinkAPI.isEntityShrunk(player, SHRINKING_DEVICE_ID))
+        {
+            player.getAttribute(Attributes.SCALE).addPermanentModifier(createModifier(getScale(stack)));
+        }
+        else
+        {
+            player.getAttribute(Attributes.SCALE).removeModifier(SHRINKING_DEVICE_ID);
+        }
+
+        usePower(player, stack);
+        return true;
+    }
+
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand)
     {

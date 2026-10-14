@@ -18,6 +18,9 @@
     "main": [
       "net.gigabit101.shrink.fabric.ShrinkModFabric"
     ],
+    "client": [
+      "net.gigabit101.shrink.fabric.ShrinkClientFabric"
+    ],
     "fabric-datagen": [
       "net.gigabit101.shrink.fabric.ShrinkDataGen"
     ]
@@ -30,5 +33,8 @@
     "minecraft": ">=1.21",
     "architectury": ">=13.0.6",
     "polylib": ">=2100.0.3-build.160"
+  },
+  "suggests": {
+    "trinkets": ">=3.10.0"
   }
 }

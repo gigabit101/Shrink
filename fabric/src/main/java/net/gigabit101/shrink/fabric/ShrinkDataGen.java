@@ -33,6 +33,8 @@ public class ShrinkDataGen implements DataGeneratorEntrypoint
             provider.add("item.mob_bottle.tooltip_with_name","Contains : %s (%s)", ModuleType.COMMON);
             provider.add("key.shrink.category", "Shrink", ModuleType.COMMON);
             provider.add("key.shrink.shrink", "Toggle Shrink", ModuleType.COMMON);
+            provider.add("curios.identifier.psd", "Personal Shrinking Device", ModuleType.COMMON);
+            provider.add("trinkets.slot.chest.psd", "Personal Shrinking Device", ModuleType.COMMON);
             provider.add("shrink.deny_shrink", "Blocked shrinking of entity due to deny tag", ModuleType.COMMON);
             provider.add("shrink.message.already_shrunk","Unable to open while already shrunk", ModuleType.COMMON);
             provider.add("shrink.message.power", "Not enough power", ModuleType.COMMON);

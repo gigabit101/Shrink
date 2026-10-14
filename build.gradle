@@ -31,6 +31,10 @@ subprojects {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
         }
+        maven {
+            name = "Curios"
+            url = uri("https://maven.theillusivec4.top/")
+        }
     }
 }
 
